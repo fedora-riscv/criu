@@ -1,6 +1,6 @@
 Name: crtools	
 Version: 0.3	
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -47,6 +47,9 @@ install -m 644 Documentation/%{name}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %doc README COPYING
 
 %changelog
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Tue Jan 22 2013 Adrian Reber <adrian@lisas.de> - 0.3-3
 - added ExclusiveArch blocker bug
 

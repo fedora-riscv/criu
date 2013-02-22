@@ -1,11 +1,11 @@
 Name: crtools	
-Version: 0.3	
-Release: 4%{?dist}
+Version: 0.4
+Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
-Source0: http://download.openvz.org/criu/crtools-0.3.tar.bz2
+Source0: http://download.openvz.org/criu/crtools-0.4.tar.bz2
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -23,16 +23,12 @@ Linux in user-space.
 
 %prep
 %setup -q
-# quick fix for broken Makefile in Documentation/
-sed -i -e 's,$(E),echo,g' Documentation/Makefile
-# allow our CLFAGS to enhance the existing
-sed -i -e "s,CFLAGS\t\t=,CFLAGS\t\t+=,g" Makefile
 
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector,,g'` make V=1 WERROR=0
-make -C Documentation V=1
+make docs V=1
 
 
 %install
@@ -47,6 +43,9 @@ install -m 644 Documentation/%{name}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %doc README COPYING
 
 %changelog
+* Fri Feb 22 2013 Adrian Reber <adrian@lisas.de> - 0.4-1
+- updated to 0.4
+
 * Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 

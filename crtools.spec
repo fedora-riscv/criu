@@ -1,11 +1,11 @@
 Name: crtools	
-Version: 0.4
+Version: 0.5
 Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
-Source0: http://download.openvz.org/criu/crtools-0.4.tar.bz2
+Source0: http://download.openvz.org/criu/criu-0.5.tar.bz2
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -22,7 +22,7 @@ Linux in user-space.
 
 
 %prep
-%setup -q
+%setup -q -n criu-0.5
 
 %build
 # %{?_smp_mflags} does not work
@@ -34,15 +34,22 @@ make docs V=1
 %install
 mkdir -p $RPM_BUILD_ROOT%{_bindir}
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
-install -m 755 %{name} $RPM_BUILD_ROOT%{_bindir}
+# upstream renamed to binary to criu
+install -m 755 criu $RPM_BUILD_ROOT%{_bindir}
+# but still provides a link
+ln -s %{_bindir}/criu $RPM_BUILD_ROOT%{_bindir}/crtools
 install -m 644 Documentation/%{name}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 %files
 %{_bindir}/%{name}
+%{_bindir}/criu
 %{_mandir}/man1/*
 %doc README COPYING
 
 %changelog
+* Tue May 14 2013 Adrian Reber <adrian@lisas.de> - 0.5-1
+- updated to 0.5
+
 * Fri Feb 22 2013 Adrian Reber <adrian@lisas.de> - 0.4-1
 - updated to 0.4
 

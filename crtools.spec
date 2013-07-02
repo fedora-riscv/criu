@@ -1,11 +1,14 @@
 Name: crtools	
 Version: 0.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-0.6.tar.bz2
+Patch0: 0001-arm-added-ARM-versions-of-the-POSIX-timer-syscalls.patch
+Patch1: 0001-posix-timers-don-t-call-ferror-for-NULL.patch
+Patch2: 0001-posix-times-don-t-fail-if-proc-PID-times-is-absent.patch
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -23,6 +26,9 @@ Linux in user-space.
 
 %prep
 %setup -q -n criu-0.6
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -44,6 +50,10 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Tue Jul 03 2013 Andrew Vagin <avagin@openvz.org> - 0.6.2
+- fix building on ARM
+- fix null pointer dereference
+
 * Tue Jul 02 2013 Adrian Reber <adrian@lisas.de> - 0.6-1
 - updated to 0.6
 - upstream moved binaries to sbin

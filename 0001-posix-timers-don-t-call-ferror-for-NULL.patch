@@ -1,0 +1,32 @@
+From f70859e2fcfe92373aa5f960460f052fff4e1c02 Mon Sep 17 00:00:00 2001
+From: Andrey Vagin <avagin@openvz.org>
+Date: Tue, 2 Jul 2013 20:25:14 +0400
+Subject: [PATCH] posix-timers: don't call ferror for NULL
+
+parse_posix_timers should not call ferror if fopen returned NULL.
+
+Reported-by: Adrian Reber <adrian@lisas.de>
+Cc: Pavel Tikhomirov <snorcht@gmail.com>
+Signed-off-by: Andrey Vagin <avagin@openvz.org>
+Signed-off-by: Pavel Emelyanov <xemul@parallels.com>
+---
+ proc_parse.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/proc_parse.c b/proc_parse.c
+index 7115392..28e2983 100644
+--- a/proc_parse.c
++++ b/proc_parse.c
+@@ -1190,8 +1190,7 @@ int parse_posix_timers(pid_t pid, struct proc_posix_timers_stat *args)
+ 	file = fopen_proc(pid, "timers");
+ 	if (file == NULL) {
+ 		pr_perror("Can't open posix timers file!");
+-		ret = -1;
+-		goto end_posix;
++		return -1;
+ 	}
+ 
+ 	while (1) {
+-- 
+1.8.3.1
+

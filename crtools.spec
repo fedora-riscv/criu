@@ -1,11 +1,11 @@
 Name: crtools	
-Version: 0.5
+Version: 0.6
 Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
-Source0: http://download.openvz.org/criu/criu-0.5.tar.bz2
+Source0: http://download.openvz.org/criu/criu-0.6.tar.bz2
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -22,31 +22,33 @@ Linux in user-space.
 
 
 %prep
-%setup -q -n criu-0.5
+%setup -q -n criu-0.6
 
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
-CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector,,g'` make V=1 WERROR=0
+CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector,,g'` make V=1 WERROR=0 PREFIX=%{_prefix}
 make docs V=1
 
 
 %install
-mkdir -p $RPM_BUILD_ROOT%{_bindir}
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix}
+
 # upstream renamed to binary to criu
-install -m 755 criu $RPM_BUILD_ROOT%{_bindir}
-# but still provides a link
-ln -s %{_bindir}/criu $RPM_BUILD_ROOT%{_bindir}/crtools
-install -m 644 Documentation/%{name}.1 $RPM_BUILD_ROOT%{_mandir}/man1
+ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 %files
-%{_bindir}/%{name}
-%{_bindir}/criu
-%{_mandir}/man1/*
+%{_sbindir}/%{name}
+%{_sbindir}/criu
+%{_mandir}/man8/*
 %doc README COPYING
 
 %changelog
+* Tue Jul 02 2013 Adrian Reber <adrian@lisas.de> - 0.6-1
+- updated to 0.6
+- upstream moved binaries to sbin
+- using upstream's make install
+
 * Tue May 14 2013 Adrian Reber <adrian@lisas.de> - 0.5-1
 - updated to 0.5
 

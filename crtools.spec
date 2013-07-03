@@ -50,7 +50,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
-* Tue Jul 03 2013 Andrew Vagin <avagin@openvz.org> - 0.6.2
+* Wed Jul 03 2013 Andrew Vagin <avagin@openvz.org> - 0.6.2
 - fix building on ARM
 - fix null pointer dereference
 

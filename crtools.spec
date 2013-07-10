@@ -5,7 +5,7 @@ Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
-Source0: http://download.openvz.org/criu/criu-0.6.tar.bz2
+Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Patch0: 0001-arm-added-ARM-versions-of-the-POSIX-timer-syscalls.patch
 Patch1: 0001-posix-timers-don-t-call-ferror-for-NULL.patch
 Patch2: 0001-posix-times-don-t-fail-if-proc-PID-times-is-absent.patch
@@ -25,7 +25,7 @@ Linux in user-space.
 
 
 %prep
-%setup -q -n criu-0.6
+%setup -q -n criu-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1

@@ -1,6 +1,6 @@
 Name: crtools	
 Version: 0.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -33,7 +33,7 @@ Linux in user-space.
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
-CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector,,g'` make V=1 WERROR=0 PREFIX=%{_prefix}
+CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix}
 make docs V=1
 
 
@@ -50,6 +50,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Wed Jul 24 2013 Andrew Vagin <avagin@openvz.org> - 0.6-3
+- Delete all kind of -fstack-protector gcc options
+
 * Wed Jul 24 2013 Andrew Vagin <avagin@openvz.org> - 0.6-3
 - Added arm macro to ExclusiveArch
 

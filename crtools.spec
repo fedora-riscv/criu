@@ -1,6 +1,6 @@
 Name: crtools	
 Version: 0.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -12,11 +12,11 @@ Patch2: 0001-posix-times-don-t-fail-if-proc-PID-times-is-absent.patch
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
-# user-space and kernel changes are only available for x86_64
+# user-space and kernel changes are only available for x86_64 and ARM
 # code is very architecture specific
 # once imported in RCS it needs a bug openend explaining the ExclusiveArch
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-ExclusiveArch: x86_64
+ExclusiveArch: x86_64 %{arm}
 
 %description
 crtools is the user-space part of Checkpoint/Restore in User-space
@@ -50,6 +50,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Wed Jul 24 2013 Andrew Vagin <avagin@openvz.org> - 0.6-3
+- Added arm macro to ExclusiveArch
+
 * Wed Jul 03 2013 Andrew Vagin <avagin@openvz.org> - 0.6-2
 - fix building on ARM
 - fix null pointer dereference

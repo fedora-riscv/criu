@@ -1,6 +1,6 @@
 Name: crtools	
 Version: 0.6
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -50,6 +50,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Wed Jul 24 2013 Andrew Vagin <avagin@openvz.org> - 0.6-3
 - Delete all kind of -fstack-protector gcc options
 

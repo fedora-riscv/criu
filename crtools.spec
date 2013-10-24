@@ -1,5 +1,5 @@
 Name: crtools	
-Version: 0.7
+Version: 0.8
 Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
@@ -44,6 +44,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Thu Oct 24 2013 Andrew Vagin <avagin@openvz.org> - 0.8-1
+- Update to 0.8
+
 * Tue Sep 10 2013 Andrew Vagin <avagin@openvz.org> - 0.7-1
 - Update to 0.7
 

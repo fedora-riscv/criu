@@ -1,6 +1,8 @@
-Name: crtools	
+Name: criu	
 Version: 1.0
-Release: 1%{?dist}
+Release: 2%{?dist}
+Provides: crtools = 2:%{version}-%{release}
+Obsoletes: crtools <= 2:1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -16,7 +18,7 @@ BuildRequires: protobuf-c-devel asciidoc xmlto
 ExclusiveArch: x86_64 %{arm}
 
 %description
-crtools is the user-space part of Checkpoint/Restore in User-space
+criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space. 
 
@@ -39,11 +41,14 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 %files
 %{_sbindir}/%{name}
-%{_sbindir}/criu
+%{_sbindir}/crtools
 %{_mandir}/man8/*
 %doc README COPYING
 
 %changelog
+* Tue Dec 10 2013 Andrew Vagin <avagin@openvz.org> - 1.0-2
+- Rename crtools to criu #1034677
+
 * Wed Nov 27 2013 Andrew Vagin <avagin@openvz.org> - 1.0-1
 - Update to 1.0
 

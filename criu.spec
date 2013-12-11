@@ -1,8 +1,8 @@
 Name: criu	
 Version: 1.0
-Release: 2%{?dist}
-Provides: crtools = 2:%{version}-%{release}
-Obsoletes: crtools <= 2:1.0-2
+Release: 3%{?dist}
+Provides: crtools = %{version}-%{release}
+Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 Group: System Environment/Base
 License: GPLv2
@@ -46,6 +46,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %doc README COPYING
 
 %changelog
+* Wed Dec 11 2013 Andrew Vagin <avagin@openvz.org> - 1.0-3
+- Fix the epoch of crtools
+
 * Tue Dec 10 2013 Andrew Vagin <avagin@openvz.org> - 1.0-2
 - Rename crtools to criu #1034677
 

@@ -1,6 +1,6 @@
 Name: criu	
-Version: 1.0
-Release: 3%{?dist}
+Version: 1.1
+Release: 0.rc1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space

@@ -1,5 +1,5 @@
 Name: criu	
-Version: 1.0
+Version: 1.1
 Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -43,6 +43,8 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_sbindir}/%{name}
 %{_sbindir}/crtools
 %{_mandir}/man8/*
+%{_unitdir}/criu.service
+%{_unitdir}/criu.socket
 %doc README COPYING
 
 %changelog

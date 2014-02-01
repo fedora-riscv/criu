@@ -8,6 +8,7 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Patch0: ptrace_peeksiginfo_args.patch
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -25,6 +26,7 @@ Linux in user-space.
 
 %prep
 %setup -q -n criu-%{version}
+%patch0 -p1
 
 %build
 # %{?_smp_mflags} does not work

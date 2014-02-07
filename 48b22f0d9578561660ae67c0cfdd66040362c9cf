@@ -1,0 +1,54 @@
+From 48b22f0d9578561660ae67c0cfdd66040362c9cf Mon Sep 17 00:00:00 2001
+From: Adrian Reber <adrian@lisas.de>
+Date: Wed, 5 Feb 2014 01:05:00 +0400
+Subject: [PATCH] Makefile: Also install libcriu.so and headers
+
+To link Open MPI against CRIU I need the header files installed.
+Attached is a patch which adds the necessary Makefile rules to
+install libcriu.so and the header file to compile against CRIU.
+
+Signed-off-by: Adrian Reber <adrian@lisas.de>
+Acked-by: Kir Kolyshkin <kir@openvz.org>
+Acked-by: Andrew Vagin <avagin@parallels.com>
+Signed-off-by: Pavel Emelyanov <xemul@parallels.com>
+---
+ Makefile     |    5 +++++
+ Makefile.inc |    2 ++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f8ee59a..985b8c9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -104,6 +104,7 @@ CFLAGS		+= $(WARNINGS) $(DEFINES)
+ SYSCALL-LIB	:= arch/$(ARCH)/syscalls.built-in.o
+ ARCH-LIB	:= arch/$(ARCH)/crtools.built-in.o
+ CRIU-LIB	:= lib/libcriu.so
++CRIU-INC	:= lib/criu.h include/criu-plugin.h include/criu-log.h protobuf/rpc.proto
+ 
+ export CC MAKE CFLAGS LIBS ARCH DEFINES MAKEFLAGS
+ export SRC_DIR SYSCALL-LIB SH RM ARCH_DIR OBJCOPY LDARCH LD
+@@ -233,6 +234,10 @@ install: $(PROGRAM) install-man
+ 	$(E) "  INSTALL " $(PROGRAM)
+ 	$(Q) mkdir -p $(DESTDIR)$(SBINDIR)
+ 	$(Q) install -m 755 $(PROGRAM) $(DESTDIR)$(SBINDIR)
++	$(Q) mkdir -p $(DESTDIR)$(LIBDIR)
++	$(Q) install -m 755 $(CRIU-LIB) $(DESTDIR)$(LIBDIR)
++	$(Q) mkdir -p $(DESTDIR)$(INCLUDEDIR)
++	$(Q) install -m 644 $(CRIU-INC) $(DESTDIR)$(INCLUDEDIR)
+ 	$(Q) mkdir -p $(DESTDIR)$(SYSTEMDUNITDIR)
+ 	$(Q) install -m 644 scripts/sd/criu.socket $(DESTDIR)$(SYSTEMDUNITDIR)
+ 	$(Q) install -m 644 scripts/sd/criu.service $(DESTDIR)$(SYSTEMDUNITDIR)
+diff --git a/Makefile.inc b/Makefile.inc
+index 87a267a..032a99a 100644
+--- a/Makefile.inc
++++ b/Makefile.inc
+@@ -15,3 +15,5 @@ PREFIX		:= /usr/local
+ SBINDIR		:= $(PREFIX)/sbin
+ MANDIR		:= $(PREFIX)/share/man
+ SYSTEMDUNITDIR	:= $(PREFIX)/lib/systemd/system/
++LIBDIR		:= $(PREFIX)/lib
++INCLUDEDIR	:= $(PREFIX)/include/criu
+-- 
+1.7.1
+

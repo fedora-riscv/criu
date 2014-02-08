@@ -1,6 +1,6 @@
 Name: criu	
 Version: 1.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -9,6 +9,11 @@ License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Patch0: ptrace_peeksiginfo_args.patch
+Patch1: http://git.criu.org/?p=criu.git;a=patch;h=48b22f0d9578561660ae67c0cfdd66040362c9cf
+Patch2: http://git.criu.org/?p=criu.git;a=patch;h=f5f9fb9c0007a613273064626b87ad62ad4b5923
+Patch3: http://git.criu.org/?p=criu.git;a=patch;h=b0e6ebc1c7a529dfc3073c26f2a18733a1088458
+Patch4: 0001-Makefile-fix-libcriu.so-links-and-man-page-installat.patch
+
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -23,10 +28,24 @@ criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space. 
 
+%package devel
+Summary: Header files and libraries for %{name}
+Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}
+
+%description devel
+This package contains header files and libraries for %{name}.
+
 
 %prep
 %setup -q -n criu-%{version}
+%if 0%{fedora} > 20
 %patch0 -p1
+%endif
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -36,10 +55,13 @@ make docs V=1
 
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix}
+make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 
 # upstream renamed to binary to criu
 ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %{_sbindir}/%{name}
@@ -47,9 +69,18 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_mandir}/man8/*
 %{_unitdir}/criu.service
 %{_unitdir}/criu.socket
+%{_libdir}/*.so.*
 %doc README COPYING
 
+%files devel
+%{_includedir}/criu
+%{_libdir}/*.so
+
+
 %changelog
+* Tue Feb 04 2014 Adrian Reber <adrian@lisas.de> - 1.1-4
+- Create -devel subpackage
+
 * Wed Dec 11 2013 Andrew Vagin <avagin@openvz.org> - 1.0-3
 - Fix the epoch of crtools
 

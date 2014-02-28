@@ -1,6 +1,6 @@
 Name: criu	
-Version: 1.1
-Release: 4%{?dist}
+Version: 1.2
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,12 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: ptrace_peeksiginfo_args.patch
-Patch1: http://git.criu.org/?p=criu.git;a=patch;h=48b22f0d9578561660ae67c0cfdd66040362c9cf
-Patch2: http://git.criu.org/?p=criu.git;a=patch;h=f5f9fb9c0007a613273064626b87ad62ad4b5923
-Patch3: http://git.criu.org/?p=criu.git;a=patch;h=b0e6ebc1c7a529dfc3073c26f2a18733a1088458
-Patch4: 0001-Makefile-fix-libcriu.so-links-and-man-page-installat.patch
-
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -39,13 +33,6 @@ This package contains header files and libraries for %{name}.
 
 %prep
 %setup -q -n criu-%{version}
-%if 0%{fedora} > 20
-%patch0 -p1
-%endif
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -55,7 +42,8 @@ make docs V=1
 
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
+make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} LOGROTATEDIR=%{_sysconfdir}/logrotate.d
 
 # upstream renamed to binary to criu
 ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
@@ -70,6 +58,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_unitdir}/criu.service
 %{_unitdir}/criu.socket
 %{_libdir}/*.so.*
+%{_sysconfdir}/logrotate.d/%{name}-service
 %doc README COPYING
 
 %files devel
@@ -78,6 +67,10 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Fri Feb 28 2014 Adrian Reber <adrian@lisas.de> - 1.2-1
+- Update to 1.2
+- Dropped all upstreamed patches
+
 * Tue Feb 04 2014 Adrian Reber <adrian@lisas.de> - 1.1-4
 - Create -devel subpackage
 

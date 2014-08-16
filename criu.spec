@@ -1,6 +1,6 @@
 Name: criu	
 Version: 1.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -69,6 +69,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Thu Aug 07 2014 Andrew Vagin <avagin@openvz.org> - 1.2-4
 - Include inttypes.h for PRI helpers 
 

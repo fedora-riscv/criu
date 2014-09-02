@@ -1,6 +1,6 @@
 Name: criu	
-Version: 1.2
-Release: 5%{?dist}
+Version: 1.3
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,7 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: 0001-log-Include-inttypes.h-for-PRI-helpers.patch
 
 BuildRequires: protobuf-c-devel asciidoc xmlto
 
@@ -34,7 +33,6 @@ This package contains header files and libraries for %{name}.
 
 %prep
 %setup -q -n criu-%{version}
-%patch0 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -66,9 +64,15 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
 
 
 %changelog
+* Tue Sep 02 2014 Adrian Reber <adrian@lisas.de> - 1.3-1
+- Update to 1.3
+- Dropped all upstreamed patches
+- included pkgconfig file in -devel
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.2-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 

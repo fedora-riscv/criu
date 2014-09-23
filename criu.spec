@@ -1,5 +1,5 @@
 Name: criu	
-Version: 1.3
+Version: 1.3.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -68,6 +68,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Tue Sep 23 2014 Adrian Reber <adrian@lisas.de> - 1.3.1-1
+- Update to 1.3.1 (#1142896)
+
 * Tue Sep 02 2014 Adrian Reber <adrian@lisas.de> - 1.3-1
 - Update to 1.3
 - Dropped all upstreamed patches

@@ -1,5 +1,5 @@
 Name: criu	
-Version: 1.2
+Version: 1.3.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -64,9 +64,30 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
 
 
 %changelog
+* Tue Sep 23 2014 Adrian Reber <adrian@lisas.de> - 1.3.1-1
+- Update to 1.3.1 (#1142896)
+
+* Tue Sep 02 2014 Adrian Reber <adrian@lisas.de> - 1.3-1
+- Update to 1.3
+- Dropped all upstreamed patches
+- included pkgconfig file in -devel
+
+* Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Thu Aug 07 2014 Andrew Vagin <avagin@openvz.org> - 1.2-4
+- Include inttypes.h for PRI helpers 
+
+* Thu Aug 07 2014 Andrew Vagin <avagin@openvz.org> - 1.2-3
+- Rebuilt for https://bugzilla.redhat.com/show_bug.cgi?id=1126751
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Fri Feb 28 2014 Adrian Reber <adrian@lisas.de> - 1.2-1
 - Update to 1.2
 - Dropped all upstreamed patches

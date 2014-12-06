@@ -68,7 +68,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
-* Dec Sat 06 2014 Adrian Reber <adrian@lisas.de> - 1.4-1
+* Sat Dec 06 2014 Adrian Reber <adrian@lisas.de> - 1.4-1
 - Update to 1.4
 
 * Tue Sep 23 2014 Adrian Reber <adrian@lisas.de> - 1.3.1-1

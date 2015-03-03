@@ -1,5 +1,5 @@
 Name: criu	
-Version: 1.4
+Version: 1.5
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -8,8 +8,9 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Patch1: python.patch
 
-BuildRequires: protobuf-c-devel asciidoc xmlto
+BuildRequires: protobuf-devel protobuf-c-devel asciidoc xmlto python2-devel
 
 # user-space and kernel changes are only available for x86_64 and ARM
 # code is very architecture specific
@@ -33,6 +34,7 @@ This package contains header files and libraries for %{name}.
 
 %prep
 %setup -q -n criu-%{version}
+%patch1 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -54,11 +56,14 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %files
 %{_sbindir}/%{name}
 %{_sbindir}/crtools
+%{_bindir}/crit
 %{_mandir}/man8/*
 %{_unitdir}/criu.service
 %{_unitdir}/criu.socket
 %{_libdir}/*.so.*
 %{_sysconfdir}/logrotate.d/%{name}-service
+%{python2_sitelib}/pycriu/*
+%{python2_sitelib}/*egg-info
 %doc README COPYING
 
 %files devel

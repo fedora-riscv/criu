@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index a896e33..ee42d84 100644
+--- a/Makefile
++++ b/Makefile
+@@ -289,7 +289,7 @@ install-man:
+ 
+ install-crit: crit
+ 	$(E) "  INSTALL crit"
+-	$(Q) python scripts/crit-setup.py install --prefix=$(DESTDIR)
++	$(Q) python scripts/crit-setup.py install --root=$(DESTDIR)
+ 
+ .PHONY: install install-man install-crit
+ 

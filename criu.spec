@@ -1,5 +1,5 @@
 Name: criu	
-Version: 1.5
+Version: 1.5.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -73,6 +73,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Tue Mar 31 2015 Andrew Vagin <avagin@openvz.org> - 1.5.1
+- Update to 1.5.1
+
 * Sat Dec 06 2014 Adrian Reber <adrian@lisas.de> - 1.4-1
 - Update to 1.4
 

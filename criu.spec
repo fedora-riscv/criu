@@ -1,6 +1,6 @@
-Name: criu	
+Name: criu
 Version: 1.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -21,7 +21,7 @@ ExclusiveArch: x86_64 %{arm}
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
-Linux in user-space. 
+Linux in user-space.
 
 %package devel
 Summary: Header files and libraries for %{name}
@@ -30,6 +30,22 @@ Requires: %{name} = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries for %{name}.
+
+%package -n python-%{name}
+Summary: Python bindings for %{name}
+Group: Development/Languages
+Requires: %{name} = %{version}-%{release}
+
+%description -n python-%{name}
+python-%{name} contains Python bindings for %{name}.
+
+%package -n crit
+Summary: CRIU image tool
+Requires: python-%{name} = %{version}-%{release}
+
+%description -n crit
+crit is a tool designed to decode CRIU binary dump files and show
+their content in human-readable form.
 
 
 %prep
@@ -56,14 +72,11 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %files
 %{_sbindir}/%{name}
 %{_sbindir}/crtools
-%{_bindir}/crit
-%{_mandir}/man8/*
 %{_unitdir}/criu.service
 %{_unitdir}/criu.socket
 %{_libdir}/*.so.*
 %{_sysconfdir}/logrotate.d/%{name}-service
-%{python2_sitelib}/pycriu/*
-%{python2_sitelib}/*egg-info
+%doc %{_mandir}/man8/criu.8*
 %doc README COPYING
 
 %files devel
@@ -71,8 +84,18 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
 
+%files -n python-%{name}
+%{python2_sitelib}/pycriu/*
+%{python2_sitelib}/*egg-info
+
+%files -n crit
+%{_bindir}/crit
+
 
 %changelog
+* Sun Apr 19 2015 Nikita Spiridonov <nspiridonov@odin.com> - 1.5.1-2
+- Create python-criu and crit subpackages
+
 * Tue Mar 31 2015 Andrew Vagin <avagin@openvz.org> - 1.5.1
 - Update to 1.5.1
 
@@ -91,7 +114,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
 * Thu Aug 07 2014 Andrew Vagin <avagin@openvz.org> - 1.2-4
-- Include inttypes.h for PRI helpers 
+- Include inttypes.h for PRI helpers
 
 * Thu Aug 07 2014 Andrew Vagin <avagin@openvz.org> - 1.2-3
 - Rebuilt for https://bugzilla.redhat.com/show_bug.cgi?id=1126751

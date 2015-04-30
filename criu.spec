@@ -1,6 +1,6 @@
 Name: criu
 Version: 1.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -34,7 +34,7 @@ This package contains header files and libraries for %{name}.
 %package -n python-%{name}
 Summary: Python bindings for %{name}
 Group: Development/Languages
-Requires: %{name} = %{version}-%{release}
+Requires: %{name} = %{version}-%{release} python-ipaddr protobuf-python
 
 %description -n python-%{name}
 python-%{name} contains Python bindings for %{name}.
@@ -93,6 +93,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Thu Apr 30 2015 Andrew Vagin <avagin@openvz.org> - 1.5.2-2
+- Require protobuf-python and python-ipaddr for python-criu
+
 * Tue Apr 28 2015 Andrew Vagin <avagin@openvz.org> - 1.5.2
 - Update to 1.5.2
 

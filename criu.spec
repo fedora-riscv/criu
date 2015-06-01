@@ -1,6 +1,6 @@
 Name: criu
-Version: 1.5.2
-Release: 2%{?dist}
+Version: 1.6
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,7 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch1: python.patch
 
 BuildRequires: protobuf-devel protobuf-c-devel asciidoc xmlto python2-devel
 
@@ -50,7 +49,6 @@ their content in human-readable form.
 
 %prep
 %setup -q -n criu-%{version}
-%patch1 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -77,7 +75,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_libdir}/*.so.*
 %{_sysconfdir}/logrotate.d/%{name}-service
 %doc %{_mandir}/man8/criu.8*
-%doc README COPYING
+%doc README.md COPYING
 
 %files devel
 %{_includedir}/criu
@@ -93,6 +91,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Mon Jun 01 2015 Andrew Vagin <avagin@openvz.org> - 1.6-1
+- Update to 1.6
+
 * Thu Apr 30 2015 Andrew Vagin <avagin@openvz.org> - 1.5.2-2
 - Require protobuf-python and python-ipaddr for python-criu
 

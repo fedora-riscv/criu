@@ -1,6 +1,6 @@
 Name: criu
-Version: 1.6
-Release: 2%{?dist}
+Version: 1.6.1
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -9,7 +9,10 @@ License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 
-BuildRequires: protobuf-devel protobuf-c-devel asciidoc xmlto python2-devel
+BuildRequires: protobuf-devel protobuf-c-devel python2-devel
+%if 0%{?fedora}
+BuildRequires: asciidoc xmlto
+%endif
 
 # user-space and kernel changes are only available for x86_64 and ARM
 # code is very architecture specific
@@ -54,27 +57,37 @@ their content in human-readable form.
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix}
+%if 0%{?fedora}
 make docs V=1
+%endif
 
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
+%if 0%{?rhel}
+# disable documentation as it requires asciidoc (which is not available on RHEL7)
+sed -i -e "s,$(CRIU-LIB) install-man,$(CRIU-LIB),g" Makefile
+%endif
 make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} LOGROTATEDIR=%{_sysconfdir}/logrotate.d
 
+%if 0%{?fedora}
 # upstream renamed to binary to criu
 ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
+%endif
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %{_sbindir}/%{name}
+%if 0%{?fedora}
 %{_sbindir}/crtools
+%doc %{_mandir}/man8/criu.8*
+%endif
 %{_unitdir}/criu.service
 %{_unitdir}/criu.socket
 %{_libdir}/*.so.*
 %{_sysconfdir}/logrotate.d/%{name}-service
-%doc %{_mandir}/man8/criu.8*
 %doc README.md COPYING
 
 %files devel
@@ -91,8 +104,15 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Thu Aug 13 2015 Adrian Reber <adrian@lisas.de> - 1.6.1-1
+- Update to 1.6.1
+- Merge changes for RHEL packaging
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.6-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Tue Jun 09 2015 Adrian Reber <areber@redhat.com> - 1.6-1.1
+- adapt to RHEL7
 
 * Mon Jun 01 2015 Andrew Vagin <avagin@openvz.org> - 1.6-1
 - Update to 1.6

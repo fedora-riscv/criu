@@ -1,6 +1,6 @@
 Name: criu
 Version: 1.6.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -18,7 +18,7 @@ BuildRequires: asciidoc xmlto
 # code is very architecture specific
 # once imported in RCS it needs a bug openend explaining the ExclusiveArch
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-ExclusiveArch: x86_64 %{arm} %{power64} aarch64
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
@@ -104,6 +104,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Thu Sep 3 2015 Andrey Vagin <avagin@openvz.org> - 1.6.1-3
+- Build only for power64le
+
 * Thu Sep 3 2015 Andrey Vagin <avagin@openvz.org> - 1.6.1-2
 - Build for aarch64 and power64 
 

@@ -1,6 +1,6 @@
 Name: criu
 Version: 1.6.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -104,6 +104,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Thu Sep 3 2015 Andrey Vagin <avagin@openvz.org> - 1.6.1-2
+- Build for aarch64 and power64 
+
 * Thu Aug 13 2015 Adrian Reber <adrian@lisas.de> - 1.6.1-1
 - Update to 1.6.1
 - Merge changes for RHEL packaging

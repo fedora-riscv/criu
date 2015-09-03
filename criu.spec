@@ -18,7 +18,7 @@ BuildRequires: asciidoc xmlto
 # code is very architecture specific
 # once imported in RCS it needs a bug openend explaining the ExclusiveArch
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-ExclusiveArch: x86_64 %{arm}
+ExclusiveArch: x86_64 %{arm} %{power64} aarch64
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space

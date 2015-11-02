@@ -1,5 +1,5 @@
 Name: criu
-Version: 1.7
+Version: 1.7.2
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -104,6 +104,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Mon Nov 02 2015 Adrian Reber <adrian@lisas.de> - 1.7.2-1
+- Update to 1.7.2
+
 * Mon Sep 7 2015 Andrey Vagin <avagin@openvz.org> - 1.7-1
 - Update to 1.7
 
@@ -111,7 +114,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 - Build only for power64le
 
 * Thu Sep 3 2015 Andrey Vagin <avagin@openvz.org> - 1.6.1-2
-- Build for aarch64 and power64 
+- Build for aarch64 and power64
 
 * Thu Aug 13 2015 Adrian Reber <adrian@lisas.de> - 1.6.1-1
 - Update to 1.6.1

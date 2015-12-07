@@ -1,5 +1,5 @@
 Name: criu
-Version: 1.7.2
+Version: 1.8
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -63,12 +63,12 @@ make docs V=1
 
 
 %install
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-%if 0%{?rhel}
-# disable documentation as it requires asciidoc (which is not available on RHEL7)
-sed -i -e "s,$(CRIU-LIB) install-man,$(CRIU-LIB),g" Makefile
+make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
+%if 0%{?fedora}
+# ony install documentation on Fedora as it requires asciidoc,
+# which is not available on RHEL7
+make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %endif
-make install DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} LOGROTATEDIR=%{_sysconfdir}/logrotate.d
 
 %if 0%{?fedora}
 # upstream renamed to binary to criu
@@ -84,10 +84,7 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %{_sbindir}/crtools
 %doc %{_mandir}/man8/criu.8*
 %endif
-%{_unitdir}/criu.service
-%{_unitdir}/criu.socket
 %{_libdir}/*.so.*
-%{_sysconfdir}/logrotate.d/%{name}-service
 %doc README.md COPYING
 
 %files devel
@@ -104,6 +101,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Mon Dec 07 2015 Adrian Reber <adrian@lisas.de> - 1.8-1
+- Update to 1.8
+
 * Mon Nov 02 2015 Adrian Reber <adrian@lisas.de> - 1.7.2-1
 - Update to 1.7.2
 

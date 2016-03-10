@@ -9,7 +9,7 @@ License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 
-BuildRequires: protobuf-devel protobuf-c-devel python2-devel
+BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
 %if 0%{?fedora}
 BuildRequires: asciidoc xmlto
 %endif

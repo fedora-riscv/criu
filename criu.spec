@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.0
+Version: 2.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -18,13 +18,19 @@ BuildRequires: asciidoc xmlto
 # code is very architecture specific
 # once imported in RCS it needs a bug openend explaining the ExclusiveArch
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
+%if 0%{?fedora}
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64
+%else
+ExclusiveArch: x86_64 ppc64le
+%endif
+
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space.
 
+%if 0%{?fedora}
 %package devel
 Summary: Header files and libraries for %{name}
 Group: Development/Libraries
@@ -32,6 +38,7 @@ Requires: %{name} = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries for %{name}.
+%endif
 
 %package -n python-%{name}
 Summary: Python bindings for %{name}
@@ -71,6 +78,13 @@ make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %endif
 
+%if 0%{?rhel}
+# remove devel package
+rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
+rm $RPM_BUILD_ROOT%{_libdir}/*.so*
+rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
+%endif
+
 %if 0%{?fedora}
 # upstream renamed to binary to criu
 ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
@@ -84,14 +98,16 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 %if 0%{?fedora}
 %{_sbindir}/crtools
 %doc %{_mandir}/man8/criu.8*
-%endif
 %{_libdir}/*.so.*
+%endif
 %doc README.md COPYING
 
+%if 0%{?fedora}
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
+%endif
 
 %files -n python-%{name}
 %{python2_sitelib}/pycriu/*
@@ -102,6 +118,12 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Mon Apr 11 2016 Adrian Reber <adrian@lisas.de> - 2.1-1
+- Update to 2.1
+
+* Wed Apr 06 2016 Adrian Reber <areber@redhat.com> - 2.0-2
+- Merge changes from Fedora
+
 * Thu Mar 10 2016 Andrey Vagin <avagin@openvz.org> - 2.0-1
 - Update to 2.0
 

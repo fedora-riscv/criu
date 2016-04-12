@@ -1,6 +1,6 @@
 Name: criu
 Version: 2.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -85,18 +85,12 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.so*
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 %endif
 
-%if 0%{?fedora}
-# upstream renamed to binary to criu
-ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
-%endif
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %{_sbindir}/%{name}
 %if 0%{?fedora}
-%{_sbindir}/crtools
 %doc %{_mandir}/man8/criu.8*
 %{_libdir}/*.so.*
 %endif
@@ -118,6 +112,9 @@ ln -s %{_sbindir}/criu $RPM_BUILD_ROOT%{_sbindir}/crtools
 
 
 %changelog
+* Tue Apr 12 2016 Adrian Reber <adrian@lisas.de> - 2.1-2
+- Remove crtools symbolic link
+
 * Mon Apr 11 2016 Adrian Reber <adrian@lisas.de> - 2.1-1
 - Update to 2.1
 

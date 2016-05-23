@@ -1,6 +1,6 @@
 Name: criu
-Version: 2.1
-Release: 2%{?dist}
+Version: 2.2
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -112,6 +112,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Mon May 23 2016 Adrian Reber <adrian@lisas.de> - 2.2-1
+- Update to 2.2
+
 * Tue Apr 12 2016 Adrian Reber <adrian@lisas.de> - 2.1-2
 - Remove crtools symbolic link
 

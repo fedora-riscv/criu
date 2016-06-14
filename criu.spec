@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.2
+Version: 2.3
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -8,6 +8,12 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+
+%if 0%{?rhel}
+# RHEL has no asciidoc; take man-page from Fedora 24
+# zcat /usr/share/man/man8/criu.8.gz > criu.8
+Source1: criu.8
+%endif
 
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
 %if 0%{?fedora}
@@ -76,6 +82,8 @@ make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 # ony install documentation on Fedora as it requires asciidoc,
 # which is not available on RHEL7
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
+%else
+install -p -m 644  -D %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
 %endif
 
 %if 0%{?rhel}
@@ -90,8 +98,8 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 %files
 %{_sbindir}/%{name}
-%if 0%{?fedora}
 %doc %{_mandir}/man8/criu.8*
+%if 0%{?fedora}
 %{_libdir}/*.so.*
 %endif
 %doc README.md COPYING
@@ -112,6 +120,10 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Tue Jun 14 2016 Adrian Reber <areber@redhat.com> - 2.3-1
+- Update to 2.3
+- Copy man-page from Fedora 24 for RHEL
+
 * Mon May 23 2016 Adrian Reber <adrian@lisas.de> - 2.2-1
 - Update to 2.2
 

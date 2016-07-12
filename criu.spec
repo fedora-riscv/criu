@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.3
+Version: 2.4
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -101,6 +101,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 %doc %{_mandir}/man8/criu.8*
 %if 0%{?fedora}
 %{_libdir}/*.so.*
+%{_libexecdir}/%{name}
 %endif
 %doc README.md COPYING
 
@@ -120,6 +121,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Tue Jul 12 2016 Adrian Reber <adrian@lisas.de> - 2.4-1
+- Update to 2.4
+
 * Tue Jun 14 2016 Adrian Reber <areber@redhat.com> - 2.3-1
 - Update to 2.3
 - Copy man-page from Fedora 24 for RHEL

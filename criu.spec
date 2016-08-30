@@ -16,6 +16,7 @@ Source1: criu.8
 %endif
 
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
+BuildRequires: perl
 %if 0%{?fedora}
 BuildRequires: asciidoc xmlto
 %endif

@@ -1,0 +1,55 @@
+From 5988ec5b89bcda9f6b57e79315a54e340926f1aa Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@virtuozzo.com>
+Date: Tue, 25 Oct 2016 04:41:00 +0300
+Subject: [PATCH] cr-check: fill up a root task mount namespace
+
+A root mount namespace list is used to resolve paths to
+unix sockets if they are placed on btrfs.
+
+This patch fixes a crash:
+ #0 mount_resolve_path at criu/mount.c:213
+ #1 phys_stat_resolve_dev at criu/mount.c:240
+ #2 phys_stat_dev_match at criu/mount.c:256
+ #3 unix_process_name at criu/sk-unix.c:565
+ #4 unix_collect_one at criu/sk-unix.c:620
+ #5 unix_receive_one at criu/sk-unix.c:692
+ #6 nlmsg_receive at criu/libnetlink.c:45
+ #7 do_rtnl_req at criu/libnetlink.c:119
+ #8 do_collect_req at criu/sockets.c:610
+ #9 collect_sockets at criu/sockets.c:636
+
+travis-ci: success for cr-check: fill up a root task mount namespace
+https://bugzilla.redhat.com/show_bug.cgi?id=1381351
+Signed-off-by: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Pavel Emelyanov <xemul@virtuozzo.com>
+---
+ criu/cr-check.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/criu/cr-check.c b/criu/cr-check.c
+index 352e9c7..6456486 100644
+--- a/criu/cr-check.c
++++ b/criu/cr-check.c
+@@ -1017,7 +1017,7 @@ static int (*chk_feature)(void);
+ 			} while (0)
+ int cr_check(void)
+ {
+-	struct ns_id ns = { .type = NS_CRIU, .ns_pid = PROC_SELF, .nd = &mnt_ns_desc };
++	struct ns_id *ns;
+ 	int ret = 0;
+ 
+ 	if (!is_root_user())
+@@ -1032,9 +1032,11 @@ int cr_check(void)
+ 	if (collect_pstree_ids())
+ 		return -1;
+ 
+-	ns.id = root_item->ids->mnt_ns_id;
++	ns = lookup_ns_by_id(root_item->ids->mnt_ns_id, &mnt_ns_desc);
++	if (ns == NULL)
++		return -1;
+ 
+-	mntinfo = collect_mntinfo(&ns, false);
++	mntinfo = collect_mntinfo(ns, false);
+ 	if (mntinfo == NULL)
+ 		return -1;
+ 

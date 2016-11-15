@@ -1,6 +1,6 @@
 Name: criu
-Version: 2.7
-Release: 2%{?dist}
+Version: 2.8
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,7 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: https://github.com/xemul/criu/commit/5988ec5b89bcda9f6b57e79315a54e340926f1aa.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -66,8 +65,7 @@ their content in human-readable form.
 
 
 %prep
-%setup -q -n criu-%{version}
-%patch0 -p1
+%setup -q
 
 %build
 # %{?_smp_mflags} does not work
@@ -124,6 +122,10 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Tue Nov 15 2016 Adrian Reber <adrian@lisas.de> - 2.8-1
+- Update to 2.8
+- Dropped 'mount_resolve_path()' patch
+
 * Wed Oct 19 2016 Adrian Reber <adrian@lisas.de> - 2.7-2
 - Added upstream patch to fix #1381351
   ("criu: mount_resolve_path(): criu killed by SIGSEGV")

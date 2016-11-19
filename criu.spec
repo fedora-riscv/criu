@@ -1,6 +1,6 @@
 Name: criu
 Version: 2.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -122,6 +122,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Sat Nov 19 2016 Orion Poplawski <orion@cora.nwra.com> - 2.8-2
+- Rebuild for protobuf 3.1.0
+
 * Tue Nov 15 2016 Adrian Reber <adrian@lisas.de> - 2.8-1
 - Update to 2.8
 - Dropped 'mount_resolve_path()' patch

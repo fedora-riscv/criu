@@ -119,11 +119,13 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 %files -n crit
 %{_bindir}/crit
+%doc %{_mandir}/man1/crit.1*
 
 
 %changelog
 * Mon Dec 12 2016 Adrian Reber <adrian@lisas.de> - 2.9-1
 - Update to 2.9
+- Added crit manpage to crit subpackage
 
 * Sat Nov 19 2016 Orion Poplawski <orion@cora.nwra.com> - 2.8-2
 - Rebuild for protobuf 3.1.0

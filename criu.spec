@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.9
+Version: 2.10
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Mon Jan 16 2017 Adrian Reber <adrian@lisas.de> - 2.10-1
+- Update to 2.10
+
 * Mon Dec 12 2016 Adrian Reber <adrian@lisas.de> - 2.9-1
 - Update to 2.9
 - Added crit manpage to crit subpackage

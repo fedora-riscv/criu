@@ -15,6 +15,7 @@ Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Source1: criu.8
 %endif
 
+BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
 BuildRequires: perl
 %if 0%{?fedora}

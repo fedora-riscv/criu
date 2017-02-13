@@ -1,6 +1,6 @@
 Name: criu
 Version: 2.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,6 +8,7 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Patch0: fix-clobber-list-item.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -67,6 +68,7 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -124,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Mon Feb 13 2017 Adrian Reber <adrian@lisas.de> - 2.10-4
+- Added patch to fix build on ppc64le
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.10-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

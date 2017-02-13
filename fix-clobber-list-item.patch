@@ -1,0 +1,33 @@
+The JUMP_TO_RESTORER_BLOB assembly macro has been rewrote through the
+commit '89d6b39cfe36 ppc64: pie -- Add ppc64le relocation's
+processing', but the Clobber list hasn't been updated.
+
+This doesn't generate build neither runtime errors since the Clobber
+list was larger than needed but GCC 7 is now raising an error when an
+assembly macro is clobbering the r2 register.
+
+This patch fix the Clobber list to just modified registers.
+
+Fixes: 89d6b39cfe36 ("ppc64: pie -- Add ppc64le relocation's processing")
+Reported-by: Adrian Reber <adrian@lisas.de>
+Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+---
+ criu/arch/ppc64/include/asm/restore.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/arch/ppc64/include/asm/restore.h b/criu/arch/ppc64/include/asm/restore.h
+index bac7bb566abb..8d4516090c65 100644
+--- a/criu/arch/ppc64/include/asm/restore.h
++++ b/criu/arch/ppc64/include/asm/restore.h
+@@ -21,7 +21,7 @@
+ 		: "r"(new_sp),						\
+ 		  "r"((unsigned long)restore_task_exec_start),		\
+ 		  "r"(task_args)					\
+-		: "r1", "1", "2", "3", "12", "memory")
++		: "1", "3", "12")
+ 
+ /* There is nothing to do since TLS is accessed through r13 */
+ #define core_get_tls(pcore, ptls)
+-- 
+2.7.4
+

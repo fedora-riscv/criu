@@ -1,6 +1,6 @@
 Name: criu
-Version: 2.10
-Release: 4%{?dist}
+Version: 2.11
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -126,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Thu Feb 16 2017 Adrian Reber <adrian@lisas.de> - 2.11-1
+- Update to 2.11
+
 * Mon Feb 13 2017 Adrian Reber <adrian@lisas.de> - 2.10-4
 - Added patch to fix build on ppc64le
 

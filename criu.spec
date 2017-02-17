@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.11
+Version: 2.11.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -8,7 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: fix-clobber-list-item.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -68,7 +67,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -126,6 +124,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Fri Feb 17 2017 Adrian Reber <adrian@lisas.de> - 2.11.1-1
+- Update to 2.11.1
+
 * Thu Feb 16 2017 Adrian Reber <adrian@lisas.de> - 2.11-1
 - Update to 2.11
 

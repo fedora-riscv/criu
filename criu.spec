@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.11.1
+Version: 2.12
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -124,6 +124,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Thu Mar 09 2017 Adrian Reber <adrian@lisas.de> - 2.12-1
+- Update to 2.12
+
 * Fri Feb 17 2017 Adrian Reber <adrian@lisas.de> - 2.11.1-1
 - Update to 2.11.1
 

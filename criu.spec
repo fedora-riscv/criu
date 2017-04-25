@@ -1,5 +1,5 @@
 Name: criu
-Version: 2.12
+Version: 3.0
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -13,6 +13,7 @@ Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 # RHEL has no asciidoc; take man-page from Fedora 24
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
+Source2: crit.1
 %endif
 
 BuildRequires: libnet-devel
@@ -86,6 +87,7 @@ make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %else
 install -p -m 644  -D %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
+install -p -m 644  -D %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man1/crit.1
 %endif
 
 %if 0%{?rhel}
@@ -124,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Tue Apr 25 2017 Adrian Reber <adrian@lisas.de> - 3.0-1
+- Update to 3.0
+
 * Thu Mar 09 2017 Adrian Reber <adrian@lisas.de> - 2.12-1
 - Update to 2.12
 

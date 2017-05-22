@@ -1,5 +1,5 @@
 Name: criu
-Version: 3.0
+Version: 3.1
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -15,6 +15,8 @@ Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Source1: criu.8
 Source2: crit.1
 %endif
+
+Source3: criu-tmpfiles.conf
 
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
@@ -72,7 +74,7 @@ their content in human-readable form.
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
-CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix}
+CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu
 %if 0%{?fedora}
 make docs V=1
 %endif
@@ -89,6 +91,10 @@ make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 install -p -m 644  -D %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
 install -p -m 644  -D %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man1/crit.1
 %endif
+
+mkdir -p %{buildroot}%{_tmpfilesdir}
+install -m 0644 %{SOURCE3} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -d -m 0755 %{buildroot}/run/%{name}/
 
 %if 0%{?rhel}
 # remove devel package
@@ -107,6 +113,8 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 %{_libdir}/*.so.*
 %{_libexecdir}/%{name}
 %endif
+%dir /run/%{name}
+%{_tmpfilesdir}/%{name}.conf
 %doc README.md COPYING
 
 %if 0%{?fedora}
@@ -126,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Mon May 22 2017 Adrian Reber <adrian@lisas.de> - 3.1-1
+- Update to 3.1
+
 * Tue Apr 25 2017 Adrian Reber <adrian@lisas.de> - 3.0-1
 - Update to 3.0
 

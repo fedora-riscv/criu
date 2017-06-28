@@ -1,6 +1,6 @@
 Name: criu
-Version: 3.1
-Release: 2%{?dist}
+Version: 3.2.1
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -134,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Wed Jun 28 2017 Adrian Reber <adrian@lisas.de> - 3.2.1-1
+- Update to 3.2.1-1
+
 * Tue Jun 13 2017 Orion Poplawski <orion@cora.nwra.com> - 3.1-2
 - Rebuild for protobuf 3.3.1
 

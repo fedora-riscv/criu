@@ -1,0 +1,62 @@
+From 24c74d1add1917685a55f4808243aa5ec9bbaa79 Mon Sep 17 00:00:00 2001
+From: Pavel Emelyanov <xemul@virtuozzo.com>
+Date: Thu, 29 Jun 2017 13:24:55 +0300
+Subject: [PATCH 1/2] cgroup: Skip unified hier controllers (v2)
+
+The unified hierarchy controller doesn't have any name, so criu hangs
+while parsing this sort of strings.
+
+Let's skip those for now, until we implement cgroup2 support.
+
+https://github.com/xemul/criu/issues/252
+
+v2: Code comments
+
+Reported-and-tested-by: Adrian Reber <adrian@lisas.de>
+Signed-off-by: Pavel Emelyanov <xemul@virtuozzo.com>
+---
+ criu/proc_parse.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/criu/proc_parse.c b/criu/proc_parse.c
+index b8881d21..46096336 100644
+--- a/criu/proc_parse.c
++++ b/criu/proc_parse.c
+@@ -2335,8 +2335,19 @@ int parse_cgroup_file(FILE *f, struct list_head *retl, unsigned int *n)
+ 		 * 2:name=systemd:/user.slice/user-1000.slice/session-1.scope
+ 		 */
+ 		name = strchr(buf, ':');
+-		if (name)
++		if (name) {
+ 			path = strchr(++name, ':');
++			if (*name == ':') {
++				/*
++				 * It's unified hierarchy. On kernels with legacy
++				 * tree this item is added automatically, so we
++				 * can just skip one. For those with full unified
++				 * support is on ... we need to write new code.
++				 */
++				xfree(ncc);
++				continue;
++			}
++		}
+ 		if (!name || !path) {
+ 			pr_err("Failed parsing cgroup %s\n", buf);
+ 			xfree(ncc);
+@@ -2500,6 +2511,13 @@ int collect_controllers(struct list_head *cgroups, unsigned int *n_cgroups)
+ 		}
+ 		controllers++;
+ 
++		if (*controllers == ':')
++			/*
++			 * Unified hier. See comment in parse_cgroup_file
++			 * for more details.
++			 */
++			continue;
++
+ 		off = strchr(controllers, ':');
+ 		if (!off) {
+ 			pr_err("Unable to parse \"%s\"\n", buf);
+-- 
+2.13.2
+

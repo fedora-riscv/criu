@@ -24,7 +24,7 @@ Source3: criu-tmpfiles.conf
 
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
-BuildRequires: perl
+BuildRequires: perl-interpreter
 %if 0%{?fedora}
 BuildRequires: asciidoc xmlto
 %endif

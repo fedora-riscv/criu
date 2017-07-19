@@ -18,6 +18,7 @@ Source2: crit.1
 
 Source3: criu-tmpfiles.conf
 
+BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
 BuildRequires: perl-interpreter

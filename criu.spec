@@ -1,6 +1,6 @@
 Name: criu
-Version: 3.2.1
-Release: 2%{?dist}
+Version: 3.3
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,10 +8,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-
-# Both patches are already discussed upstream
-Patch0: 0001-cgroup-Skip-unified-hier-controllers-v2.patch
-Patch1: 0002-fix-building-with-newer-glibc.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -74,8 +70,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -140,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Wed Jul 19 2017 Adrian Reber <adrian@lisas.de> - 3.3-1
+- Update to 3.3
+
 * Fri Jun 30 2017 Adrian Reber <adrian@lisas.de> - 3.2.1-2
 - Added patches to handle unified hierarchy and new glibc
 

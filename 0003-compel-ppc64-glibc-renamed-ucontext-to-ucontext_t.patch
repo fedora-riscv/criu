@@ -1,0 +1,56 @@
+From a2bac7a99fd62c8f7f2fae6d7d85677c5e1607c7 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Thu, 20 Jul 2017 11:33:48 -0400
+Subject: [PATCH 3/4] compel/ppc64: glibc renamed ucontext to ucontext_t
+
+The upcoming glibc release renamed 'struct ucontext' to
+'struct ucontext_t':
+
+https://sourceware.org/git/gitweb.cgi?p=glibc.git;a=commitdiff;h=251287734e89a52da3db682a8241eb6bccc050c9;hp=c86ed71d633c22d6f638576f7660c52a5f783d66
+
+Instead of using 'struct ucontext' this patch changes it
+to the typedef ucontext_t which already exists in older and
+new versions of glibc.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ compel/arch/ppc64/src/lib/include/uapi/asm/sigframe.h | 6 +++---
+ criu/arch/ppc64/crtools.c                             | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/compel/arch/ppc64/src/lib/include/uapi/asm/sigframe.h b/compel/arch/ppc64/src/lib/include/uapi/asm/sigframe.h
+index bfaee878..6f8b6ec5 100644
+--- a/compel/arch/ppc64/src/lib/include/uapi/asm/sigframe.h
++++ b/compel/arch/ppc64/src/lib/include/uapi/asm/sigframe.h
+@@ -28,12 +28,12 @@
+ #define TRAMP_SIZE			6
+ 
+ /*
+- * ucontext defined in /usr/include/powerpc64le-linux-gnu/sys/ucontext.h
++ * ucontext_t defined in /usr/include/powerpc64le-linux-gnu/sys/ucontext.h
+  */
+ struct rt_sigframe {
+         /* sys_rt_sigreturn requires the ucontext be the first field */
+-        struct ucontext			uc;
+-        struct ucontext			uc_transact; /* Transactional state	 */
++        ucontext_t			uc;
++        ucontext_t			uc_transact; /* Transactional state	 */
+         unsigned long			_unused[2];
+         unsigned int			tramp[TRAMP_SIZE];
+         struct rt_siginfo		*pinfo;
+diff --git a/criu/arch/ppc64/crtools.c b/criu/arch/ppc64/crtools.c
+index ecda5ce9..5a5966ad 100644
+--- a/criu/arch/ppc64/crtools.c
++++ b/criu/arch/ppc64/crtools.c
+@@ -259,7 +259,7 @@ static int put_tm_regs(struct rt_sigframe *f, UserPpc64TmRegsEntry *tme)
+  *   For the case of getting a signal and simply returning from it,
+  *   we don't need to re-copy them here.
+  */
+-	struct ucontext *tm_uc = &f->uc_transact;
++	ucontext_t *tm_uc = &f->uc_transact;
+ 
+ 	pr_debug("Restoring TM registers FP:%d VR:%d VSX:%d\n",
+ 		 !!(tme->fpstate), !!(tme->vrstate), !!(tme->vsxstate));
+-- 
+2.13.2
+

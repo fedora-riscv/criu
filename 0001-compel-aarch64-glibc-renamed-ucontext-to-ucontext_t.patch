@@ -1,0 +1,35 @@
+From b0de9a656116e8f596c1c6d7f9bb4038eee6fb6b Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Thu, 20 Jul 2017 02:57:08 -0400
+Subject: [PATCH 1/4] compel/aarch64: glibc renamed ucontext to ucontext_t
+
+The upcoming glibc release renamed 'struct ucontext' to
+'struct ucontext_t':
+
+https://sourceware.org/git/gitweb.cgi?p=glibc.git;a=commitdiff;h=251287734e89a52da3db682a8241eb6bccc050c9;hp=c86ed71d633c22d6f638576f7660c52a5f783d66
+
+Instead of using 'struct ucontext' this patch changes it
+to the typedef ucontext_t which already exists in older and
+new versions of glibc.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ compel/arch/aarch64/src/lib/include/uapi/asm/sigframe.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/compel/arch/aarch64/src/lib/include/uapi/asm/sigframe.h b/compel/arch/aarch64/src/lib/include/uapi/asm/sigframe.h
+index c890d103..22246b8f 100644
+--- a/compel/arch/aarch64/src/lib/include/uapi/asm/sigframe.h
++++ b/compel/arch/aarch64/src/lib/include/uapi/asm/sigframe.h
+@@ -27,7 +27,7 @@ struct aux_context {
+ 
+ struct rt_sigframe {
+ 	siginfo_t			info;
+-	struct ucontext			uc;
++	ucontext_t			uc;
+ 	uint64_t			fp;
+ 	uint64_t			lr;
+ };
+-- 
+2.13.2
+

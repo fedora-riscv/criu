@@ -1,6 +1,6 @@
 Name: criu
 Version: 3.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,6 +8,10 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+
+# Patches are submitted upstream
+Patch0: 0001-compel-aarch64-glibc-renamed-ucontext-to-ucontext_t.patch
+Patch1: 0003-compel-ppc64-glibc-renamed-ucontext-to-ucontext_t.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -71,6 +75,8 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -135,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Thu Jul 20 2017 Adrian Reber <adrian@lisas.de> - 3.3-2
+- Added patches to handle changes in glibc
+
 * Wed Jul 19 2017 Adrian Reber <adrian@lisas.de> - 3.3-1
 - Update to 3.3
 

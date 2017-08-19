@@ -1,6 +1,6 @@
 Name: criu
 Version: 3.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -56,12 +56,13 @@ Requires: %{name} = %{version}-%{release}
 This package contains header files and libraries for %{name}.
 %endif
 
-%package -n python-%{name}
+%package -n python2-%{name}
+%{?python_provide:%python_provide python2-%{name}}
 Summary: Python bindings for %{name}
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release} python-ipaddr protobuf-python
 
-%description -n python-%{name}
+%description -n python2-%{name}
 python-%{name} contains Python bindings for %{name}.
 
 %package -n crit
@@ -131,7 +132,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 %{_libdir}/pkgconfig/*.pc
 %endif
 
-%files -n python-%{name}
+%files -n python2-%{name}
 %{python2_sitelib}/pycriu/*
 %{python2_sitelib}/*egg-info
 
@@ -141,6 +142,10 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Sat Aug 19 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.3-5
+- Python 2 binary package renamed to python2-criu
+  See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 

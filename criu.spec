@@ -1,6 +1,12 @@
+%if 0%{?fedora} > 27
+%global py2_prefix python2
+%else
+%global py2_prefix python
+%endif
+
 Name: criu
-Version: 3.3
-Release: 5%{?dist}
+Version: 3.4
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -8,10 +14,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-
-# Patches are submitted upstream
-Patch0: 0001-compel-aarch64-glibc-renamed-ucontext-to-ucontext_t.patch
-Patch1: 0003-compel-ppc64-glibc-renamed-ucontext-to-ucontext_t.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -30,12 +32,12 @@ BuildRequires: perl-interpreter
 BuildRequires: asciidoc xmlto
 %endif
 
-# user-space and kernel changes are only available for x86_64 and ARM
-# code is very architecture specific
-# once imported in RCS it needs a bug openend explaining the ExclusiveArch
+# user-space and kernel changes are only available for x86_64, arm,
+# ppc64le, aarch64 and s390x
+# the code is very architecture specific
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
 %if 0%{?fedora}
-ExclusiveArch: x86_64 %{arm} ppc64le aarch64
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
 %else
 ExclusiveArch: x86_64 ppc64le
 %endif
@@ -56,18 +58,18 @@ Requires: %{name} = %{version}-%{release}
 This package contains header files and libraries for %{name}.
 %endif
 
-%package -n python2-%{name}
-%{?python_provide:%python_provide python2-%{name}}
+%package -n %{py2_prefix}-%{name}
+%{?python_provide:%python_provide %{py2_prefix}-%{name}}
 Summary: Python bindings for %{name}
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release} python-ipaddr protobuf-python
 
-%description -n python2-%{name}
+%description -n %{py2_prefix}-%{name}
 python-%{name} contains Python bindings for %{name}.
 
 %package -n crit
 Summary: CRIU image tool
-Requires: python-%{name} = %{version}-%{release}
+Requires: %{py2_prefix}-%{name} = %{version}-%{release}
 
 %description -n crit
 crit is a tool designed to decode CRIU binary dump files and show
@@ -76,8 +78,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -132,7 +132,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 %{_libdir}/pkgconfig/*.pc
 %endif
 
-%files -n python2-%{name}
+%files -n %{py2_prefix}-%{name}
 %{python2_sitelib}/pycriu/*
 %{python2_sitelib}/*egg-info
 
@@ -142,6 +142,11 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Sun Aug 27 2017 Adrian Reber <adrian@lisas.de> - 3.4-1
+- Update to 3.4 (#1483774)
+- Removed upstreamed patches
+- Added s390x (#1475719)
+
 * Sat Aug 19 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.3-5
 - Python 2 binary package renamed to python2-criu
   See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3

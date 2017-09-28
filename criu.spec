@@ -36,7 +36,12 @@ BuildRequires: asciidoc xmlto
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
+%if 0%{?fedora} > 26
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
+%else
+# kernel support for s390x was only enabled for > f26
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64
+%endif
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space

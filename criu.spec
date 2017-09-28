@@ -14,6 +14,7 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Patch0: 0001-fix-building-on-newest-glibc-and-kernel.patch
 
 %if 0%{?rhel}
 # RHEL has no asciidoc; take man-page from Fedora 24
@@ -72,6 +73,7 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 # %{?_smp_mflags} does not work

@@ -5,7 +5,7 @@
 %endif
 
 Name: criu
-Version: 3.4
+Version: 3.5
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -34,14 +34,8 @@ BuildRequires: asciidoc xmlto
 
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
-# the code is very architecture specific
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-%if 0%{?fedora}
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
-%else
-ExclusiveArch: x86_64 ppc64le
-%endif
-
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
@@ -142,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Thu Sep 28 2017 Adrian Reber <adrian@lisas.de> - 3.5-1
+- Update to 3.5 (#1496614)
+
 * Sun Aug 27 2017 Adrian Reber <adrian@lisas.de> - 3.4-1
 - Update to 3.4 (#1483774)
 - Removed upstreamed patches

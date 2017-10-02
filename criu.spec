@@ -17,6 +17,7 @@ Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Patch0: 0001-fix-building-on-newest-glibc-and-kernel.patch
 
 %if ! 0%{?fedora}
+BuildRequires: perl
 # RHEL has no asciidoc; take man-page from Fedora 24
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
@@ -31,9 +32,9 @@ Source3: criu-tmpfiles.conf
 BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
-BuildRequires: perl-interpreter
 %if 0%{?fedora}
 BuildRequires: asciidoc xmlto
+BuildRequires: perl-interpreter
 %endif
 
 # user-space and kernel changes are only available for x86_64, arm,

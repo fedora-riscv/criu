@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -16,11 +16,14 @@ URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Patch0: 0001-fix-building-on-newest-glibc-and-kernel.patch
 
-%if 0%{?rhel}
+%if ! 0%{?fedora}
 # RHEL has no asciidoc; take man-page from Fedora 24
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
 Source2: crit.1
+# The patch aio-fix.patch is needed as RHEL7
+# doesn't do "nr_events *= 2" in ioctx_alloc().
+Patch100: aio-fix.patch
 %endif
 
 Source3: criu-tmpfiles.conf
@@ -36,11 +39,11 @@ BuildRequires: asciidoc xmlto
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-%if 0%{?fedora} > 26
-ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
-%else
-# kernel support for s390x was only enabled for > f26
+%if 0%{?fedora} < 27
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64
+%else
+# kernel support for s390x was only enabled for >= f27
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
 %endif
 
 %description
@@ -80,6 +83,10 @@ their content in human-readable form.
 %setup -q
 %patch0 -p1
 
+%if 0%{?rhel}
+%patch100 -p1
+%endif
+
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
@@ -105,7 +112,7 @@ mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE3} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
-%if 0%{?rhel}
+%if ! 0%{?fedora}
 # remove devel package
 rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
 rm $RPM_BUILD_ROOT%{_libdir}/*.so*
@@ -143,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 
 
 %changelog
+* Mon Oct 02 2017 Adrian Reber <adrian@lisas.de> - 3.5-2
+- Merge RHEL and Fedora spec file
+
 * Thu Sep 28 2017 Adrian Reber <adrian@lisas.de> - 3.5-1
 - Update to 3.5 (#1496614)
 

@@ -101,7 +101,7 @@ make docs V=1
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %if 0%{?fedora}
-# ony install documentation on Fedora as it requires asciidoc,
+# only install documentation on Fedora as it requires asciidoc,
 # which is not available on RHEL7
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %else
@@ -118,6 +118,7 @@ install -d -m 0755 %{buildroot}/run/%{name}/
 rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
 rm $RPM_BUILD_ROOT%{_libdir}/*.so*
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
+rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %endif
 
 %post -p /sbin/ldconfig

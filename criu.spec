@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.5
-Release: 2%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -15,10 +15,11 @@ License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 Patch0: 0001-fix-building-on-newest-glibc-and-kernel.patch
+Patch1: 36f3ab45867338e98e43ea5f1f26764ae3946fc2.patch
 
 %if ! 0%{?fedora}
 BuildRequires: perl
-# RHEL has no asciidoc; take man-page from Fedora 24
+# RHEL has no asciidoc; take man-page from Fedora 26
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
 Source2: crit.1
@@ -83,6 +84,7 @@ their content in human-readable form.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %if 0%{?rhel}
 %patch100 -p1
@@ -152,6 +154,15 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Oct 18 2017 Adrian Reber <adrian@lisas.de> - 3.5-5
+- Added patch to fix build on Fedora rawhide aarch64
+
+* Tue Oct 10 2017 Adrian Reber <areber@redhat.com> - 3.5-4
+- Upgrade imported manpages to 3.5
+
+* Mon Oct 09 2017 Adrian Reber <areber@redhat.com> - 3.5-3
+- Fix ExclusiveArch on RHEL
+
 * Mon Oct 02 2017 Adrian Reber <adrian@lisas.de> - 3.5-2
 - Merge RHEL and Fedora spec file
 

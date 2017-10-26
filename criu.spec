@@ -5,8 +5,8 @@
 %endif
 
 Name: criu
-Version: 3.5
-Release: 5%{?dist}
+Version: 3.6
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -14,8 +14,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: 0001-fix-building-on-newest-glibc-and-kernel.patch
-Patch1: 36f3ab45867338e98e43ea5f1f26764ae3946fc2.patch
 
 %if ! 0%{?fedora}
 BuildRequires: perl
@@ -83,8 +81,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %if 0%{?rhel}
 %patch100 -p1
@@ -154,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Thu Oct 26 2017 Adrian Reber <adrian@lisas.de> - 3.6-1
+- Update to 3.6
+
 * Wed Oct 18 2017 Adrian Reber <adrian@lisas.de> - 3.5-5
 - Added patch to fix build on Fedora rawhide aarch64
 

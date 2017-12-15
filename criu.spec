@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -65,7 +65,7 @@ This package contains header files and libraries for %{name}.
 %{?python_provide:%python_provide %{py2_prefix}-%{name}}
 Summary: Python bindings for %{name}
 Group: Development/Languages
-Requires: %{name} = %{version}-%{release} python-ipaddr protobuf-python
+Requires: %{name} = %{version}-%{release} python2-ipaddr python2-protobuf
 
 %description -n %{py2_prefix}-%{name}
 python-%{name} contains Python bindings for %{name}.
@@ -150,6 +150,10 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Fri Dec 15 2017 Iryna Shcherbina <ishcherb@redhat.com> - 3.6-2
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
 * Thu Oct 26 2017 Adrian Reber <adrian@lisas.de> - 3.6-1
 - Update to 3.6
 

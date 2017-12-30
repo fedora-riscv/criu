@@ -5,8 +5,8 @@
 %endif
 
 Name: criu
-Version: 3.6
-Release: 2%{?dist}
+Version: 3.7
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -150,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Sat Dec 30 2017 Adrian Reber <adrian@lisas.de> - 3.7-1
+- Update to 3.7
+
 * Fri Dec 15 2017 Iryna Shcherbina <ishcherb@redhat.com> - 3.6-2
 - Update Python 2 dependency declarations to new packaging standards
   (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)

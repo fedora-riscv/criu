@@ -1,4 +1,4 @@
-%if 0%{?fedora} > 27
+%if 0%{?fedora} > 27 || 0%{?rhel} > 7
 %global py2_prefix python2
 %else
 %global py2_prefix python
@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -15,7 +15,7 @@ License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 
-%if ! 0%{?fedora}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
 # RHEL has no asciidoc; take man-page from Fedora 26
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
@@ -31,7 +31,7 @@ Source3: criu-tmpfiles.conf
 BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
 %endif
@@ -39,7 +39,7 @@ BuildRequires: perl-interpreter
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-%if 0%{?fedora} < 27
+%if 0%{?fedora} < 27 && 0%{?rhel} <= 7
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64
 %else
 # kernel support for s390x was only enabled for >= f27
@@ -51,7 +51,7 @@ criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space.
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %package devel
 Summary: Header files and libraries for %{name}
 Group: Development/Libraries
@@ -82,7 +82,7 @@ their content in human-readable form.
 %prep
 %setup -q
 
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
 %endif
 
@@ -90,7 +90,7 @@ their content in human-readable form.
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 make docs V=1
 %endif
 
@@ -98,7 +98,7 @@ make docs V=1
 %install
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 # only install documentation on Fedora as it requires asciidoc,
 # which is not available on RHEL7
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
@@ -111,7 +111,7 @@ mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE3} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
-%if ! 0%{?fedora}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 # remove devel package
 rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
 rm $RPM_BUILD_ROOT%{_libdir}/*.so*
@@ -125,7 +125,7 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %files
 %{_sbindir}/%{name}
 %doc %{_mandir}/man8/criu.8*
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %{_libdir}/*.so.*
 %{_libexecdir}/%{name}
 %endif
@@ -133,7 +133,7 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %{_tmpfilesdir}/%{name}.conf
 %doc README.md COPYING
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so
@@ -150,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Jan 03 2018 Merlin Mathesius <mmathesi@redhat.com> - 3.7-2
+- Cleanup spec file conditionals
+
 * Sat Dec 30 2017 Adrian Reber <adrian@lisas.de> - 3.7-1
 - Update to 3.7
 

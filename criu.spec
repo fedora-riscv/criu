@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -65,7 +65,12 @@ This package contains header files and libraries for %{name}.
 %{?python_provide:%python_provide %{py2_prefix}-%{name}}
 Summary: Python bindings for %{name}
 Group: Development/Languages
-Requires: %{name} = %{version}-%{release} python2-ipaddr python2-protobuf
+Requires: %{name} = %{version}-%{release} %{py2_prefix}-ipaddr
+%if 0%{?fedora} || 0%{?rhel} > 7
+Requires: python2-protobuf
+%else
+Requires: protobuf-python
+%endif
 
 %description -n %{py2_prefix}-%{name}
 python-%{name} contains Python bindings for %{name}.
@@ -150,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Fri Jan 12 2018 Adrian Reber <adrian@lisas.de> - 3.7-3
+- Fix python/python2 dependencies accross all branches
+
 * Wed Jan 03 2018 Merlin Mathesius <mmathesi@redhat.com> - 3.7-2
 - Cleanup spec file conditionals
 

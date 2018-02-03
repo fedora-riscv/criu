@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -124,8 +124,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %endif
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %files
 %{_sbindir}/%{name}
@@ -155,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.7-4
+- Switch to %%ldconfig_scriptlets
+
 * Fri Jan 12 2018 Adrian Reber <adrian@lisas.de> - 3.7-3
 - Fix python/python2 dependencies accross all branches
 

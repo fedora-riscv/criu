@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.7
-Release: 4%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.7-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.7-4
 - Switch to %%ldconfig_scriptlets
 

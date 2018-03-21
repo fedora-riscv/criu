@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app=""> 
+
+	<!-- Head -->
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+   		<title>rpms/criu.git - git.centos.org</title>
+		<link rel="icon" href="../../../gitblt-favicon.png" type="image/png"/>
+		
+		<link rel="stylesheet" href="../../../bootstrap/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../../../bootstrap/css/iconic.css"/>
+		<link rel="stylesheet" href="../../../fontawesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="../../../octicons/octicons.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../gitblit.css"/>
+	
+  
+   	<link href="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/prettify.css" type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/prettify.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-apollo.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-basic.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-clj.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-css.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-dart.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-erlang.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-go.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-hs.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-lisp.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-llvm.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-lua.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-matlab.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-ml.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-mumps.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-n.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-pascal.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-proto.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-r.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-rd.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-scala.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-sql.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-tcl.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-tex.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-vb.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-vhdl.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-wiki.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-xq.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-yaml.js"></script>
+  
+<link rel="stylesheet" type="text/css" href="../../../bootstrap/css/bootstrap-responsive.css" />
+<style type="text/css">
+.navbar-inner {
+}
+</style>
+</head>
+
+	<body>
+
+		<!-- page content -->
+		
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          		</a>
+				<a class="brand" href="" title="git.centos.org">
+					<img src="../../../logo.png" width="120" class="logo"/>
+				</a>
+				
+				<div class="nav-collapse">
+					<div>
+	<ul class="nav">
+		<li>
+<a href="../../../">dashboard</a>
+</li><li class="active">
+<a href="../../../repositories/">repositories</a>
+</li><li>
+<a href="../../../filestore/">filestore</a>
+</li><li>
+<a href="../../../activity/">activity</a>
+</li><li>
+<a href="../../../lucene/">search</a>
+</li>			
+	</ul>	
+</div>
+					<ul class="nav pull-right">
+					 	
+		<li>
+			<form class="pull-right" id="id1" method="post" action="../../../?wicket:interface=:0:userPanel:loginForm::IFormSubmitListener::"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="wicket:bookmarkablePage" value=":com.gitblit.wicket.pages.BlobPage" /><input type="hidden" name="r" value="rpms/criu.git" /><input type="hidden" name="h" value="c7" /><input type="hidden" name="f" value="SOURCES/crit.1" /></div><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id1_hf_0" id="id1_hf_0" /></div>
+				<span class="form-search">
+					<input class="input-small" type="text" value="" name="username" placeholder="username"/>
+					<input class="input-small" type="password" value="" name="password" placeholder="password"/>
+					<button class="btn" type="submit">login</button>
+				</span>
+			</form>
+		</li>
+	
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+				
+	<!-- subclass content -->
+	<div class="container">
+		<div style="text-align:center">
+  
+</div>
+	</div>
+	
+	
+		<div class="repositorynavbar">
+			<div class="repositorynavbar-inner">
+				<div class="container">
+		
+					<div class="title">
+						<div class="row">
+							<!-- search form -->
+							<div class="hidden-phone pull-right">
+								<form class="form-search" style="margin: 0px;" id="id2" method="post" action="../../../?wicket:interface=:0:searchForm::IFormSubmitListener::"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="wicket:bookmarkablePage" value=":com.gitblit.wicket.pages.BlobPage" /><input type="hidden" name="r" value="rpms/criu.git" /><input type="hidden" name="h" value="c7" /><input type="hidden" name="f" value="SOURCES/crit.1" /></div><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id2_hf_0" id="id2_hf_0" /></div>
+									<div class="input-append">
+										
+										<input type="text" class="input-medium search-query" style="border-radius: 14px 0 0 14px; padding-left: 14px;" id="searchBox" value="" name="searchBox" title="Search rpms/criu.git" placeholder="search"/>
+										<button class="btn" style="border-radius: 0 14px 14px 0px;margin-left:-5px;" type="submit"><i class="icon-search"></i></button>
+									</div>
+								</form>
+							</div>
+							
+							<div class="span7">
+                                <div style="display:inline-block;vertical-align:top;padding-right:5px;">
+                                    <span>
+            <span class="gray mega-octicon octicon-repo"></span>
+        </span>
+                                </div>
+								<div style="display:inline-block;">
+                                    <div>
+									   <span class="project">
+<a href="../../../project/rpms">rpms</a>
+</span>/<span class="repository">
+<a href="../../../summary/rpms!criu.git">criu</a>
+</span>
+									   <a class="hidden-phone hidden-tablet" style="text-decoration: none;" href="../../../feed/rpms/criu.git" title="feed">
+										  <img style="border:0px;vertical-align:baseline;" src="../../../feed_16x16.png"></img>
+									   </a>
+                                    </div>
+                                    <div>
+                                        <span class="gray">Tool for Checkpoint/Restore in User-space</span>   
+                                    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+			
+					<div>
+						<div class="hidden-phone btn-group pull-right" style="margin-top:5px;">
+							<!-- future spot for other repo buttons -->
+							
+							
+							
+							
+							
+							
+						</div>
+						
+						<div>
+	<ul class="nav">
+		<li>
+<a href="../../../summary/rpms!criu.git">summary</a>
+</li><li>
+<a href="../../../log/rpms!criu.git/c7">commits</a>
+</li><li class="active">
+<a href="../../../tree/rpms!criu.git/c7">tree</a>
+</li><li class="hidden-phone">
+<a href="../../../docs/rpms!criu.git/c7">docs</a>
+</li><li class="hidden-phone">
+<a href="../../../forks/rpms!criu.git">forks</a>
+</li><li class="hidden-phone">
+<a href="../../../compare/rpms!criu.git">compare</a>
+</li>			
+	</ul>	
+</div>
+					</div>
+				</div>
+			</div>
+		</div>
+				
+		<div class="container">
+			
+
+		<!-- blob nav links -->	
+		<div class="page_nav2">
+			<a href="../../../blame/rpms!criu.git/c7/SOURCES!crit.1">blame</a> | <a href="../../../history/rpms!criu.git/c7/SOURCES!crit.1">history</a> | <a href="../../../raw/rpms/criu.git/c7/SOURCES!crit.1">raw</a>
+		</div>	
+	
+		<!-- commit header -->
+		<div>	
+	<div class="commitHeader">
+		<div class="row">
+			<div>
+				<span class="pull-right">
+<img src="https://www.gravatar.com/avatar/f36401112c113054a8d9348a80837343?s=50&amp;d=identicon" class="gravatar" title="CentOS Sources"></img>
+</span>
+			</div>
+			<div class="span9">
+					<div>
+<a href="../../../commit/rpms!criu.git/72b139a5eca46d6860c70c9e78326e1ff05afbdd" class="title">import criu-2.12-2.el7</a>
+</div>
+					<div>CentOS Sources</div>
+					<div>
+			 			<span class="age4" title="8 months ago">2017-08-01</span>
+			 			<span class="hidden-phone" style="padding-left:20px;color:#888;">72b139a5eca46d6860c70c9e78326e1ff05afbdd</span>
+			 		</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<!-- breadcrumbs -->
+		<div>
+	<!-- page path links -->
+	<div class="page_path">	
+		<ul class="breadcrumb">
+			<li>
+				<span>
+<a href="../../../tree/rpms!criu.git/c7">[rpms/criu.git]</a>
+</span> <span class="divider">/</span>
+			</li><li>
+				<span>
+<a href="../../../tree/rpms!criu.git/c7/SOURCES">SOURCES</a>
+</span> <span class="divider">/</span>
+			</li><li>
+				<span>crit.1</span> 
+			</li>
+		</ul>
+	</div>
+</div>
+		
+		<!--  blob content -->
+		<pre style="border:0px;"><!-- start blob table --><table width="100%"><tbody><tr><!-- start nums column --><td id="nums"><pre><span id="L1" class="jump"></span><a href="#L1">1</a>
+<span id="L2" class="jump"></span><a href="#L2">2</a>
+<span id="L3" class="jump"></span><a href="#L3">3</a>
+<span id="L4" class="jump"></span><a href="#L4">4</a>
+<span id="L5" class="jump"></span><a href="#L5">5</a>
+<span id="L6" class="jump"></span><a href="#L6">6</a>
+<span id="L7" class="jump"></span><a href="#L7">7</a>
+<span id="L8" class="jump"></span><a href="#L8">8</a>
+<span id="L9" class="jump"></span><a href="#L9">9</a>
+<span id="L10" class="jump"></span><a href="#L10">10</a>
+<span id="L11" class="jump"></span><a href="#L11">11</a>
+<span id="L12" class="jump"></span><a href="#L12">12</a>
+<span id="L13" class="jump"></span><a href="#L13">13</a>
+<span id="L14" class="jump"></span><a href="#L14">14</a>
+<span id="L15" class="jump"></span><a href="#L15">15</a>
+<span id="L16" class="jump"></span><a href="#L16">16</a>
+<span id="L17" class="jump"></span><a href="#L17">17</a>
+<span id="L18" class="jump"></span><a href="#L18">18</a>
+<span id="L19" class="jump"></span><a href="#L19">19</a>
+<span id="L20" class="jump"></span><a href="#L20">20</a>
+<span id="L21" class="jump"></span><a href="#L21">21</a>
+<span id="L22" class="jump"></span><a href="#L22">22</a>
+<span id="L23" class="jump"></span><a href="#L23">23</a>
+<span id="L24" class="jump"></span><a href="#L24">24</a>
+<span id="L25" class="jump"></span><a href="#L25">25</a>
+<span id="L26" class="jump"></span><a href="#L26">26</a>
+<span id="L27" class="jump"></span><a href="#L27">27</a>
+<span id="L28" class="jump"></span><a href="#L28">28</a>
+<span id="L29" class="jump"></span><a href="#L29">29</a>
+<span id="L30" class="jump"></span><a href="#L30">30</a>
+<span id="L31" class="jump"></span><a href="#L31">31</a>
+<span id="L32" class="jump"></span><a href="#L32">32</a>
+<span id="L33" class="jump"></span><a href="#L33">33</a>
+<span id="L34" class="jump"></span><a href="#L34">34</a>
+<span id="L35" class="jump"></span><a href="#L35">35</a>
+<span id="L36" class="jump"></span><a href="#L36">36</a>
+<span id="L37" class="jump"></span><a href="#L37">37</a>
+<span id="L38" class="jump"></span><a href="#L38">38</a>
+<span id="L39" class="jump"></span><a href="#L39">39</a>
+<span id="L40" class="jump"></span><a href="#L40">40</a>
+<span id="L41" class="jump"></span><a href="#L41">41</a>
+<span id="L42" class="jump"></span><a href="#L42">42</a>
+<span id="L43" class="jump"></span><a href="#L43">43</a>
+<span id="L44" class="jump"></span><a href="#L44">44</a>
+<span id="L45" class="jump"></span><a href="#L45">45</a>
+<span id="L46" class="jump"></span><a href="#L46">46</a>
+<span id="L47" class="jump"></span><a href="#L47">47</a>
+<span id="L48" class="jump"></span><a href="#L48">48</a>
+<span id="L49" class="jump"></span><a href="#L49">49</a>
+<span id="L50" class="jump"></span><a href="#L50">50</a>
+<span id="L51" class="jump"></span><a href="#L51">51</a>
+<span id="L52" class="jump"></span><a href="#L52">52</a>
+<span id="L53" class="jump"></span><a href="#L53">53</a>
+<span id="L54" class="jump"></span><a href="#L54">54</a>
+<span id="L55" class="jump"></span><a href="#L55">55</a>
+<span id="L56" class="jump"></span><a href="#L56">56</a>
+<span id="L57" class="jump"></span><a href="#L57">57</a>
+<span id="L58" class="jump"></span><a href="#L58">58</a>
+<span id="L59" class="jump"></span><a href="#L59">59</a>
+<span id="L60" class="jump"></span><a href="#L60">60</a>
+<span id="L61" class="jump"></span><a href="#L61">61</a>
+<span id="L62" class="jump"></span><a href="#L62">62</a>
+<span id="L63" class="jump"></span><a href="#L63">63</a>
+<span id="L64" class="jump"></span><a href="#L64">64</a>
+<span id="L65" class="jump"></span><a href="#L65">65</a>
+<span id="L66" class="jump"></span><a href="#L66">66</a>
+<span id="L67" class="jump"></span><a href="#L67">67</a>
+<span id="L68" class="jump"></span><a href="#L68">68</a>
+<span id="L69" class="jump"></span><a href="#L69">69</a>
+<span id="L70" class="jump"></span><a href="#L70">70</a>
+<span id="L71" class="jump"></span><a href="#L71">71</a>
+<span id="L72" class="jump"></span><a href="#L72">72</a>
+<span id="L73" class="jump"></span><a href="#L73">73</a>
+<span id="L74" class="jump"></span><a href="#L74">74</a>
+<span id="L75" class="jump"></span><a href="#L75">75</a>
+<span id="L76" class="jump"></span><a href="#L76">76</a>
+<span id="L77" class="jump"></span><a href="#L77">77</a>
+<span id="L78" class="jump"></span><a href="#L78">78</a>
+<span id="L79" class="jump"></span><a href="#L79">79</a>
+<span id="L80" class="jump"></span><a href="#L80">80</a>
+<span id="L81" class="jump"></span><a href="#L81">81</a>
+<span id="L82" class="jump"></span><a href="#L82">82</a>
+<span id="L83" class="jump"></span><a href="#L83">83</a>
+<span id="L84" class="jump"></span><a href="#L84">84</a>
+<span id="L85" class="jump"></span><a href="#L85">85</a>
+<span id="L86" class="jump"></span><a href="#L86">86</a>
+<span id="L87" class="jump"></span><a href="#L87">87</a>
+<span id="L88" class="jump"></span><a href="#L88">88</a>
+<span id="L89" class="jump"></span><a href="#L89">89</a>
+<span id="L90" class="jump"></span><a href="#L90">90</a>
+<span id="L91" class="jump"></span><a href="#L91">91</a>
+<span id="L92" class="jump"></span><a href="#L92">92</a>
+<span id="L93" class="jump"></span><a href="#L93">93</a>
+<span id="L94" class="jump"></span><a href="#L94">94</a>
+<span id="L95" class="jump"></span><a href="#L95">95</a>
+<span id="L96" class="jump"></span><a href="#L96">96</a>
+<span id="L97" class="jump"></span><a href="#L97">97</a>
+<span id="L98" class="jump"></span><a href="#L98">98</a>
+<span id="L99" class="jump"></span><a href="#L99">99</a>
+<span id="L100" class="jump"></span><a href="#L100">100</a>
+<span id="L101" class="jump"></span><a href="#L101">101</a>
+<span id="L102" class="jump"></span><a href="#L102">102</a>
+<span id="L103" class="jump"></span><a href="#L103">103</a>
+<span id="L104" class="jump"></span><a href="#L104">104</a>
+<span id="L105" class="jump"></span><a href="#L105">105</a>
+<span id="L106" class="jump"></span><a href="#L106">106</a>
+<span id="L107" class="jump"></span><a href="#L107">107</a>
+<span id="L108" class="jump"></span><a href="#L108">108</a>
+<span id="L109" class="jump"></span><a href="#L109">109</a>
+<span id="L110" class="jump"></span><a href="#L110">110</a>
+<span id="L111" class="jump"></span><a href="#L111">111</a>
+<span id="L112" class="jump"></span><a href="#L112">112</a>
+<span id="L113" class="jump"></span><a href="#L113">113</a>
+<span id="L114" class="jump"></span><a href="#L114">114</a>
+<span id="L115" class="jump"></span><a href="#L115">115</a>
+<span id="L116" class="jump"></span><a href="#L116">116</a>
+<span id="L117" class="jump"></span><a href="#L117">117</a>
+<span id="L118" class="jump"></span><a href="#L118">118</a>
+<span id="L119" class="jump"></span><a href="#L119">119</a>
+<span id="L120" class="jump"></span><a href="#L120">120</a>
+<span id="L121" class="jump"></span><a href="#L121">121</a>
+<span id="L122" class="jump"></span><a href="#L122">122</a>
+<span id="L123" class="jump"></span><a href="#L123">123</a>
+<span id="L124" class="jump"></span><a href="#L124">124</a>
+<span id="L125" class="jump"></span><a href="#L125">125</a>
+<span id="L126" class="jump"></span><a href="#L126">126</a>
+<span id="L127" class="jump"></span><a href="#L127">127</a>
+<span id="L128" class="jump"></span><a href="#L128">128</a>
+<span id="L129" class="jump"></span><a href="#L129">129</a>
+<span id="L130" class="jump"></span><a href="#L130">130</a>
+<span id="L131" class="jump"></span><a href="#L131">131</a>
+<span id="L132" class="jump"></span><a href="#L132">132</a>
+<span id="L133" class="jump"></span><a href="#L133">133</a>
+<span id="L134" class="jump"></span><a href="#L134">134</a>
+<span id="L135" class="jump"></span><a href="#L135">135</a>
+<span id="L136" class="jump"></span><a href="#L136">136</a>
+<span id="L137" class="jump"></span><a href="#L137">137</a>
+<span id="L138" class="jump"></span><a href="#L138">138</a>
+<span id="L139" class="jump"></span><a href="#L139">139</a>
+<span id="L140" class="jump"></span><a href="#L140">140</a>
+<span id="L141" class="jump"></span><a href="#L141">141</a>
+<span id="L142" class="jump"></span><a href="#L142">142</a>
+<span id="L143" class="jump"></span><a href="#L143">143</a>
+<span id="L144" class="jump"></span><a href="#L144">144</a>
+<span id="L145" class="jump"></span><a href="#L145">145</a>
+<span id="L146" class="jump"></span><a href="#L146">146</a>
+<span id="L147" class="jump"></span><a href="#L147">147</a>
+<span id="L148" class="jump"></span><a href="#L148">148</a>
+<span id="L149" class="jump"></span><a href="#L149">149</a>
+<span id="L150" class="jump"></span><a href="#L150">150</a>
+<span id="L151" class="jump"></span><a href="#L151">151</a>
+<span id="L152" class="jump"></span><a href="#L152">152</a>
+<span id="L153" class="jump"></span><a href="#L153">153</a>
+<span id="L154" class="jump"></span><a href="#L154">154</a>
+<span id="L155" class="jump"></span><a href="#L155">155</a>
+<span id="L156" class="jump"></span><a href="#L156">156</a>
+<span id="L157" class="jump"></span><a href="#L157">157</a>
+<span id="L158" class="jump"></span><a href="#L158">158</a>
+<span id="L159" class="jump"></span><a href="#L159">159</a>
+<span id="L160" class="jump"></span><a href="#L160">160</a>
+<span id="L161" class="jump"></span><a href="#L161">161</a>
+<span id="L162" class="jump"></span><a href="#L162">162</a>
+<span id="L163" class="jump"></span><a href="#L163">163</a>
+<span id="L164" class="jump"></span><a href="#L164">164</a>
+<span id="L165" class="jump"></span><a href="#L165">165</a>
+<span id="L166" class="jump"></span><a href="#L166">166</a>
+<span id="L167" class="jump"></span><a href="#L167">167</a>
+<span id="L168" class="jump"></span><a href="#L168">168</a>
+<span id="L169" class="jump"></span><a href="#L169">169</a>
+<span id="L170" class="jump"></span><a href="#L170">170</a>
+<span id="L171" class="jump"></span><a href="#L171">171</a>
+<span id="L172" class="jump"></span><a href="#L172">172</a>
+<span id="L173" class="jump"></span><a href="#L173">173</a>
+<span id="L174" class="jump"></span><a href="#L174">174</a>
+<span id="L175" class="jump"></span><a href="#L175">175</a>
+<span id="L176" class="jump"></span><a href="#L176">176</a>
+<span id="L177" class="jump"></span><a href="#L177">177</a>
+<span id="L178" class="jump"></span><a href="#L178">178</a>
+<span id="L179" class="jump"></span><a href="#L179">179</a>
+<span id="L180" class="jump"></span><a href="#L180">180</a>
+<span id="L181" class="jump"></span><a href="#L181">181</a>
+<span id="L182" class="jump"></span><a href="#L182">182</a>
+<span id="L183" class="jump"></span><a href="#L183">183</a>
+<span id="L184" class="jump"></span><a href="#L184">184</a>
+<span id="L185" class="jump"></span><a href="#L185">185</a>
+<span id="L186" class="jump"></span><a href="#L186">186</a>
+<span id="L187" class="jump"></span><a href="#L187">187</a>
+<span id="L188" class="jump"></span><a href="#L188">188</a>
+<span id="L189" class="jump"></span><a href="#L189">189</a>
+<span id="L190" class="jump"></span><a href="#L190">190</a>
+<span id="L191" class="jump"></span><a href="#L191">191</a>
+<span id="L192" class="jump"></span><a href="#L192">192</a>
+<span id="L193" class="jump"></span><a href="#L193">193</a>
+<span id="L194" class="jump"></span><a href="#L194">194</a>
+<span id="L195" class="jump"></span><a href="#L195">195</a>
+<span id="L196" class="jump"></span><a href="#L196">196</a>
+<span id="L197" class="jump"></span><a href="#L197">197</a>
+<span id="L198" class="jump"></span><a href="#L198">198</a>
+<span id="L199" class="jump"></span><a href="#L199">199</a>
+<span id="L200" class="jump"></span><a href="#L200">200</a>
+<span id="L201" class="jump"></span><a href="#L201">201</a>
+<span id="L202" class="jump"></span><a href="#L202">202</a>
+<span id="L203" class="jump"></span><a href="#L203">203</a>
+<span id="L204" class="jump"></span><a href="#L204">204</a>
+<span id="L205" class="jump"></span><a href="#L205">205</a>
+<span id="L206" class="jump"></span><a href="#L206">206</a>
+<span id="L207" class="jump"></span><a href="#L207">207</a>
+<span id="L208" class="jump"></span><a href="#L208">208</a>
+<span id="L209" class="jump"></span><a href="#L209">209</a>
+<span id="L210" class="jump"></span><a href="#L210">210</a>
+<span id="L211" class="jump"></span><a href="#L211">211</a>
+<span id="L212" class="jump"></span><a href="#L212">212</a>
+<span id="L213" class="jump"></span><a href="#L213">213</a>
+<span id="L214" class="jump"></span><a href="#L214">214</a>
+<span id="L215" class="jump"></span><a href="#L215">215</a>
+<span id="L216" class="jump"></span><a href="#L216">216</a>
+<span id="L217" class="jump"></span><a href="#L217">217</a>
+<span id="L218" class="jump"></span><a href="#L218">218</a>
+<span id="L219" class="jump"></span><a href="#L219">219</a>
+<span id="L220" class="jump"></span><a href="#L220">220</a>
+<span id="L221" class="jump"></span><a href="#L221">221</a>
+<span id="L222" class="jump"></span><a href="#L222">222</a>
+<span id="L223" class="jump"></span><a href="#L223">223</a>
+<span id="L224" class="jump"></span><a href="#L224">224</a>
+<span id="L225" class="jump"></span><a href="#L225">225</a>
+<span id="L226" class="jump"></span><a href="#L226">226</a>
+<span id="L227" class="jump"></span><a href="#L227">227</a>
+<span id="L228" class="jump"></span><a href="#L228">228</a>
+<span id="L229" class="jump"></span><a href="#L229">229</a>
+<span id="L230" class="jump"></span><a href="#L230">230</a>
+<span id="L231" class="jump"></span><a href="#L231">231</a>
+<span id="L232" class="jump"></span><a href="#L232">232</a>
+<span id="L233" class="jump"></span><a href="#L233">233</a>
+<span id="L234" class="jump"></span><a href="#L234">234</a>
+<span id="L235" class="jump"></span><a href="#L235">235</a>
+</pre><!-- end nums column --></td><!-- start lines column --><td id="lines"><div class="sourceview"><pre class="plainprint"><table width="100%"><tbody><tr class="even"><td><div><span class="line">'\&quot;&nbsp;t</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Title:&nbsp;crit</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;&nbsp;&nbsp;&nbsp;Author:&nbsp;[see&nbsp;the&nbsp;&quot;AUTHOR&quot;&nbsp;section]</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;Generator:&nbsp;DocBook&nbsp;XSL&nbsp;Stylesheets&nbsp;v1.79.1&nbsp;&lt;http://docbook.sf.net/&gt;</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:&nbsp;03/09/2017</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;&nbsp;&nbsp;&nbsp;Manual:&nbsp;CRIU&nbsp;Manual</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;&nbsp;&nbsp;&nbsp;Source:&nbsp;criu&nbsp;2.12</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;&nbsp;Language:&nbsp;English</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;</span></div></tr><tr class="odd"><td><div><span class="line">.TH&nbsp;&quot;CRIT&quot;&nbsp;&quot;1&quot;&nbsp;&quot;03/09/2017&quot;&nbsp;&quot;criu&nbsp;2\&amp;.12&quot;&nbsp;&quot;CRIU&nbsp;Manual&quot;</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;*&nbsp;Define&nbsp;some&nbsp;portability&nbsp;stuff</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;http://bugs.debian.org/507673</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.ie&nbsp;\n(.g&nbsp;.ds&nbsp;Aq&nbsp;\(aq</span></div></tr><tr class="even"><td><div><span class="line">.el&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.ds&nbsp;Aq&nbsp;'</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;*&nbsp;(re)Define&nbsp;some&nbsp;macros</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;toupper&nbsp;-&nbsp;uppercase&nbsp;a&nbsp;string&nbsp;(locale-aware)</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.de&nbsp;toupper</span></div></tr><tr class="even"><td><div><span class="line">.tr&nbsp;aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ</span></div></tr><tr class="odd"><td><div><span class="line">\\$*</span></div></tr><tr class="even"><td><div><span class="line">.tr&nbsp;aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz</span></div></tr><tr class="odd"><td><div><span class="line">..</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;SH-xref&nbsp;-&nbsp;format&nbsp;a&nbsp;cross-reference&nbsp;to&nbsp;an&nbsp;SH&nbsp;section</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.de&nbsp;SH-xref</span></div></tr><tr class="even"><td><div><span class="line">.ie&nbsp;n&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">.toupper&nbsp;\\$*</span></div></tr><tr class="odd"><td><div><span class="line">.el&nbsp;\{\</span></div></tr><tr class="even"><td><div><span class="line">\\$*</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">..</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;SH&nbsp;-&nbsp;level-one&nbsp;heading&nbsp;that&nbsp;works&nbsp;better&nbsp;for&nbsp;non-TTY&nbsp;output</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.de1&nbsp;SH</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;put&nbsp;an&nbsp;extra&nbsp;blank&nbsp;line&nbsp;of&nbsp;space&nbsp;above&nbsp;the&nbsp;head&nbsp;in&nbsp;non-TTY&nbsp;output</span></div></tr><tr class="even"><td><div><span class="line">.if&nbsp;t&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;1</span></div></tr><tr class="even"><td><div><span class="line">.\}</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;\\n[PD]u</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-level&nbsp;1</span></div></tr><tr class="odd"><td><div><span class="line">.set-an-margin</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-prevailing-indent&nbsp;\\n[IN]</span></div></tr><tr class="odd"><td><div><span class="line">.fi</span></div></tr><tr class="even"><td><div><span class="line">.in&nbsp;\\n[an-margin]u</span></div></tr><tr class="odd"><td><div><span class="line">.ti&nbsp;0</span></div></tr><tr class="even"><td><div><span class="line">.HTML-TAG&nbsp;&quot;.NH&nbsp;\\n[an-level]&quot;</span></div></tr><tr class="odd"><td><div><span class="line">.it&nbsp;1&nbsp;an-trap</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-no-space-flag&nbsp;1</span></div></tr><tr class="odd"><td><div><span class="line">.nr&nbsp;an-break-flag&nbsp;1</span></div></tr><tr class="even"><td><div><span class="line">\.&quot;&nbsp;make&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;head&nbsp;bigger</span></div></tr><tr class="odd"><td><div><span class="line">.ps&nbsp;+3</span></div></tr><tr class="even"><td><div><span class="line">.ft&nbsp;B</span></div></tr><tr class="odd"><td><div><span class="line">.ne&nbsp;(2v&nbsp;+&nbsp;1u)</span></div></tr><tr class="even"><td><div><span class="line">.ie&nbsp;n&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;if&nbsp;n&nbsp;(TTY&nbsp;output),&nbsp;use&nbsp;uppercase</span></div></tr><tr class="even"><td><div><span class="line">.toupper&nbsp;\\$*</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">.el&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.nr&nbsp;an-break-flag&nbsp;0</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;if&nbsp;not&nbsp;n&nbsp;(not&nbsp;TTY),&nbsp;use&nbsp;normal&nbsp;case&nbsp;(not&nbsp;uppercase)</span></div></tr><tr class="odd"><td><div><span class="line">\\$1</span></div></tr><tr class="even"><td><div><span class="line">.in&nbsp;\\n[an-margin]u</span></div></tr><tr class="odd"><td><div><span class="line">.ti&nbsp;0</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;if&nbsp;not&nbsp;n&nbsp;(not&nbsp;TTY),&nbsp;put&nbsp;a&nbsp;border/line&nbsp;under&nbsp;subheading</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;-.6</span></div></tr><tr class="even"><td><div><span class="line">\l'\n(.lu'</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">..</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;SS&nbsp;-&nbsp;level-two&nbsp;heading&nbsp;that&nbsp;works&nbsp;better&nbsp;for&nbsp;non-TTY&nbsp;output</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.de1&nbsp;SS</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;\\n[PD]u</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-level&nbsp;1</span></div></tr><tr class="odd"><td><div><span class="line">.set-an-margin</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-prevailing-indent&nbsp;\\n[IN]</span></div></tr><tr class="odd"><td><div><span class="line">.fi</span></div></tr><tr class="even"><td><div><span class="line">.in&nbsp;\\n[IN]u</span></div></tr><tr class="odd"><td><div><span class="line">.ti&nbsp;\\n[SN]u</span></div></tr><tr class="even"><td><div><span class="line">.it&nbsp;1&nbsp;an-trap</span></div></tr><tr class="odd"><td><div><span class="line">.nr&nbsp;an-no-space-flag&nbsp;1</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;an-break-flag&nbsp;1</span></div></tr><tr class="odd"><td><div><span class="line">.ps&nbsp;\\n[PS-SS]u</span></div></tr><tr class="even"><td><div><span class="line">\.&quot;&nbsp;make&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;head&nbsp;bigger</span></div></tr><tr class="odd"><td><div><span class="line">.ps&nbsp;+2</span></div></tr><tr class="even"><td><div><span class="line">.ft&nbsp;B</span></div></tr><tr class="odd"><td><div><span class="line">.ne&nbsp;(2v&nbsp;+&nbsp;1u)</span></div></tr><tr class="even"><td><div><span class="line">.if&nbsp;\\n[.$]&nbsp;\&amp;\\$*</span></div></tr><tr class="odd"><td><div><span class="line">..</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;BB/EB&nbsp;-&nbsp;put&nbsp;background/screen&nbsp;(filled&nbsp;box)&nbsp;around&nbsp;block&nbsp;of&nbsp;text</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="odd"><td><div><span class="line">.de&nbsp;BB</span></div></tr><tr class="even"><td><div><span class="line">.if&nbsp;t&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;-.5</span></div></tr><tr class="even"><td><div><span class="line">.br</span></div></tr><tr class="odd"><td><div><span class="line">.in&nbsp;+2n</span></div></tr><tr class="even"><td><div><span class="line">.ll&nbsp;-2n</span></div></tr><tr class="odd"><td><div><span class="line">.gcolor&nbsp;red</span></div></tr><tr class="even"><td><div><span class="line">.di&nbsp;BX</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">..</span></div></tr><tr class="odd"><td><div><span class="line">.de&nbsp;EB</span></div></tr><tr class="even"><td><div><span class="line">.if&nbsp;t&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">.if&nbsp;&quot;\\$2&quot;adjust-for-leading-newline&quot;&nbsp;\{\</span></div></tr><tr class="even"><td><div><span class="line">.sp&nbsp;-1</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">.br</span></div></tr><tr class="odd"><td><div><span class="line">.di</span></div></tr><tr class="even"><td><div><span class="line">.in</span></div></tr><tr class="odd"><td><div><span class="line">.ll</span></div></tr><tr class="even"><td><div><span class="line">.gcolor</span></div></tr><tr class="odd"><td><div><span class="line">.nr&nbsp;BW&nbsp;\\n(.lu-\\n(.i</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;BH&nbsp;\\n(dn+.5v</span></div></tr><tr class="odd"><td><div><span class="line">.ne&nbsp;\\n(BHu+.5v</span></div></tr><tr class="even"><td><div><span class="line">.ie&nbsp;&quot;\\$2&quot;adjust-for-leading-newline&quot;&nbsp;\{\</span></div></tr><tr class="odd"><td><div><span class="line">\M[\\$1]\h'1n'\v'+.5v'\D'P&nbsp;\\n(BWu&nbsp;0&nbsp;0&nbsp;\\n(BHu&nbsp;-\\n(BWu&nbsp;0&nbsp;0&nbsp;-\\n(BHu'\M[]</span></div></tr><tr class="even"><td><div><span class="line">.\}</span></div></tr><tr class="odd"><td><div><span class="line">.el&nbsp;\{\</span></div></tr><tr class="even"><td><div><span class="line">\M[\\$1]\h'1n'\v'-.5v'\D'P&nbsp;\\n(BWu&nbsp;0&nbsp;0&nbsp;\\n(BHu&nbsp;-\\n(BWu&nbsp;0&nbsp;0&nbsp;-\\n(BHu'\M[]</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">.in&nbsp;0</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;-.5v</span></div></tr><tr class="even"><td><div><span class="line">.nf</span></div></tr><tr class="odd"><td><div><span class="line">.BX</span></div></tr><tr class="even"><td><div><span class="line">.in</span></div></tr><tr class="odd"><td><div><span class="line">.sp&nbsp;.5v</span></div></tr><tr class="even"><td><div><span class="line">.fi</span></div></tr><tr class="odd"><td><div><span class="line">.\}</span></div></tr><tr class="even"><td><div><span class="line">..</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;BM/EM&nbsp;-&nbsp;put&nbsp;colored&nbsp;marker&nbsp;in&nbsp;margin&nbsp;next&nbsp;to&nbsp;block&nbsp;of&nbsp;text</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></div></tr><tr class="even"><td><div><span class="line">.de&nbsp;BM</span></div></tr><tr class="odd"><td><div><span class="line">.if&nbsp;t&nbsp;\{\</span></div></tr><tr class="even"><td><div><span class="line">.br</span></div></tr><tr class="odd"><td><div><span class="line">.ll&nbsp;-2n</span></div></tr><tr class="even"><td><div><span class="line">.gcolor&nbsp;red</span></div></tr><tr class="odd"><td><div><span class="line">.di&nbsp;BX</span></div></tr><tr class="even"><td><div><span class="line">.\}</span></div></tr><tr class="odd"><td><div><span class="line">..</span></div></tr><tr class="even"><td><div><span class="line">.de&nbsp;EM</span></div></tr><tr class="odd"><td><div><span class="line">.if&nbsp;t&nbsp;\{\</span></div></tr><tr class="even"><td><div><span class="line">.br</span></div></tr><tr class="odd"><td><div><span class="line">.di</span></div></tr><tr class="even"><td><div><span class="line">.ll</span></div></tr><tr class="odd"><td><div><span class="line">.gcolor</span></div></tr><tr class="even"><td><div><span class="line">.nr&nbsp;BH&nbsp;\\n(dn</span></div></tr><tr class="odd"><td><div><span class="line">.ne&nbsp;\\n(BHu</span></div></tr><tr class="even"><td><div><span class="line">\M[\\$1]\D'P&nbsp;-.75n&nbsp;0&nbsp;0&nbsp;\\n(BHu&nbsp;-(\\n[.i]u&nbsp;-&nbsp;\\n(INu&nbsp;-&nbsp;.75n)&nbsp;0&nbsp;0&nbsp;-\\n(BHu'\M[]</span></div></tr><tr class="odd"><td><div><span class="line">.in&nbsp;0</span></div></tr><tr class="even"><td><div><span class="line">.nf</span></div></tr><tr class="odd"><td><div><span class="line">.BX</span></div></tr><tr class="even"><td><div><span class="line">.in</span></div></tr><tr class="odd"><td><div><span class="line">.fi</span></div></tr><tr class="even"><td><div><span class="line">.\}</span></div></tr><tr class="odd"><td><div><span class="line">..</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;*&nbsp;set&nbsp;default&nbsp;formatting</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="even"><td><div><span class="line">.\&quot;&nbsp;*&nbsp;MAIN&nbsp;CONTENT&nbsp;STARTS&nbsp;HERE&nbsp;*</span></div></tr><tr class="odd"><td><div><span class="line">.\&quot;&nbsp;-----------------------------------------------------------------</span></div></tr><tr class="even"><td><div><span class="line">.SH&nbsp;&quot;Name&quot;</span></div></tr><tr class="odd"><td><div><span class="line">crit&nbsp;\-&nbsp;CRiu&nbsp;Image&nbsp;Tool</span></div></tr><tr class="even"><td><div><span class="line">.SH&nbsp;&quot;Synopsis&quot;</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">\fBcrit\fR&nbsp;\fIdecode\fR&nbsp;[\-h]&nbsp;[\-i&nbsp;IN]&nbsp;[\-o&nbsp;OUT]&nbsp;[\-\-pretty]</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">\fBcrit\fR&nbsp;\fIencode\fR&nbsp;[\-h]&nbsp;[\-i&nbsp;IN]&nbsp;[\-o&nbsp;OUT]</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">\fBcrit\fR&nbsp;\fIinfo\fR&nbsp;[\-h]&nbsp;in</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">\fBcrit\fR&nbsp;\fIx\fR&nbsp;[\-h]&nbsp;dir&nbsp;{ps,fds,mems}</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">\fBcrit\fR&nbsp;\fIshow\fR&nbsp;[\-h]&nbsp;in</span></div></tr><tr class="odd"><td><div><span class="line">.SH&nbsp;&quot;DESCRIPTION&quot;</span></div></tr><tr class="even"><td><div><span class="line">.sp</span></div></tr><tr class="odd"><td><div><span class="line">\fBcrit\fR&nbsp;is&nbsp;a&nbsp;feature\-rich&nbsp;replacement&nbsp;for&nbsp;existing&nbsp;\fBcriu\fR&nbsp;show\&amp;.</span></div></tr><tr class="even"><td><div><span class="line">.SH&nbsp;&quot;ARGUMENTS&quot;</span></div></tr><tr class="odd"><td><div><span class="line">.SS&nbsp;&quot;Positional&nbsp;Arguments&quot;</span></div></tr><tr class="even"><td><div><span class="line">.PP</span></div></tr><tr class="odd"><td><div><span class="line">\fBdecode\fR</span></div></tr><tr class="even"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="odd"><td><div><span class="line">convert</span></div></tr><tr class="even"><td><div><span class="line">\fBcriu\fR</span></div></tr><tr class="odd"><td><div><span class="line">image&nbsp;from&nbsp;binary&nbsp;type&nbsp;JSON</span></div></tr><tr class="even"><td><div><span class="line">.RE</span></div></tr><tr class="odd"><td><div><span class="line">.PP</span></div></tr><tr class="even"><td><div><span class="line">\fBencode\fR</span></div></tr><tr class="odd"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="even"><td><div><span class="line">convert</span></div></tr><tr class="odd"><td><div><span class="line">\fBcriu\fR</span></div></tr><tr class="even"><td><div><span class="line">image&nbsp;from&nbsp;JSON&nbsp;type&nbsp;to&nbsp;binary</span></div></tr><tr class="odd"><td><div><span class="line">.RE</span></div></tr><tr class="even"><td><div><span class="line">.PP</span></div></tr><tr class="odd"><td><div><span class="line">\fBinfo\fR</span></div></tr><tr class="even"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="odd"><td><div><span class="line">show&nbsp;info&nbsp;about&nbsp;image</span></div></tr><tr class="even"><td><div><span class="line">.RE</span></div></tr><tr class="odd"><td><div><span class="line">.PP</span></div></tr><tr class="even"><td><div><span class="line">\fBx\fR</span></div></tr><tr class="odd"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="even"><td><div><span class="line">explore&nbsp;image&nbsp;directory</span></div></tr><tr class="odd"><td><div><span class="line">.RE</span></div></tr><tr class="even"><td><div><span class="line">.PP</span></div></tr><tr class="odd"><td><div><span class="line">\fBshow\fR</span></div></tr><tr class="even"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="odd"><td><div><span class="line">convert</span></div></tr><tr class="even"><td><div><span class="line">\fBcriu\fR</span></div></tr><tr class="odd"><td><div><span class="line">image&nbsp;from&nbsp;binary&nbsp;to&nbsp;human\-readable&nbsp;JSON</span></div></tr><tr class="even"><td><div><span class="line">.RE</span></div></tr><tr class="odd"><td><div><span class="line">.SS&nbsp;&quot;Optional&nbsp;Arguments&quot;</span></div></tr><tr class="even"><td><div><span class="line">.PP</span></div></tr><tr class="odd"><td><div><span class="line">\fB\-h\fR,&nbsp;\fB\-\-help\fR</span></div></tr><tr class="even"><td><div><span class="line">.RS&nbsp;4</span></div></tr><tr class="odd"><td><div><span class="line">Print&nbsp;some&nbsp;help&nbsp;and&nbsp;exit</span></div></tr><tr class="even"><td><div><span class="line">.RE</span></div></tr><tr class="odd"><td><div><span class="line">.SH&nbsp;&quot;SEE&nbsp;ALSO&quot;</span></div></tr><tr class="even"><td><div><span class="line">.sp</span></div></tr><tr class="odd"><td><div><span class="line">criu(8)</span></div></tr><tr class="even"><td><div><span class="line">.SH&nbsp;&quot;AUTHOR&quot;</span></div></tr><tr class="odd"><td><div><span class="line">.sp</span></div></tr><tr class="even"><td><div><span class="line">The&nbsp;CRIU&nbsp;team</span></div></tr></tbody></table></pre></pre></div></td><!-- end lines column --></tr></tbody></table><!-- end blob table --></pre>
+
+		<!--  blob image -->
+		
+	
+
+		</div>
+		
+		
+		
+        
+
+        
+
+        
+
+        
+    
+		
+
+		
+				
+	
+	
+	
+	
+	<!-- user fragment -->
+	
+
+	
+	
+
+		
+		<!-- page footer -->
+		<div class="container">
+			<footer class="footer">
+				<p class="pull-right">
+					<a title="gitblit homepage" href="http://gitblit.com/">
+						<span>v1.8.0</span>
+					</a> 
+				</p>
+			</footer>
+		</div>
+
+		<!-- Override Bootstrap's responsive menu background highlighting -->
+		<style>
+		@media (max-width: 979px) {
+			.nav-collapse .nav > li > a:hover, .nav-collapse .dropdown-menu a:hover {
+				background-color: #002060;
+			}
+			
+			.navbar div > ul .dropdown-menu li a {
+				color: #ccc;
+			}
+		}
+		</style>
+		
+		<!-- Include scripts at end for faster page loading -->
+		<script type="text/javascript" src="../../../bootstrap/js/jquery.js"></script>
+		<script type="text/javascript" src="../../../bootstrap/js/bootstrap.js"></script>		
+		<script type='text/javascript'>/*<![CDATA[*/
+jQuery(prettyPrint);
+//]]>
+</script>
+
+	</body>
+</html>

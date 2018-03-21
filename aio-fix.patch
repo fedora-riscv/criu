@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app=""> 
+
+	<!-- Head -->
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+   		<title>rpms/criu.git - git.centos.org</title>
+		<link rel="icon" href="../../../gitblt-favicon.png" type="image/png"/>
+		
+		<link rel="stylesheet" href="../../../bootstrap/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../../../bootstrap/css/iconic.css"/>
+		<link rel="stylesheet" href="../../../fontawesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="../../../octicons/octicons.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../gitblit.css"/>
+	
+  
+   	<link href="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/prettify.css" type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/prettify.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-apollo.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-basic.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-clj.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-css.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-dart.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-erlang.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-go.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-hs.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-lisp.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-llvm.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-lua.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-matlab.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-ml.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-mumps.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-n.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-pascal.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-proto.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-r.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-rd.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-scala.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-sql.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-tcl.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-tex.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-vb.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-vhdl.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-wiki.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-xq.js"></script>
+	<script type="text/javascript" src="../../../resources/com.gitblit.wicket.pages.BlobPage/prettify/lang-yaml.js"></script>
+  
+<link rel="stylesheet" type="text/css" href="../../../bootstrap/css/bootstrap-responsive.css" />
+<style type="text/css">
+.navbar-inner {
+}
+</style>
+</head>
+
+	<body>
+
+		<!-- page content -->
+		
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          		</a>
+				<a class="brand" href="" title="git.centos.org">
+					<img src="../../../logo.png" width="120" class="logo"/>
+				</a>
+				
+				<div class="nav-collapse">
+					<div>
+	<ul class="nav">
+		<li>
+<a href="../../../">dashboard</a>
+</li><li class="active">
+<a href="../../../repositories/">repositories</a>
+</li><li>
+<a href="../../../filestore/">filestore</a>
+</li><li>
+<a href="../../../activity/">activity</a>
+</li><li>
+<a href="../../../lucene/">search</a>
+</li>			
+	</ul>	
+</div>
+					<ul class="nav pull-right">
+					 	
+		<li>
+			<form class="pull-right" id="id1" method="post" action="../../../?wicket:interface=:0:userPanel:loginForm::IFormSubmitListener::"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="wicket:bookmarkablePage" value=":com.gitblit.wicket.pages.BlobPage" /><input type="hidden" name="r" value="rpms/criu.git" /><input type="hidden" name="h" value="c7" /><input type="hidden" name="f" value="SOURCES/aio-fix.patch" /></div><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id1_hf_0" id="id1_hf_0" /></div>
+				<span class="form-search">
+					<input class="input-small" type="text" value="" name="username" placeholder="username"/>
+					<input class="input-small" type="password" value="" name="password" placeholder="password"/>
+					<button class="btn" type="submit">login</button>
+				</span>
+			</form>
+		</li>
+	
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+				
+	<!-- subclass content -->
+	<div class="container">
+		<div style="text-align:center">
+  
+</div>
+	</div>
+	
+	
+		<div class="repositorynavbar">
+			<div class="repositorynavbar-inner">
+				<div class="container">
+		
+					<div class="title">
+						<div class="row">
+							<!-- search form -->
+							<div class="hidden-phone pull-right">
+								<form class="form-search" style="margin: 0px;" id="id2" method="post" action="../../../?wicket:interface=:0:searchForm::IFormSubmitListener::"><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="wicket:bookmarkablePage" value=":com.gitblit.wicket.pages.BlobPage" /><input type="hidden" name="r" value="rpms/criu.git" /><input type="hidden" name="h" value="c7" /><input type="hidden" name="f" value="SOURCES/aio-fix.patch" /></div><div style="width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden"><input type="hidden" name="id2_hf_0" id="id2_hf_0" /></div>
+									<div class="input-append">
+										
+										<input type="text" class="input-medium search-query" style="border-radius: 14px 0 0 14px; padding-left: 14px;" id="searchBox" value="" name="searchBox" title="Search rpms/criu.git" placeholder="search"/>
+										<button class="btn" style="border-radius: 0 14px 14px 0px;margin-left:-5px;" type="submit"><i class="icon-search"></i></button>
+									</div>
+								</form>
+							</div>
+							
+							<div class="span7">
+                                <div style="display:inline-block;vertical-align:top;padding-right:5px;">
+                                    <span>
+            <span class="gray mega-octicon octicon-repo"></span>
+        </span>
+                                </div>
+								<div style="display:inline-block;">
+                                    <div>
+									   <span class="project">
+<a href="../../../project/rpms">rpms</a>
+</span>/<span class="repository">
+<a href="../../../summary/rpms!criu.git">criu</a>
+</span>
+									   <a class="hidden-phone hidden-tablet" style="text-decoration: none;" href="../../../feed/rpms/criu.git" title="feed">
+										  <img style="border:0px;vertical-align:baseline;" src="../../../feed_16x16.png"></img>
+									   </a>
+                                    </div>
+                                    <div>
+                                        <span class="gray">Tool for Checkpoint/Restore in User-space</span>   
+                                    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+			
+					<div>
+						<div class="hidden-phone btn-group pull-right" style="margin-top:5px;">
+							<!-- future spot for other repo buttons -->
+							
+							
+							
+							
+							
+							
+						</div>
+						
+						<div>
+	<ul class="nav">
+		<li>
+<a href="../../../summary/rpms!criu.git">summary</a>
+</li><li>
+<a href="../../../log/rpms!criu.git/c7">commits</a>
+</li><li class="active">
+<a href="../../../tree/rpms!criu.git/c7">tree</a>
+</li><li class="hidden-phone">
+<a href="../../../docs/rpms!criu.git/c7">docs</a>
+</li><li class="hidden-phone">
+<a href="../../../forks/rpms!criu.git">forks</a>
+</li><li class="hidden-phone">
+<a href="../../../compare/rpms!criu.git">compare</a>
+</li>			
+	</ul>	
+</div>
+					</div>
+				</div>
+			</div>
+		</div>
+				
+		<div class="container">
+			
+
+		<!-- blob nav links -->	
+		<div class="page_nav2">
+			<a href="../../../blame/rpms!criu.git/c7/SOURCES!aio-fix.patch">blame</a> | <a href="../../../history/rpms!criu.git/c7/SOURCES!aio-fix.patch">history</a> | <a href="../../../raw/rpms/criu.git/c7/SOURCES!aio-fix.patch">raw</a>
+		</div>	
+	
+		<!-- commit header -->
+		<div>	
+	<div class="commitHeader">
+		<div class="row">
+			<div>
+				<span class="pull-right">
+<img src="https://www.gravatar.com/avatar/f36401112c113054a8d9348a80837343?s=50&amp;d=identicon" class="gravatar" title="CentOS Sources"></img>
+</span>
+			</div>
+			<div class="span9">
+					<div>
+<a href="../../../commit/rpms!criu.git/72b139a5eca46d6860c70c9e78326e1ff05afbdd" class="title">import criu-2.12-2.el7</a>
+</div>
+					<div>CentOS Sources</div>
+					<div>
+			 			<span class="age4" title="8 months ago">2017-08-01</span>
+			 			<span class="hidden-phone" style="padding-left:20px;color:#888;">72b139a5eca46d6860c70c9e78326e1ff05afbdd</span>
+			 		</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<!-- breadcrumbs -->
+		<div>
+	<!-- page path links -->
+	<div class="page_path">	
+		<ul class="breadcrumb">
+			<li>
+				<span>
+<a href="../../../tree/rpms!criu.git/c7">[rpms/criu.git]</a>
+</span> <span class="divider">/</span>
+			</li><li>
+				<span>
+<a href="../../../tree/rpms!criu.git/c7/SOURCES">SOURCES</a>
+</span> <span class="divider">/</span>
+			</li><li>
+				<span>aio-fix.patch</span> 
+			</li>
+		</ul>
+	</div>
+</div>
+		
+		<!--  blob content -->
+		<pre style="border:0px;"><!-- start blob table --><table width="100%"><tbody><tr><!-- start nums column --><td id="nums"><pre><span id="L1" class="jump"></span><a href="#L1">1</a>
+<span id="L2" class="jump"></span><a href="#L2">2</a>
+<span id="L3" class="jump"></span><a href="#L3">3</a>
+<span id="L4" class="jump"></span><a href="#L4">4</a>
+<span id="L5" class="jump"></span><a href="#L5">5</a>
+<span id="L6" class="jump"></span><a href="#L6">6</a>
+<span id="L7" class="jump"></span><a href="#L7">7</a>
+<span id="L8" class="jump"></span><a href="#L8">8</a>
+<span id="L9" class="jump"></span><a href="#L9">9</a>
+<span id="L10" class="jump"></span><a href="#L10">10</a>
+<span id="L11" class="jump"></span><a href="#L11">11</a>
+</pre><!-- end nums column --></td><!-- start lines column --><td id="lines"><div class="sourceview"><pre class="plainprint"><table width="100%"><tbody><tr class="even"><td><div><span class="line">---&nbsp;a/criu/aio.c&nbsp;&nbsp;&nbsp;&nbsp;2015-07-01&nbsp;11:02:50.360004543&nbsp;-0400</span></div></tr><tr class="odd"><td><div><span class="line">+++&nbsp;b/criu/aio.c&nbsp;&nbsp;&nbsp;&nbsp;2015-07-01&nbsp;11:03:33.099757812&nbsp;-0400</span></div></tr><tr class="even"><td><div><span class="line">@@&nbsp;-74,7&nbsp;+74,7&nbsp;@@</span></div></tr><tr class="odd"><td><div><span class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;up&nbsp;back&nbsp;to&nbsp;the&nbsp;k_max_reqs.</span></div></tr><tr class="even"><td><div><span class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></div></tr><tr class="odd"><td><div><span class="line">&nbsp;</span></div></tr><tr class="even"><td><div><span class="line">-&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(k_max_reqs&nbsp;-&nbsp;2)&nbsp;/&nbsp;2;</span></div></tr><tr class="odd"><td><div><span class="line">+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(k_max_reqs&nbsp;-&nbsp;2);</span></div></tr><tr class="even"><td><div><span class="line">&nbsp;}</span></div></tr><tr class="odd"><td><div><span class="line">&nbsp;</span></div></tr><tr class="even"><td><div><span class="line">&nbsp;unsigned&nbsp;long&nbsp;aio_rings_args_size(struct&nbsp;vm_area_list&nbsp;*vmas)</span></div></tr></tbody></table></pre></pre></div></td><!-- end lines column --></tr></tbody></table><!-- end blob table --></pre>
+
+		<!--  blob image -->
+		
+	
+
+		</div>
+		
+		
+		
+        
+
+        
+
+        
+
+        
+    
+		
+
+		
+				
+	
+	
+	
+	
+	<!-- user fragment -->
+	
+
+	
+	
+
+		
+		<!-- page footer -->
+		<div class="container">
+			<footer class="footer">
+				<p class="pull-right">
+					<a title="gitblit homepage" href="http://gitblit.com/">
+						<span>v1.8.0</span>
+					</a> 
+				</p>
+			</footer>
+		</div>
+
+		<!-- Override Bootstrap's responsive menu background highlighting -->
+		<style>
+		@media (max-width: 979px) {
+			.nav-collapse .nav > li > a:hover, .nav-collapse .dropdown-menu a:hover {
+				background-color: #002060;
+			}
+			
+			.navbar div > ul .dropdown-menu li a {
+				color: #ccc;
+			}
+		}
+		</style>
+		
+		<!-- Include scripts at end for faster page loading -->
+		<script type="text/javascript" src="../../../bootstrap/js/jquery.js"></script>
+		<script type="text/javascript" src="../../../bootstrap/js/bootstrap.js"></script>		
+		<script type='text/javascript'>/*<![CDATA[*/
+jQuery(prettyPrint);
+//]]>
+</script>
+
+	</body>
+</html>

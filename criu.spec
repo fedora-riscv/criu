@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Thu Mar 22 2018 Adrian Reber <adrian@lisas.de> - 3.8-2
+- Bump release for COPR
+
 * Wed Mar 14 2018 Adrian Reber <adrian@lisas.de> - 3.8-1
 - Update to 3.8
 

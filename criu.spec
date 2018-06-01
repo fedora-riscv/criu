@@ -5,7 +5,7 @@
 %endif
 
 Name: criu
-Version: 3.8.1
+Version: 3.9
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Fri Jun 01 2018 Adrian Reber <adrian@lisas.de> - 3.9-1
+- Update to 3.9
+
 * Tue Apr 03 2018 Adrian Reber <adrian@lisas.de> - 3.8.1-1
 - Update to 3.8.1
 

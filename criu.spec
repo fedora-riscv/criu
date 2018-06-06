@@ -6,7 +6,7 @@
 
 Name: criu
 Version: 3.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -39,12 +39,7 @@ BuildRequires: perl-interpreter
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-%if 0%{?fedora} < 27 && 0%{?rhel} <= 7
-ExclusiveArch: x86_64 %{arm} ppc64le aarch64
-%else
-# kernel support for s390x was only enabled for >= f27
 ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
-%endif
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
@@ -154,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Jun 06 2018 Adrian Reber <adrian@lisas.de> - 3.9-2
+- Simplify ExclusiveArch now that there is no more F26
+
 * Fri Jun 01 2018 Adrian Reber <adrian@lisas.de> - 3.9-1
 - Update to 3.9
 

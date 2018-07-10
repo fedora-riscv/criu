@@ -30,6 +30,7 @@ Patch100: aio-fix.patch
 
 Source3: criu-tmpfiles.conf
 
+BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel libcap-devel

@@ -1,12 +1,12 @@
 %if 0%{?fedora} > 27 || 0%{?rhel} > 7
-%global py2_prefix python2
+%global py_prefix python3
 %else
-%global py2_prefix python
+%global py_prefix python
 %endif
 
 Name: criu
-Version: 3.9
-Release: 2%{?dist}
+Version: 3.10
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -14,6 +14,8 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+# https://patchwork.criu.org/patch/8849/mbox/
+Patch1: 1-2-Fix-building-with-4.18.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -30,7 +32,7 @@ Source3: criu-tmpfiles.conf
 
 BuildRequires: systemd
 BuildRequires: libnet-devel
-BuildRequires: protobuf-devel protobuf-c-devel python2-devel libnl3-devel libcap-devel
+BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel libcap-devel
 %if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
@@ -56,23 +58,24 @@ Requires: %{name} = %{version}-%{release}
 This package contains header files and libraries for %{name}.
 %endif
 
-%package -n %{py2_prefix}-%{name}
-%{?python_provide:%python_provide %{py2_prefix}-%{name}}
+%package -n %{py_prefix}-%{name}
+%{?python_provide:%python_provide %{py_prefix}-%{name}}
 Summary: Python bindings for %{name}
 Group: Development/Languages
-Requires: %{name} = %{version}-%{release} %{py2_prefix}-ipaddr
-%if 0%{?fedora} || 0%{?rhel} > 7
-Requires: python2-protobuf
-%else
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires: protobuf-python
+Requires: %{name} = %{version}-%{release} %{py_prefix}-ipaddr
+%else
+Requires: %{py_prefix}-protobuf
+Obsoletes: python2-criu < 3.10-1
 %endif
 
-%description -n %{py2_prefix}-%{name}
-python-%{name} contains Python bindings for %{name}.
+%description -n %{py_prefix}-%{name}
+%{py_prefix}-%{name} contains Python bindings for %{name}.
 
 %package -n crit
 Summary: CRIU image tool
-Requires: %{py2_prefix}-%{name} = %{version}-%{release}
+Requires: %{py_prefix}-%{name} = %{version}-%{release}
 
 %description -n crit
 crit is a tool designed to decode CRIU binary dump files and show
@@ -81,6 +84,7 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -89,7 +93,7 @@ their content in human-readable form.
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
-CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu
+CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_prefix}
 %if 0%{?fedora} || 0%{?rhel} > 7
 make docs V=1
 %endif
@@ -97,7 +101,7 @@ make docs V=1
 
 %install
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
-make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
+make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_prefix}
 %if 0%{?fedora} || 0%{?rhel} > 7
 # only install documentation on Fedora as it requires asciidoc,
 # which is not available on RHEL7
@@ -139,9 +143,14 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %{_libdir}/pkgconfig/*.pc
 %endif
 
-%files -n %{py2_prefix}-%{name}
+%files -n %{py_prefix}-%{name}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 %{python2_sitelib}/pycriu/*
 %{python2_sitelib}/*egg-info
+%else
+%{python3_sitelib}/pycriu/*
+%{python3_sitelib}/*egg-info
+%endif
 
 %files -n crit
 %{_bindir}/crit
@@ -149,6 +158,10 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Tue Jul 10 2018 Adrian Reber <adrian@lisas.de> - 3.10-1
+- Update to 3.10 (#1599710)
+- Switch to python3
+
 * Wed Jun 06 2018 Adrian Reber <adrian@lisas.de> - 3.9-2
 - Simplify ExclusiveArch now that there is no more F26
 

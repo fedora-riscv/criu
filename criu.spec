@@ -1,4 +1,4 @@
-%if 0%{?fedora} > 27 || 0%{?rhel} > 7
+%if 0%{?fedora} >= 27 || 0%{?rhel} > 7
 %global py_prefix python3
 %else
 %global py_prefix python

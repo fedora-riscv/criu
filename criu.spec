@@ -4,9 +4,13 @@
 %global py_prefix python
 %endif
 
+# With annobin enabled, CRIU does not work anymore. It seems CRIU's
+# parasite code breaks if annobin is enabled.
+%undefine _annotated_build
+
 Name: criu
 Version: 3.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -159,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Jul 11 2018 Adrian Reber <adrian@lisas.de> - 3.10-2
+- Disable annobin as it seems to break CRIU
+
 * Tue Jul 10 2018 Adrian Reber <adrian@lisas.de> - 3.10-1
 - Update to 3.10 (#1599710)
 - Switch to python3

@@ -10,7 +10,7 @@
 
 Name: criu
 Version: 3.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -20,6 +20,8 @@ URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 # https://patchwork.criu.org/patch/8849/mbox/
 Patch1: 1-2-Fix-building-with-4.18.patch
+# Fixes errors with read-only runc
+Patch2: https://github.com/checkpoint-restore/criu/commit/27034e7c64b00a1f2467afb5ebb1d5b9b1a06ce1.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -90,6 +92,7 @@ their content in human-readable form.
 %prep
 %setup -q
 %patch1 -p1
+%patch2 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -163,6 +166,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Mon Jul 16 2018 Adrian Reber <adrian@lisas.de> - 3.10-4
+- Add patch to fix errors with read-only runc
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.10-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 

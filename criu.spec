@@ -10,7 +10,7 @@
 
 Name: criu
 Version: 3.10
-Release: 4%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -43,6 +43,8 @@ BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel l
 %if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
+# Checkpointing containers with a tmpfs requires tar
+Recommends: tar
 %endif
 
 # user-space and kernel changes are only available for x86_64, arm,
@@ -166,6 +168,10 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Tue Oct 30 2018 Adrian Reber <adrian@lisas.de> - 3.10-5
+- Added Recommends: tar
+  It is necessary when checkpointing containers with a tmpfs
+
 * Mon Jul 16 2018 Adrian Reber <adrian@lisas.de> - 3.10-4
 - Add patch to fix errors with read-only runc
 

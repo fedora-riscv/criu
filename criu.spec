@@ -1,7 +1,9 @@
 %if 0%{?fedora} >= 27 || 0%{?rhel} > 7
 %global py_prefix python3
+%global py_binary %{py_prefix}
 %else
 %global py_prefix python
+%global py_binary python2
 %endif
 
 # With annobin enabled, CRIU does not work anymore. It seems CRIU's
@@ -9,8 +11,8 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.10
-Release: 5%{?dist}
+Version: 3.11
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -18,10 +20,6 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-# https://patchwork.criu.org/patch/8849/mbox/
-Patch1: 1-2-Fix-building-with-4.18.patch
-# Fixes errors with read-only runc
-Patch2: https://github.com/checkpoint-restore/criu/commit/27034e7c64b00a1f2467afb5ebb1d5b9b1a06ce1.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -93,8 +91,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -103,7 +99,7 @@ their content in human-readable form.
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
-CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_prefix}
+CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_binary}
 %if 0%{?fedora} || 0%{?rhel} > 7
 make docs V=1
 %endif
@@ -111,7 +107,7 @@ make docs V=1
 
 %install
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
-make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_prefix}
+make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_binary}
 %if 0%{?fedora} || 0%{?rhel} > 7
 # only install documentation on Fedora as it requires asciidoc,
 # which is not available on RHEL7
@@ -168,6 +164,10 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Tue Nov 06 2018 Adrian Reber <adrian@lisas.de> - 3.11-1
+- Updated to 3.11
+- Removed upstreamed patches
+
 * Tue Oct 30 2018 Adrian Reber <adrian@lisas.de> - 3.10-5
 - Added Recommends: tar
   It is necessary when checkpointing containers with a tmpfs

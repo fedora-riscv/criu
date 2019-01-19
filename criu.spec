@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -20,6 +20,7 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Patch0: https://github.com/checkpoint-restore/criu/commit/17271599cc8328c0d4418daaed1caebd123e425e.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -91,6 +92,7 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -164,6 +166,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Sat Jan 19 2019 Adrian Reber <adrian@lisas.de> - 3.11-2
+- Added patch for gcc-9
+
 * Tue Nov 06 2018 Adrian Reber <adrian@lisas.de> - 3.11-1
 - Updated to 3.11
 - Removed upstreamed patches

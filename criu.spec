@@ -16,7 +16,6 @@ Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
-Group: System Environment/Base
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
@@ -59,7 +58,6 @@ Linux in user-space.
 %if 0%{?fedora} || 0%{?rhel} > 7
 %package devel
 Summary: Header files and libraries for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -69,7 +67,6 @@ This package contains header files and libraries for %{name}.
 %package -n %{py_prefix}-%{name}
 %{?python_provide:%python_provide %{py_prefix}-%{name}}
 Summary: Python bindings for %{name}
-Group: Development/Languages
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires: protobuf-python
 Requires: %{name} = %{version}-%{release} %{py_prefix}-ipaddr

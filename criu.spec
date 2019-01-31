@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.11
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.11-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Sat Jan 19 2019 Adrian Reber <adrian@lisas.de> - 3.11-2
 - Added patch for gcc-9
 

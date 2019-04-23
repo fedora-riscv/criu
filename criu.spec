@@ -11,15 +11,15 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.11
-Release: 3%{?dist}
+Version: 3.12
+Release: 0.1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
+# Still using a pre-release tarball
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-Patch0: https://github.com/checkpoint-restore/criu/commit/17271599cc8328c0d4418daaed1caebd123e425e.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -41,8 +41,12 @@ BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel l
 %if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
+BuildRequires: libselinux-devel
 # Checkpointing containers with a tmpfs requires tar
 Recommends: tar
+%if 0%{?fedora}
+BuildRequires: libbsd-devel
+%endif
 %endif
 
 # user-space and kernel changes are only available for x86_64, arm,
@@ -62,6 +66,13 @@ Requires: %{name} = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries for %{name}.
+
+%package libs
+Summary: Libraries for %{name}
+Requires: %{name} = %{version}-%{release}
+
+%description libs
+This package contains the libraries for %{name}
 %endif
 
 %package -n %{py_prefix}-%{name}
@@ -89,7 +100,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -128,13 +138,10 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %endif
 
-%ldconfig_scriptlets
-
 %files
 %{_sbindir}/%{name}
 %doc %{_mandir}/man8/criu.8*
 %if 0%{?fedora} || 0%{?rhel} > 7
-%{_libdir}/*.so.*
 %{_libexecdir}/%{name}
 %endif
 %dir /run/%{name}
@@ -146,6 +153,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %{_includedir}/criu
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
+
+%files libs
+%{_libdir}/*.so.*
 %endif
 
 %files -n %{py_prefix}-%{name}
@@ -163,6 +173,12 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Tue Apr 23 2019 Adrian Reber <adrian@lisas.de> - 3.12-0.1
+- Updated to 3.12 (pre-release)
+- Create libs subpackage
+- Build against SELinux (Fedora and RHEL8)
+- Build against libbsd (Fedora)
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.11-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 

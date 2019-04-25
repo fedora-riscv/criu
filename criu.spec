@@ -12,13 +12,12 @@
 
 Name: criu
 Version: 3.12
-Release: 0.1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
-# Still using a pre-release tarball
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -173,6 +172,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Thu Apr 25 2019 Adrian Reber <adrian@lisas.de> - 3.12-2
+- Updated to official 3.12
+
 * Tue Apr 23 2019 Adrian Reber <adrian@lisas.de> - 3.12-0.1
 - Updated to 3.12 (pre-release)
 - Create libs subpackage

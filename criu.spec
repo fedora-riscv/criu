@@ -58,7 +58,7 @@ criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space.
 
-%if 0%{?fedora} || 0%{?rhel} > 7
+%if 0%{?fedora}
 %package devel
 Summary: Header files and libraries for %{name}
 Requires: %{name} = %{version}-%{release}
@@ -147,7 +147,7 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %{_tmpfilesdir}/%{name}.conf
 %doc README.md COPYING
 
-%if 0%{?fedora} || 0%{?rhel} > 7
+%if 0%{?fedora}
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so

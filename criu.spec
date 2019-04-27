@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -129,8 +129,8 @@ mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE3} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
-%if 0%{?rhel} && 0%{?rhel} <= 7
-# remove devel package
+%if 0%{?rhel}
+# remove devel and libs packages
 rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
 rm $RPM_BUILD_ROOT%{_libdir}/*.so*
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
@@ -140,7 +140,7 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %files
 %{_sbindir}/%{name}
 %doc %{_mandir}/man8/criu.8*
-%if 0%{?fedora} || 0%{?rhel} > 7
+%if 0%{?fedora}
 %{_libexecdir}/%{name}
 %endif
 %dir /run/%{name}
@@ -172,6 +172,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Sat Apr 27 2019 Adrian Reber <adrian@lisas.de> - 3.12-3
+- Correctly exclude libs and devel for RHEL
+
 * Thu Apr 25 2019 Adrian Reber <adrian@lisas.de> - 3.12-2
 - Updated to official 3.12
 

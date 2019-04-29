@@ -12,13 +12,15 @@
 
 Name: criu
 Version: 3.12
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+
+Patch0: https://patch-diff.githubusercontent.com/raw/checkpoint-restore/criu/pull/685.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -99,6 +101,7 @@ their content in human-readable form.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -172,6 +175,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Mon Apr 29 2019 Adrian Reber <adrian@lisas.de> - 3.12-4
+- Applied patch to correctly restore socket()s
+
 * Sat Apr 27 2019 Adrian Reber <adrian@lisas.de> - 3.12-3
 - Correctly exclude libs and devel for RHEL
 

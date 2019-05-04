@@ -29,3 +29,6 @@
     - podman:
         dir: .
         run: ./run-podman-checkpoint-restore.sh
+    - zdtm:
+        dir: .
+        run: ./run-zdtm.sh

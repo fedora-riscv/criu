@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  roles:
+  - role: standard-test-source
+    tags:
+    - classic
+  - role: standard-test-basic
+    tags:
+    - classic
+    required_packages:
+    - podman
+    - curl
+    - jq
+    - checkpolicy
+    - policycoreutils
+    - make
+    - gcc
+    - python3
+    - libnet-devel
+    - protobuf-devel
+    - protobuf-c-devel
+    - python3-devel
+    - libnl3-devel
+    - libcap-devel
+    - libaio-devel
+    - python3-pyyaml
+    - python3-protobuf
+    tests:
+    - podman:
+        dir: .
+        run: ./run-podman-checkpoint-restore.sh

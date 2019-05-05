@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 7%{?dist}
+Release: 8%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -175,7 +175,7 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
-* Sat May 04 2019 Adrian Reber <adrian@lisas.de> - 3.12-7
+* Sat May 04 2019 Adrian Reber <adrian@lisas.de> - 3.12-8
 - Patch for socket labelling has changed upstream
 
 * Mon Apr 29 2019 Adrian Reber <adrian@lisas.de> - 3.12-4

@@ -1,0 +1,40 @@
+From b9e9e3903c78ba5d243b4176e82bf4b82342cb6a Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Sat, 4 May 2019 15:27:32 +0200
+Subject: [PATCH] lsm: fix compiler error on Fedora 30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This fixes following compiler error:
+
+criu/lsm.c: In function ‘dump_xattr_security_selinux’:
+criu/include/log.h:51:2: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+   51 |  print_on_level(LOG_ERROR,     \
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   52 |          "Error (%s:%d): " LOG_PREFIX fmt,  \
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   53 |          __FILE__, __LINE__, ##__VA_ARGS__)
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+criu/lsm.c:166:3: note: in expansion of macro ‘pr_err’
+  166 |   pr_err("Reading xattr %s to FD %d failed\n", ctx, fd);
+      |   ^~~~~~
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ criu/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/lsm.c b/criu/lsm.c
+index 5921138392..420585ba4f 100644
+--- a/criu/lsm.c
++++ b/criu/lsm.c
+@@ -175,7 +175,7 @@ int dump_xattr_security_selinux(int fd, FdinfoEntry *e)
+ 	/* Get the size of the xattr. */
+ 	len = fgetxattr(fd, "security.selinux", ctx, 0);
+ 	if (len == -1) {
+-		pr_err("Reading xattr %s to FD %d failed\n", ctx, fd);
++		pr_err("Reading xattr security.selinux from FD %d failed\n", fd);
+ 		return -1;
+ 	}
+ 

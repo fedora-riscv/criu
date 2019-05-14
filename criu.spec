@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 10%{?dist}
+Release: 11%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Tue May 14 2019 Adrian Reber <adrian@lisas.de> - 3.12-11
+- Test different decision_context in gating.yaml
+
 * Mon May 13 2019 Adrian Reber <adrian@lisas.de> - 3.12-10
 - Added additional fixup patches for the socket labelling
 

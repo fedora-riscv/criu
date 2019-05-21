@@ -12,10 +12,13 @@ ping localhost -c 3 -4
 ping localhost -c 3 -6
 ping localhost -c 3
 
+ip route save > /tmp/test
+echo $?
+file /tmp/test
+rpm -q iproute
+
 # These zdtm tests are skipped because they fail only in CI system
 EXCLUDES=" \
-	-x zdtm/static/netns_sub \
-	-x zdtm/static/netns_sub_veth \
 	-x zdtm/static/socket-tcp-reseted \
 	-x zdtm/static/socket-tcp-closed \
 	-x zdtm/static/socket-tcp-closed-last-ack \

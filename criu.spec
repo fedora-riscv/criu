@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 11%{?dist}
+Release: 12%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space

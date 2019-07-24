@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 12%{?dist}
+Release: 13%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.12-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Tue May 14 2019 Adrian Reber <adrian@lisas.de> - 3.12-11
 - Test different decision_context in gating.yaml
 

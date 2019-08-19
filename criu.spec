@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.12
-Release: 13%{?dist}
+Release: 14%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 3.12-14
+- Rebuilt for Python 3.8
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.12-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 

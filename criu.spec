@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.13
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -26,6 +26,7 @@ BuildRequires: perl
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
 Source2: crit.1
+Source2: compel.1
 # The patch aio-fix.patch is needed as RHEL7
 # doesn't do "nr_events *= 2" in ioctx_alloc().
 Patch100: aio-fix.patch
@@ -123,6 +124,7 @@ make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 %else
 install -p -m 644  -D %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
 install -p -m 644  -D %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man1/crit.1
+install -p -m 644  -D %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
 %endif
 
 mkdir -p %{buildroot}%{_tmpfilesdir}
@@ -176,7 +178,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
-* Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-1
+* Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-3
 - Update to 3.13 (#1751146)
 - Drop upstreamed patches
 - Drop static library

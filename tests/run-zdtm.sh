@@ -43,6 +43,8 @@ run_test() {
 
 RESULT=42
 
+# F30, F29 do not provide python -> python3 symlink
+test -e /usr/bin/python || ln -sf /usr/bin/python3 /usr/bin/python
 python -V
 
 # this socket brakes CRIU's test cases

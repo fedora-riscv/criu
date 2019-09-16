@@ -26,7 +26,7 @@ BuildRequires: perl
 # zcat /usr/share/man/man8/criu.8.gz > criu.8
 Source1: criu.8
 Source2: crit.1
-Source2: compel.1
+Source3: compel.1
 # The patch aio-fix.patch is needed as RHEL7
 # doesn't do "nr_events *= 2" in ioctx_alloc().
 Patch100: aio-fix.patch

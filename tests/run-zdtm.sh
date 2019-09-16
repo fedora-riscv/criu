@@ -26,9 +26,12 @@ EXCLUDES=" \
 	-x zdtm/static/socket-tcp4v6-closed \
 	-x zdtm/static/maps01 \
 	-x zdtm/static/maps04 \
+	-x zdtm/static/cgroup04 \
+	-x zdtm/static/cgroup_ifpriomap \
+	-x zdtm/static/netns_sub \
+	-x zdtm/static/netns_sub_veth \
 	-x zdtm/static/file_locks01 \
 	-x zdtm/static/cgroup02 "
-
 
 run_test() {
 	./zdtm.py run --criu-bin /usr/sbin/criu ${EXCLUDES} \
@@ -40,8 +43,7 @@ run_test() {
 
 RESULT=42
 
-echo "Create python link to python3 for zdtm"
-ln -s /usr/bin/python3 /usr/bin/python
+python -V
 
 # this socket brakes CRIU's test cases
 rm -f /var/lib/sss/pipes/nss

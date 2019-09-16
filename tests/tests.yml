@@ -26,9 +26,6 @@
     - python3-pyyaml
     - python3-protobuf
     tests:
-    - podman:
-        dir: .
-        run: ./run-podman-checkpoint-restore.sh
     - zdtm:
         dir: .
         run: ./run-zdtm.sh

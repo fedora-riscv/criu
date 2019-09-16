@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.13
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -32,7 +32,7 @@ Source3: compel.1
 Patch100: aio-fix.patch
 %endif
 
-Source3: criu-tmpfiles.conf
+Source4: criu-tmpfiles.conf
 
 BuildRequires: gcc
 BuildRequires: systemd
@@ -128,7 +128,7 @@ install -p -m 644  -D %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
 %endif
 
 mkdir -p %{buildroot}%{_tmpfilesdir}
-install -m 0644 %{SOURCE3} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -m 0644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
 %if 0%{?rhel}
@@ -178,7 +178,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
-* Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-3
+* Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-4
 - Update to 3.13 (#1751146)
 - Drop upstreamed patches
 - Drop static library

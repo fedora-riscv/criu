@@ -11,19 +11,14 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.12
-Release: 14%{?dist}
+Version: 3.13
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
 Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
-
-Patch0: https://patch-diff.githubusercontent.com/raw/checkpoint-restore/criu/pull/685.patch
-Patch1: https://github.com/checkpoint-restore/criu/commit/1e84cb90b63bce841376140a7a80107e5ec1e1a8.patch
-Patch2: https://github.com/checkpoint-restore/criu/commit/80d90c5c59e9477d8a0c9eb727a0fc1bec2b01ea.patch
-Patch3: https://github.com/checkpoint-restore/criu/commit/b9e9e3903c78ba5d243b4176e82bf4b82342cb6a.patch
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -104,10 +99,6 @@ their content in human-readable form.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
@@ -146,9 +137,13 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 %endif
 
+# remove static lib
+rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
+
 %files
 %{_sbindir}/%{name}
 %doc %{_mandir}/man8/criu.8*
+%doc %{_mandir}/man1/compel.1*
 %if 0%{?fedora}
 %{_libexecdir}/%{name}
 %endif
@@ -181,6 +176,12 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 
 %changelog
+* Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-1
+- Update to 3.13 (#1751146)
+- Drop upstreamed patches
+- Drop static library
+- Add compel man-page
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 3.12-14
 - Rebuilt for Python 3.8
 

@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.13
-Release: 5%{?dist}
+Release: 6%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -178,6 +178,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.13-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Mon Sep 16 2019 Adrian Reber <adrian@lisas.de> - 3.13-5
 - Update to 3.13 (#1751146)
 - Drop upstreamed patches

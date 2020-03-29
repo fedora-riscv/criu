@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.13
-Release: 6%{?dist}
+Release: 7%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -31,6 +31,8 @@ Source3: compel.1
 # doesn't do "nr_events *= 2" in ioctx_alloc().
 Patch100: aio-fix.patch
 %endif
+
+Patch101: cr-service-fix.patch
 
 Source4: criu-tmpfiles.conf
 
@@ -105,6 +107,8 @@ their content in human-readable form.
 %patch100 -p1
 %endif
 
+%patch101 -p1
+
 %build
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
@@ -178,6 +182,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Sun Mar 29 2020 Andrei Vagin <avagin@gmail.com> - 3.13-7
+- Added patch for gcc-10
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.13-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 

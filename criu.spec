@@ -11,8 +11,8 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.13
-Release: 7%{?dist}
+Version: 3.14
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -32,8 +32,6 @@ Source3: compel.1
 Patch100: aio-fix.patch
 %endif
 
-Patch101: cr-service-fix.patch
-
 Source4: criu-tmpfiles.conf
 
 BuildRequires: gcc
@@ -44,6 +42,7 @@ BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel l
 BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel
+BuildRequires: gnutls-devel
 # Checkpointing containers with a tmpfs requires tar
 Recommends: tar
 %if 0%{?fedora}
@@ -106,8 +105,6 @@ their content in human-readable form.
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1
 %endif
-
-%patch101 -p1
 
 %build
 # %{?_smp_mflags} does not work
@@ -182,6 +179,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Wed Apr 29 2020 Adrian Reber <adrian@lisas.de> - 3.14-1
+- Update to 3.14 (#1829399)
+
 * Sun Mar 29 2020 Andrei Vagin <avagin@gmail.com> - 3.13-7
 - Added patch for gcc-10
 

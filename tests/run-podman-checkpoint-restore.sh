@@ -4,30 +4,6 @@ set -eux
 
 ls -la
 
-echo "Load additional SELinux policy for checkpointing"
-
-# Add missing selinux policy
-cat << EOF > criu.te
-
-module criu 1.0;
-
-require {
- type container_t;
- type container_var_lib_t;
- type sysctl_kernel_ns_last_pid_t;
- class file { append write };
-}
-
-allow container_t sysctl_kernel_ns_last_pid_t:file write;
-allow container_t container_var_lib_t:file append;
-EOF
-
-cat criu.te
-
-checkmodule -M -m criu.te -o criu.mod
-semodule_package -o criu.pp -m criu.mod
-#semodule -i criu.pp
-
 echo "Start container with tomcat"
 podman --log-level debug run --tmpfs /tmp --tmpfs /usr/local/tomcat/logs -d docker://docker.io/yovfiatbeb/podman-criu-test
 

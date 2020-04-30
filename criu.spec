@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.14
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -179,6 +179,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-2
+- Rebuild for CI fixes
+
 * Wed Apr 29 2020 Adrian Reber <adrian@lisas.de> - 3.14-1
 - Update to 3.14 (#1829399)
 

@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.14
-Release: 2%{?dist}
+Release: 3%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -43,6 +43,7 @@ BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel
 BuildRequires: gnutls-devel
+BuildRequires: nftables-devel
 # Checkpointing containers with a tmpfs requires tar
 Recommends: tar
 %if 0%{?fedora}
@@ -179,6 +180,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-3
+- BuildRequire nftables-devel for working CI
+
 * Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-2
 - Rebuild for CI fixes
 

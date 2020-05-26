@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.14
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -180,6 +180,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 3.14-4
+- Rebuilt for Python 3.9
+
 * Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-3
 - BuildRequire nftables-devel for working CI
 

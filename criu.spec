@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.14
-Release: 5%{?dist}
+Release: 6%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -108,6 +108,10 @@ their content in human-readable form.
 %endif
 
 %build
+# This package calls LD directly without specifying the LTO plugins.  Until
+# that is fixed, disable LTO.
+%define _lto_cflags %{nil}
+
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_binary}
@@ -180,6 +184,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Tue Jul 14 2020 Jeff Law <law@redhat.com> - 3.14-6
+- Disable LTO
+
 * Sun Jun 14 2020 Adrian Reber <adrian@lisas.de> - 3.14-5
 - Rebuilt for protobuf 3.12
 

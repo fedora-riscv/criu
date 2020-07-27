@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.14
-Release: 6%{?dist}
+Release: 7%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -184,6 +184,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.14-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Tue Jul 14 2020 Jeff Law <law@redhat.com> - 3.14-6
 - Disable LTO
 

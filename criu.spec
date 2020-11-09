@@ -11,7 +11,7 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.14
+Version: 3.15
 Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
@@ -179,6 +179,30 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Wed Nov 04 2020 Adrian Reber <adrian@lisas.de> - 3.15-1
+- Update to 3.15
+
+* Wed Sep 23 2020 Adrian Reber <adrian@lisas.de> - 3.14-8
+- Rebuilt for protobuf 3.13
+
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.14-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Tue Jul 14 2020 Jeff Law <law@redhat.com> - 3.14-6
+- Disable LTO
+
+* Sun Jun 14 2020 Adrian Reber <adrian@lisas.de> - 3.14-5
+- Rebuilt for protobuf 3.12
+
+* Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 3.14-4
+- Rebuilt for Python 3.9
+
+* Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-3
+- BuildRequire nftables-devel for working CI
+
+* Thu Apr 30 2020 Adrian Reber <adrian@lisas.de> - 3.14-2
+- Rebuild for CI fixes
+
 * Wed Apr 29 2020 Adrian Reber <adrian@lisas.de> - 3.14-1
 - Update to 3.14 (#1829399)
 

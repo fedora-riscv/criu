@@ -11,8 +11,8 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.14
-Release: 8%{?dist}
+Version: 3.15
+Release: 1%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -184,6 +184,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Wed Nov 04 2020 Adrian Reber <adrian@lisas.de> - 3.15-1
+- Update to 3.15
+
 * Wed Sep 23 2020 Adrian Reber <adrian@lisas.de> - 3.14-8
 - Rebuilt for protobuf 3.13
 

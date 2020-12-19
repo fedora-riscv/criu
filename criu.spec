@@ -50,6 +50,7 @@ Recommends: tar
 BuildRequires: libbsd-devel
 %endif
 %endif
+BuildRequires: make
 
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x

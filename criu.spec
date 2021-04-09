@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.15
-Release: 3%{?dist}
+Release: 4%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -185,6 +185,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Fri Apr 09 2021 Adrian Reber <adrian@lisas.de> - 3.15-4
+- Test for testing
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.15-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 

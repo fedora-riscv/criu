@@ -4,19 +4,6 @@ set -x
 
 uname -a
 
-# Two IPv6 related tests are failing in CI, not sure why.
-echo "Network setup"
-cat /etc/hosts
-ip a
-ping localhost -c 3 -4
-ping localhost -c 3 -6
-ping localhost -c 3
-
-ip route save > /tmp/test
-echo $?
-file /tmp/test
-rpm -q iproute
-
 # These zdtm tests are skipped because they fail only in CI system
 EXCLUDES=" \
 	-x zdtm/static/socket-tcp-reseted \

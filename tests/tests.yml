@@ -26,7 +26,11 @@
     - nftables-devel
     - python3-pyyaml
     - python3-protobuf
+    - python-unversioned-command
     tests:
     - zdtm:
         dir: .
         run: ./run-zdtm.sh
+    - podman:
+        dir: .
+        run: ./run-podman-checkpoint-restore.sh

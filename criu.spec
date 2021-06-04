@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.15
-Release: 4%{?dist}
+Release: 5%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
@@ -185,6 +185,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 
 %changelog
+* Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 3.15-5
+- Rebuilt for Python 3.10
+
 * Fri Apr 09 2021 Adrian Reber <adrian@lisas.de> - 3.15-4
 - Test for testing
 

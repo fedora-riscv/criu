@@ -27,6 +27,7 @@ BuildRequires: perl
 Source1: criu.8
 Source2: crit.1
 Source3: compel.1
+Source4: criu-ns.1
 # The patch aio-fix.patch is needed as RHEL7
 # doesn't do "nr_events *= 2" in ioctx_alloc().
 Patch100: aio-fix.patch
@@ -140,6 +141,7 @@ make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 install -p -m 644  -D %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
 install -p -m 644  -D %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man1/crit.1
 install -p -m 644  -D %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
+install -p -m 644  -D %{SOURCE4} $RPM_BUILD_ROOT%{_mandir}/man1/criu-ns.1
 %endif
 
 sed -e "s,/usr/bin/env python,%{_bindir}/%{py_binary},g" -i $RPM_BUILD_ROOT/%{_sbindir}/criu-ns

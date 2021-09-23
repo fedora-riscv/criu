@@ -12,13 +12,13 @@
 
 Name: criu
 Version: 3.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Provides: crtools = %{version}-%{release}
 Obsoletes: crtools <= 1.0-2
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
-Source0: http://download.openvz.org/criu/criu-%{version}.tar.bz2
+Source0: https://github.com/checkpoint-restore/criu/archive/v%{version}/criu-%{version}.tar.gz
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
@@ -100,6 +100,14 @@ Requires: %{py_prefix}-%{name} = %{version}-%{release}
 crit is a tool designed to decode CRIU binary dump files and show
 their content in human-readable form.
 
+%package -n criu-ns
+Summary: Tool to run CRIU in different namespaces
+Requires: %{name} = %{version}-%{release}
+
+%description -n criu-ns
+The purpose of the criu-ns wrapper script is to enable restoring a process
+tree that might require a specific PID that is already used on the system.
+This script can help to workaround the so called "PID mismatch" problem.
 
 %prep
 %setup -q
@@ -134,8 +142,7 @@ install -p -m 644  -D %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man1/crit.1
 install -p -m 644  -D %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
 %endif
 
-rm -f $RPM_BUILD_ROOT/%{_sbindir}/criu-ns
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/criu-ns.1
+sed -e "s,/usr/bin/env python,%{_bindir}/%{py_binary},g" -i $RPM_BUILD_ROOT/%{_sbindir}/criu-ns
 
 mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
@@ -186,8 +193,15 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %{_bindir}/crit
 %doc %{_mandir}/man1/crit.1*
 
+%files -n criu-ns
+%{_sbindir}/criu-ns
+%doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Thu Sep 23 2021 Adrian Reber <adrian@lisas.de> - 3.16-2
+- Include criu-ns sub package
+- Use new github Source0 location
+
 * Wed Sep 22 2021 Adrian Reber <adrian@lisas.de> - 3.16-1
 - Update to 3.16
 

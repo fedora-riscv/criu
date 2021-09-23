@@ -217,7 +217,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.15-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
-* Wed Jan 13 09:45:16 CET 2021 Adrian Reber <adrian@lisas.de> - 3.15-2
+* Wed Jan 13 2021 Adrian Reber <adrian@lisas.de> - 3.15-2
 - Rebuilt for protobuf 3.14
 
 * Wed Nov 04 2020 Adrian Reber <adrian@lisas.de> - 3.15-1

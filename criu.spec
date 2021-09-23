@@ -33,7 +33,7 @@ Source4: criu-ns.1
 Patch100: aio-fix.patch
 %endif
 
-Source4: criu-tmpfiles.conf
+Source5: criu-tmpfiles.conf
 
 BuildRequires: gcc
 BuildRequires: systemd
@@ -147,7 +147,7 @@ install -p -m 644  -D %{SOURCE4} $RPM_BUILD_ROOT%{_mandir}/man1/criu-ns.1
 sed -e "s,/usr/bin/env python,%{_bindir}/%{py_binary},g" -i $RPM_BUILD_ROOT/%{_sbindir}/criu-ns
 
 mkdir -p %{buildroot}%{_tmpfilesdir}
-install -m 0644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
 %if 0%{?rhel}

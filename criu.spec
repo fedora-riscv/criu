@@ -12,9 +12,7 @@
 
 Name: criu
 Version: 3.16
-Release: 2%{?dist}
-Provides: crtools = %{version}-%{release}
-Obsoletes: crtools <= 1.0-2
+Release: 3%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -44,11 +42,11 @@ BuildRequires: asciidoc xmlto
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel
 BuildRequires: gnutls-devel
-BuildRequires: nftables-devel
 # Checkpointing containers with a tmpfs requires tar
 Recommends: tar
 %if 0%{?fedora}
 BuildRequires: libbsd-devel
+BuildRequires: nftables-devel
 %endif
 %endif
 BuildRequires: make
@@ -63,7 +61,7 @@ criu is the user-space part of Checkpoint/Restore in User-space
 (CRIU), a project to implement checkpoint/restore functionality for
 Linux in user-space.
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %package devel
 Summary: Header files and libraries for %{name}
 Requires: %{name} = %{version}-%{release}
@@ -150,7 +148,7 @@ mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/
 
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 # remove devel and libs packages
 rm -rf $RPM_BUILD_ROOT%{_includedir}/criu
 rm $RPM_BUILD_ROOT%{_libdir}/*.so*
@@ -165,14 +163,14 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %{_sbindir}/%{name}
 %doc %{_mandir}/man8/criu.8*
 %doc %{_mandir}/man1/compel.1*
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %{_libexecdir}/%{name}
 %endif
 %dir /run/%{name}
 %{_tmpfilesdir}/%{name}.conf
 %doc README.md COPYING
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %files devel
 %{_includedir}/criu
 %{_libdir}/*.so
@@ -200,6 +198,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Tue Oct 05 2021 Adrian Reber <adrian@lisas.de> - 3.16-3
+- Fix build on RHEL 8
+
 * Thu Sep 23 2021 Adrian Reber <adrian@lisas.de> - 3.16-2
 - Include criu-ns sub package
 - Use new github Source0 location

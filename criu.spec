@@ -11,8 +11,8 @@
 %undefine _annotated_build
 
 Name: criu
-Version: 3.16
-Release: 3%{?dist}
+Version: 3.16.1
+Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -204,6 +204,10 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Thu Oct 14 2021 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-1
+- Update to 3.16.1
+- Add protobuf-c as required dependency (#2013775)
+
 * Tue Oct 05 2021 Adrian Reber <adrian@lisas.de> - 3.16-3
 - Fix build on RHEL 8
 

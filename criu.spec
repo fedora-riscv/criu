@@ -150,8 +150,6 @@ install -p -m 644  -D %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
 install -p -m 644  -D %{SOURCE4} $RPM_BUILD_ROOT%{_mandir}/man1/criu-ns.1
 %endif
 
-sed -e "s,/usr/bin/env python,%{_bindir}/%{py_binary},g" -i $RPM_BUILD_ROOT/%{_sbindir}/criu-ns
-
 mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}/run/%{name}/

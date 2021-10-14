@@ -18,6 +18,11 @@ License: GPLv2
 URL: http://criu.org/
 Source0: https://github.com/checkpoint-restore/criu/archive/v%{version}/criu-%{version}.tar.gz
 
+# Add protobuf-c as a dependency.
+# We use this patch because the protobuf-c package name
+# in RPM and DEB is different.
+Patch99: criu.pc.patch
+
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires: perl
 # RHEL has no asciidoc; take man-page from Fedora 26
@@ -26,6 +31,7 @@ Source1: criu.8
 Source2: crit.1
 Source3: compel.1
 Source4: criu-ns.1
+
 # The patch aio-fix.patch is needed as RHEL7
 # doesn't do "nr_events *= 2" in ioctx_alloc().
 Patch100: aio-fix.patch
@@ -110,6 +116,8 @@ This script can help to workaround the so called "PID mismatch" problem.
 
 %prep
 %setup -q
+
+%patch99 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %patch100 -p1

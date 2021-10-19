@@ -19,9 +19,9 @@ index 33986d10d..bcced5033 100644
  Name: CRIU
  Description: RPC library for userspace checkpoint and restore
  Version: @version@
-+Requires.private: protobuf-c
++Requires.private: libprotobuf-c
  Libs: -L${libdir} -lcriu
  Cflags: -I${includedir}
--- 
+--
 2.31.1
 

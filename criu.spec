@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.16.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -204,6 +204,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Sat Nov 06 2021 Adrian Reber <adrian@lisas.de> - 3.16.1-4
+- Rebuilt for protobuf 3.19.0
+
 * Mon Oct 25 2021 Adrian Reber <adrian@lisas.de> - 3.16.1-3
 - Rebuilt for protobuf 3.18.1
 

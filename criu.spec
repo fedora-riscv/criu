@@ -44,7 +44,7 @@ BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel libcap-devel
 %if 0%{?fedora} || 0%{?rhel} > 7
-BuildRequires: asciidoc xmlto
+BuildRequires: asciidoctor
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel
 BuildRequires: gnutls-devel

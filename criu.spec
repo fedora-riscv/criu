@@ -213,7 +213,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 * Mon Oct 25 2021 Adrian Reber <adrian@lisas.de> - 3.16.1-3
 - Rebuilt for protobuf 3.18.1
 
-* Thu Oct 19 2021 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-2
+* Tue Oct 19 2021 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-2
 - Update protobuf-c to libprotobuf-c requirement
 
 * Thu Oct 14 2021 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-1

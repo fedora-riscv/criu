@@ -1,0 +1,37 @@
+From d6d76e07bb7f4532bb49c1fce99f3fef7fcd87c6 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Mon, 18 Oct 2021 18:43:14 +0300
+Subject: [PATCH 030/120] criu-ns: make pidns init first do setsid
+
+We see that on criu-ns dump/restore/dump of the process which initially
+was not a session leader (with --shell-job option) we see sid == 0 for
+it and fail with something like:
+
+Error (criu/cr-dump.c:1333): A session leader of 41585(41585) is outside of its pid namespace
+
+Note: We should not dump processes with sid 0 (even with --shell-job) as
+on restore we can can put such processes from multiple sessions into
+one, which is wrong.
+
+Fixes: #232
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ scripts/criu-ns | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/criu-ns b/scripts/criu-ns
+index d76db3606..72c0753e5 100755
+--- a/scripts/criu-ns
++++ b/scripts/criu-ns
+@@ -102,6 +102,7 @@ def wrap_restore():
+ 
+     criu_pid = os.fork()
+     if criu_pid == 0:
++        os.setsid()
+         _mount_new_proc()
+         run_criu(restore_args)
+ 
+-- 
+2.34.1
+

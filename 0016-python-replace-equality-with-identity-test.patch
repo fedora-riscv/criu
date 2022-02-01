@@ -1,0 +1,117 @@
+From e108510070507deb370ef0c857eadc5a9e855a1c Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 21:36:10 +0100
+Subject: [PATCH 016/120] python: replace equality with identity test
+
+PEP8 recommends for comparisons to singletons like None to always be
+done with 'is' or 'is not', never the equality operators.
+
+https://python.org/dev/peps/pep-0008/#programming-recommendations
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/criu_coredump/coredump.py |  6 +++---
+ test/exhaustive/pipe.py            | 12 ++++++------
+ test/exhaustive/unix.py            |  2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/coredump/criu_coredump/coredump.py b/coredump/criu_coredump/coredump.py
+index 9b4aad5ff..a9a8bb27c 100644
+--- a/coredump/criu_coredump/coredump.py
++++ b/coredump/criu_coredump/coredump.py
+@@ -725,10 +725,10 @@ class coredump_generator:
+             # and choose appropriate.
+             page_mem = self._get_page(pid, page_no)
+ 
+-            if f != None:
++            if f is not None:
+                 page = f.read(PAGESIZE)
+ 
+-            if page_mem != None:
++            if page_mem is not None:
+                 # Page from pages.img has higher priority
+                 # than one from maped file on disk.
+                 page = page_mem
+@@ -755,7 +755,7 @@ class coredump_generator:
+             buf += page[n_skip:n_skip + n_read]
+ 
+         # Don't forget to close file.
+-        if f != None:
++        if f is not None:
+             f.close()
+ 
+         return buf
+diff --git a/test/exhaustive/pipe.py b/test/exhaustive/pipe.py
+index fdadc480c..7f1c53d34 100755
+--- a/test/exhaustive/pipe.py
++++ b/test/exhaustive/pipe.py
+@@ -75,7 +75,7 @@ def get_pipe_rw(pid, fd):
+ 
+ def check_pipe_y(pid, fd, rw, inos):
+     ino = get_pipe_ino(pid, fd)
+-    if ino == None:
++    if ino is None:
+         return 'missing '
+     if not inos.has_key(fd):
+         inos[fd] = ino
+@@ -89,7 +89,7 @@ def check_pipe_y(pid, fd, rw, inos):
+ 
+ def check_pipe_n(pid, fd):
+     ino = get_pipe_ino(pid, fd)
+-    if ino == None:
++    if ino is None:
+         return None
+     else:
+         return 'present '
+@@ -102,7 +102,7 @@ def check_pipe_end(kids, fd, comb, rw, inos):
+             res = check_pipe_y(t_pid, fd, rw, inos)
+         else:
+             res = check_pipe_n(t_pid, fd)
+-        if res != None:
++        if res is not None:
+             return res + 'kid(%d)' % t_nr
+         t_nr += 1
+     return None
+@@ -111,7 +111,7 @@ def check_pipe_end(kids, fd, comb, rw, inos):
+ def check_pipe(kids, fds, comb, inos):
+     for e in (0, 1):  # 0 == R, 1 == W, see get_pipe_rw()
+         res = check_pipe_end(kids, fds[e], comb[e], e, inos)
+-        if res != None:
++        if res is not None:
+             return res + 'end(%d)' % e
+     return None
+ 
+@@ -124,7 +124,7 @@ def check_pipes(kids, pipes, comb):
+     p_inos = {}
+     for p_fds in pipes:
+         res = check_pipe(kids, p_fds, comb[p_nr], p_inos)
+-        if res != None:
++        if res is not None:
+             return res + 'pipe(%d)' % p_nr
+         p_nr += 1
+ 
+@@ -182,7 +182,7 @@ def make_comb(comb, opts, status_pipe):
+         if v == '0':
+             print('\tCheck pipes')
+             res = check_pipes(kids, pipes, comb)
+-            if res == None:
++            if res is None:
+                 ex_code = 0
+             else:
+                 print('\tFAIL %s' % res)
+diff --git a/test/exhaustive/unix.py b/test/exhaustive/unix.py
+index 98dbbb7b0..114bf957b 100755
+--- a/test/exhaustive/unix.py
++++ b/test/exhaustive/unix.py
+@@ -304,7 +304,7 @@ class sock:
+         for psk in st.sockets:
+             if psk == self:
+                 continue
+-            if psk.peer != None and psk.peer != self.sk_id:
++            if psk.peer is not None and psk.peer != self.sk_id:
+                 # Peer by someone else, can do nothing
+                 continue
+ 
+-- 
+2.34.1
+

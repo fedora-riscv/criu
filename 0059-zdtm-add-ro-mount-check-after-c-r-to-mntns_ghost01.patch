@@ -1,0 +1,47 @@
+From d137057e215de10ee772852126075ce9575e908e Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 30 Nov 2021 19:03:29 +0300
+Subject: [PATCH 059/120] zdtm: add ro-mount check after c/r to mntns_ghost01
+
+This is a test for "ghost/mount: allocate remounted_rw in shmem to get
+info from other processes" patch, without the patch test fails with:
+
+  ############# Test zdtm/static/mntns_ghost01 FAIL at result check ##############
+  Test output: ================================
+  16:15:19.607:     5: ERR: mntns_ghost01.c:95: open for write on rofs -> 7 (errno = 11 (Resource temporarily unavailable))
+  16:15:19.607:     4: FAIL: mntns_ghost01.c:121: Test died (errno = 11 (Resource temporarily unavailable))
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ test/zdtm/static/mntns_ghost01.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/test/zdtm/static/mntns_ghost01.c b/test/zdtm/static/mntns_ghost01.c
+index 20397d543..2cc2270dd 100644
+--- a/test/zdtm/static/mntns_ghost01.c
++++ b/test/zdtm/static/mntns_ghost01.c
+@@ -6,6 +6,7 @@
+ #include <sched.h>
+ #include <sys/wait.h>
+ #include <limits.h>
++#include <errno.h>
+ 
+ #include "zdtmtst.h"
+ 
+@@ -89,6 +90,13 @@ int main(int argc, char **argv)
+ 			return 1;
+ 		}
+ 
++		fd = open(ghost_path, O_CREAT | O_WRONLY, 0600);
++		if (fd >= 0 || errno != EROFS) {
++			pr_perror("open for write on rofs -> %d", fd);
++			close(fd);
++			return 1;
++		}
++
+ 		return 0;
+ 	}
+ 
+-- 
+2.34.1
+

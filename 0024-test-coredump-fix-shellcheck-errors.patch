@@ -1,0 +1,51 @@
+From e56c944db74f9c3b033274271f7a82fef6fed815 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Mon, 6 Sep 2021 00:20:58 +0100
+Subject: [PATCH 024/120] test/coredump: fix shellcheck errors
+
+ShellCheck reports the following problems:
+
+SC2086: Double quote to prevent globbing and word splitting.
+SC2035: Use ./*glob* or -- *glob* so names with dashes won't become options.
+SC1091: Not following: ../env.sh was not specified as input (see shellcheck -x).
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ test/others/criu-coredump/test.sh | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/test/others/criu-coredump/test.sh b/test/others/criu-coredump/test.sh
+index 62d9f7edc..dd774e298 100755
+--- a/test/others/criu-coredump/test.sh
++++ b/test/others/criu-coredump/test.sh
+@@ -1,4 +1,8 @@
+-source ../env.sh
++#!/bin/bash
++
++set -x
++# shellcheck disable=SC1091
++source ../env.sh || exit 1
+ 
+ function gen_imgs {
+ 	PID=$(../loop)
+@@ -9,7 +13,7 @@ function gen_imgs {
+ 		exit 1
+ 	fi
+ 
+-	images_list=$(ls -1 *.img)
++	images_list=$(ls -1 ./*.img)
+ 	if [ -z "$images_list" ]; then
+ 		echo "Failed to generate images"
+ 		exit 1
+@@ -32,7 +36,7 @@ function run_test {
+ 	for x in $cores
+ 	do
+ 		echo "=== try readelf $x"
+-		readelf -a $x || exit $?
++		readelf -a "$x" || exit $?
+ 		echo "=== done"
+ 	done
+ 
+-- 
+2.34.1
+

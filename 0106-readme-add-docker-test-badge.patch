@@ -1,0 +1,25 @@
+From 3caa619b34653a0c32dd3116c9f6bf0249d9c30d Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+Date: Mon, 10 Jan 2022 10:37:19 +0000
+Subject: [PATCH 106/120] readme: add docker test badge
+
+Signed-off-by: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+---
+ README.md | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index fd86b2c15..6b86cac9e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,6 @@
+ ![X86_64 GCC Test](https://github.com/checkpoint-restore/criu/workflows/X86_64%20GCC%20Test/badge.svg)
+-![Podman Test](https://github.com/checkpoint-restore/criu/workflows/Podman%20Test/badge.svg)
++![Docker Test](https://github.com/checkpoint-restore/criu/actions/workflows/docker-test.yml/badge.svg)
++![Podman Test](https://github.com/checkpoint-restore/criu/actions/workflows/podman-test.yml/badge.svg)
+ [![CircleCI](https://circleci.com/gh/checkpoint-restore/criu.svg?style=svg)](https://circleci.com/gh/checkpoint-restore/criu)
+ 
+ <p align="center"><img src="https://criu.org/w/images/1/1c/CRIU.svg" width="256px"/></p>
+-- 
+2.34.1
+

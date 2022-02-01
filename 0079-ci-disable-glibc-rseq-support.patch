@@ -1,0 +1,55 @@
+From d99def7dcfa938918368c91021f72a77f738bc61 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+Date: Fri, 17 Dec 2021 03:01:49 +0000
+Subject: [PATCH 079/120] ci: disable glibc rseq support
+
+This patch sets the glibc.pthread.rseq tunable [1] to disable rseq
+support in glibc as a temporary solution for the problem described in
+[2]. This would allow us to run CI tests until CRIU has rseq support.
+
+This commit also disables the rpc tests as they fail even
+when GLIBC_TUNABLES is set.
+
+[1] https://sourceware.org/git/?p=glibc.git;a=commit;h=e3e589829d16af9f7e73c7b70f74f3c5d5003e45
+[2] https://github.com/checkpoint-restore/criu/issues/1696
+
+Signed-off-by: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+---
+ scripts/build/Dockerfile.fedora.tmpl | 3 +++
+ scripts/ci/run-ci-tests.sh           | 7 ++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/build/Dockerfile.fedora.tmpl b/scripts/build/Dockerfile.fedora.tmpl
+index 9d3bb0f87..fd4ba4aef 100644
+--- a/scripts/build/Dockerfile.fedora.tmpl
++++ b/scripts/build/Dockerfile.fedora.tmpl
+@@ -1,5 +1,8 @@
+ ARG CC=gcc
+ 
++# FIXME: Temporary solution for https://github.com/checkpoint-restore/criu/issues/1696
++ENV GLIBC_TUNABLES=glibc.pthread.rseq=0
++
+ COPY scripts/ci/prepare-for-fedora-rawhide.sh /bin/prepare-for-fedora-rawhide.sh
+ RUN /bin/prepare-for-fedora-rawhide.sh
+ 
+diff --git a/scripts/ci/run-ci-tests.sh b/scripts/ci/run-ci-tests.sh
+index 096f907fb..bf7331142 100755
+--- a/scripts/ci/run-ci-tests.sh
++++ b/scripts/ci/run-ci-tests.sh
+@@ -235,7 +235,12 @@ if [ -n "$TRAVIS" ] || [ -n "$CIRCLECI" ]; then
+        # Error (criu/tty.c:1014): tty: Don't have tty to inherit session from, aborting
+        make -C test/others/shell-job/ run
+ fi
+-make -C test/others/rpc/ run
++
++# FIXME: rpc tests fail even with set glibc tunable
++# https://github.com/checkpoint-restore/criu/issues/1696
++if [ "$GLIBC_TUNABLES" != "glibc.pthread.rseq=0" ]; then
++	make -C test/others/rpc/ run
++fi
+ 
+ ./test/zdtm.py run -t zdtm/static/env00 --sibling
+ 
+-- 
+2.34.1
+

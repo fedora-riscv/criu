@@ -1,0 +1,72 @@
+From 983464ffad11a0f8c5656492f3c342139acd2527 Mon Sep 17 00:00:00 2001
+From: Liu Hua <weldonliu@tencent.com>
+Date: Thu, 4 Nov 2021 10:04:22 +0800
+Subject: [PATCH 052/120] crtools: ignore SIGPIPE in swrk mode
+
+Criu ignores SIGPIPE in most cases except swrk mode. And in the
+following situtation criu get killed by SIGPIPE and have no chance
+to do cleanup: Connection to page server is lost when we do disk-less
+migration, criu send PS_IOV_FLUSH via a broken connction in
+disconnect_from_page_server.
+
+This patch let criu ignore SIGPIPE in all paths .
+
+Signed-off-by: Liu Hua <weldonliu@tencent.com>
+---
+ criu/crtools.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/criu/crtools.c b/criu/crtools.c
+index 6a75cd1ea..81c0aa963 100644
+--- a/criu/crtools.c
++++ b/criu/crtools.c
+@@ -106,6 +106,24 @@ int main(int argc, char *argv[], char *envp[])
+ 
+ 	log_set_loglevel(opts.log_level);
+ 
++	/*
++	 * There kernel might send us lethal signals in the following cases:
++	 * 1) Writing a pipe which reader has disappeared.
++	 * 2) Writing to a socket of type SOCK_STREAM which is no longer connected.
++	 * We deal with write()/Send() failures on our own, and prefer not to get killed.
++	 * So we ignore SIGPIPEs.
++	 *
++	 * Pipes are used in various places:
++	 * 1) Receiving application page data
++	 * 2) Transmitting data to the image streamer
++	 * 3) Emitting logs (potentially to a pipe).
++	 * Sockets are mainly used in transmitting memory data.
++	 */
++	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
++		pr_perror("Failed to set a SIGPIPE signal ignore.");
++		return 1;
++	}
++
+ 	if (optind < argc && !strcmp(argv[optind], "swrk")) {
+ 		if (argc != optind + 2) {
+ 			fprintf(stderr, "Usage: criu swrk <fd>\n");
+@@ -175,21 +193,6 @@ int main(int argc, char *argv[], char *envp[])
+ 		}
+ 	}
+ 
+-	/*
+-	 * The kernel might send us lethal signals when writing to a pipe
+-	 * which reader has disappeared. We deal with write() failures on our
+-	 * own, and prefer not to get killed. So we ignore SIGPIPEs.
+-	 *
+-	 * Pipes are used in various places:
+-	 * 1) Receiving application page data
+-	 * 2) Transmitting data to the image streamer
+-	 * 3) Emitting logs (potentially to a pipe).
+-	 */
+-	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+-		pr_perror("Failed to set a SIGPIPE signal ignore.");
+-		return 1;
+-	}
+-
+ 	/*
+ 	 * When a process group becomes an orphan,
+ 	 * its processes are sent a SIGHUP signal
+-- 
+2.34.1
+

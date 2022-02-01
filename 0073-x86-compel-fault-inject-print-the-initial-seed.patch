@@ -1,0 +1,41 @@
+From ef96f75f2c84575bd5bf702f933807be4275ee40 Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Mon, 13 Dec 2021 15:32:00 +0300
+Subject: [PATCH 073/120] x86/compel/fault-inject: print the initial seed
+
+Fixes: e2e8be37 ("x86/compel/fault-inject: Add a fault-injection for corrupting extended regset")
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ compel/arch/x86/src/lib/infect.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/compel/arch/x86/src/lib/infect.c b/compel/arch/x86/src/lib/infect.c
+index 37b0ee327..de9013c27 100644
+--- a/compel/arch/x86/src/lib/infect.c
++++ b/compel/arch/x86/src/lib/infect.c
+@@ -283,10 +283,10 @@ static int corrupt_extregs(pid_t pid)
+ 	bool use_xsave = compel_cpu_has_feature(X86_FEATURE_OSXSAVE);
+ 	user_fpregs_struct_t ext_regs;
+ 	int *rand_to = (int *)&ext_regs;
+-	unsigned int seed;
++	unsigned int seed, init_seed;
+ 	size_t i;
+ 
+-	seed = time(NULL);
++	init_seed = seed = time(NULL);
+ 	for (i = 0; i < sizeof(ext_regs) / sizeof(int); i++)
+ 		*rand_to++ = rand_r(&seed);
+ 
+@@ -296,7 +296,7 @@ static int corrupt_extregs(pid_t pid)
+ 	 *  - zdtm.py will grep it auto-magically from logs
+ 	 *    (and the seed will be known from an automatical testing)
+ 	 */
+-	pr_err("Corrupting %s for %d, seed %u\n", use_xsave ? "xsave" : "fpuregs", pid, seed);
++	pr_err("Corrupting %s for %d, seed %u\n", use_xsave ? "xsave" : "fpuregs", pid, init_seed);
+ 
+ 	if (!use_xsave) {
+ 		if (ptrace(PTRACE_SETFPREGS, pid, NULL, &ext_regs)) {
+-- 
+2.34.1
+

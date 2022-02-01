@@ -1,0 +1,31 @@
+From 8b69c69dbec5e6b2a84083e609c3de4e15661c90 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 21:32:17 +0100
+Subject: [PATCH 014/120] coredump: sort imports
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/criu_coredump/coredump.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/coredump/criu_coredump/coredump.py b/coredump/criu_coredump/coredump.py
+index d67c335c1..9b4aad5ff 100644
+--- a/coredump/criu_coredump/coredump.py
++++ b/coredump/criu_coredump/coredump.py
+@@ -30,9 +30,12 @@
+ #
+ import io
+ import sys
+-from . import elf
+ import ctypes
++
+ from pycriu import images
++from . import elf
++
++
+ try:
+     from itertools import ifilter as filter
+ except ImportError:
+-- 
+2.34.1
+

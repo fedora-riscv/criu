@@ -1,0 +1,33 @@
+From e0bf87fecbcc353d697dccd3fe0801347caf1423 Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Sat, 18 Dec 2021 11:03:53 +0300
+Subject: [PATCH 083/120] zdtm: zdtm_ct fix compilation error with
+ strict-prototypes on
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+zdtm_ct.c:44:12: error: function declaration isn’t a prototype [-Werror=strict-prototypes]
+   44 | static int create_timens()
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ test/zdtm_ct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/zdtm_ct.c b/test/zdtm_ct.c
+index e4b17a512..0e8eeff8a 100644
+--- a/test/zdtm_ct.c
++++ b/test/zdtm_ct.c
+@@ -41,7 +41,7 @@ static inline int _settime(clockid_t clk_id, time_t offset)
+ 	return 0;
+ }
+ 
+-static int create_timens()
++static int create_timens(void)
+ {
+ 	struct utsname buf;
+ 	unsigned major, minor;
+-- 
+2.34.1
+

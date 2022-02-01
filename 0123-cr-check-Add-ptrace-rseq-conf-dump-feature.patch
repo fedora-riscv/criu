@@ -1,0 +1,163 @@
+From e4aca530b7d001fbccf9dfb2cf41c4b32f46a1fe Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Tue, 21 Dec 2021 18:29:14 +0300
+Subject: [PATCH 04/10] cr-check: Add ptrace rseq conf dump feature
+
+Add "get_rseq_conf" feature corresponding to the
+ptrace(PTRACE_GET_RSEQ_CONFIGURATION) support.
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ compel/include/uapi/ptrace.h | 12 +++++++++++
+ criu/cr-check.c              | 11 ++++++++++
+ criu/include/kerndat.h       |  1 +
+ criu/kerndat.c               | 41 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 65 insertions(+)
+
+diff --git a/compel/include/uapi/ptrace.h b/compel/include/uapi/ptrace.h
+index 533e0569f..15476f158 100644
+--- a/compel/include/uapi/ptrace.h
++++ b/compel/include/uapi/ptrace.h
+@@ -65,6 +65,18 @@ typedef struct {
+ 	uint64_t flags;	     /* Output: filter's flags */
+ } seccomp_metadata_t;
+ 
++#ifndef PTRACE_GET_RSEQ_CONFIGURATION
++#define PTRACE_GET_RSEQ_CONFIGURATION	0x420f
++
++struct ptrace_rseq_configuration {
++	__u64 rseq_abi_pointer;
++	__u32 rseq_abi_size;
++	__u32 signature;
++	__u32 flags;
++	__u32 pad;
++};
++#endif
++
+ #ifdef PTRACE_EVENT_STOP
+ #if PTRACE_EVENT_STOP == 7 /* Bad value from Linux 3.1-3.3, fixed in 3.4 */
+ #undef PTRACE_EVENT_STOP
+diff --git a/criu/cr-check.c b/criu/cr-check.c
+index ccda00173..092ab2e79 100644
+--- a/criu/cr-check.c
++++ b/criu/cr-check.c
+@@ -798,6 +798,15 @@ static int check_ptrace_dump_seccomp_filters(void)
+ 	return ret;
+ }
+ 
++static int check_ptrace_get_rseq_conf(void)
++{
++	if (!kdat.has_ptrace_get_rseq_conf) {
++		pr_warn("ptrace(PTRACE_GET_RSEQ_CONFIGURATION) isn't supported. C/R of processes which are using rseq() won't work.\n");
++		return -1;
++	}
++	return 0;
++}
++
+ static int check_mem_dirty_track(void)
+ {
+ 	if (!kdat.has_dirty_track) {
+@@ -1448,6 +1457,7 @@ int cr_check(void)
+ 		ret |= check_apparmor_stacking();
+ 		ret |= check_network_lock_nftables();
+ 		ret |= check_sockopt_buf_lock();
++		ret |= check_ptrace_get_rseq_conf();
+ 	}
+ 
+ 	/*
+@@ -1561,6 +1571,7 @@ static struct feature_list feature_list[] = {
+ 	{ "apparmor_stacking", check_apparmor_stacking },
+ 	{ "network_lock_nftables", check_network_lock_nftables },
+ 	{ "sockopt_buf_lock", check_sockopt_buf_lock },
++	{ "get_rseq_conf", check_ptrace_get_rseq_conf },
+ 	{ NULL, NULL },
+ };
+ 
+diff --git a/criu/include/kerndat.h b/criu/include/kerndat.h
+index 3e0a657ba..fdbe06c8e 100644
+--- a/criu/include/kerndat.h
++++ b/criu/include/kerndat.h
+@@ -76,6 +76,7 @@ struct kerndat_s {
+ 	bool has_nftables_concat;
+ 	bool has_sockopt_buf_lock;
+ 	bool has_rseq;
++	bool has_ptrace_get_rseq_conf;
+ };
+ 
+ extern struct kerndat_s kdat;
+diff --git a/criu/kerndat.c b/criu/kerndat.c
+index 82143377f..8772a7293 100644
+--- a/criu/kerndat.c
++++ b/criu/kerndat.c
+@@ -4,6 +4,8 @@
+ #include <sys/file.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/ptrace.h>
++#include <sys/wait.h>
+ #include <sys/mman.h>
+ #include <errno.h>
+ #include <sys/syscall.h>
+@@ -36,6 +38,7 @@
+ #include "sockets.h"
+ #include "net.h"
+ #include "tun.h"
++#include <compel/ptrace.h>
+ #include <compel/plugins/std/syscall-codes.h>
+ #include "netfilter.h"
+ #include "fsnotify.h"
+@@ -830,6 +833,40 @@ static int kerndat_has_rseq(void)
+ 	return 0;
+ }
+ 
++static int kerndat_has_ptrace_get_rseq_conf(void)
++{
++	pid_t pid;
++	int len;
++	struct ptrace_rseq_configuration rseq;
++
++	pid = fork_and_ptrace_attach(NULL);
++	if (pid < 0)
++		return -1;
++
++	len = ptrace(PTRACE_GET_RSEQ_CONFIGURATION, pid, sizeof(rseq), &rseq);
++	if (len != sizeof(rseq)) {
++		kdat.has_ptrace_get_rseq_conf = false;
++		pr_info("ptrace(PTRACE_GET_RSEQ_CONFIGURATION) is not supported\n");
++		goto out;
++	}
++
++	/*
++	 * flags is always zero from the kernel side, if it will be changed
++	 * we need to pay attention to that and, possibly, make changes on the CRIU side.
++	 */
++	if (rseq.flags != 0) {
++		kdat.has_ptrace_get_rseq_conf = false;
++		pr_err("ptrace(PTRACE_GET_RSEQ_CONFIGURATION): rseq.flags != 0\n");
++	} else {
++		kdat.has_ptrace_get_rseq_conf = true;
++	}
++
++out:
++	kill(pid, SIGKILL);
++	waitpid(pid, NULL, 0);
++	return 0;
++}
++
+ int kerndat_sockopt_buf_lock(void)
+ {
+ 	int exit_code = -1;
+@@ -1410,6 +1447,10 @@ int kerndat_init(void)
+ 		pr_err("kerndat_has_rseq failed when initializing kerndat.\n");
+ 		ret = -1;
+ 	}
++	if (!ret && kerndat_has_ptrace_get_rseq_conf()) {
++		pr_err("kerndat_has_ptrace_get_rseq_conf failed when initializing kerndat.\n");
++		ret = -1;
++	}
+ 
+ 	kerndat_lsm();
+ 	kerndat_mmap_min_addr();
+-- 
+2.34.1
+

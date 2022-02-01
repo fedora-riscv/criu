@@ -1,0 +1,29 @@
+From d2632238947d8aa9096deb27ae8ba05971f43de9 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 16 Dec 2021 18:05:01 +0300
+Subject: [PATCH 088/120] crtools: check that cpuinfo command has sub-command
+
+This fixes segfault on empty sub-command for cpuinfo.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/crtools.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/criu/crtools.c b/criu/crtools.c
+index 7bf92ffd0..0752800f6 100644
+--- a/criu/crtools.c
++++ b/criu/crtools.c
+@@ -222,6 +222,9 @@ int main(int argc, char *argv[], char *envp[])
+ 		if (opts.mode != CR_CPUINFO && has_sub_command) {
+ 			pr_err("excessive parameter%s for command %s\n", (argc - optind) > 2 ? "s" : "", argv[optind]);
+ 			goto usage;
++		} else if (opts.mode == CR_CPUINFO && !has_sub_command) {
++			pr_err("cpuinfo requires an action: dump or check\n");
++			goto usage;
+ 		}
+ 	}
+ 
+-- 
+2.34.1
+

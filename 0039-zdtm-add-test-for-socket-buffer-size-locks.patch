@@ -1,0 +1,118 @@
+From 579b8b02603d29adf664aab99f9df6cda33acfea Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 29 Jul 2021 16:16:12 +0300
+Subject: [PATCH 039/120] zdtm: add test for socket buffer size locks
+
+Just set all possible values 0-3 and chack if it persists.
+
+Reviewed-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ test/zdtm/static/Makefile         |  1 +
+ test/zdtm/static/sock_opts02.c    | 73 +++++++++++++++++++++++++++++++
+ test/zdtm/static/sock_opts02.desc |  1 +
+ 3 files changed, 75 insertions(+)
+ create mode 100644 test/zdtm/static/sock_opts02.c
+ create mode 100644 test/zdtm/static/sock_opts02.desc
+
+diff --git a/test/zdtm/static/Makefile b/test/zdtm/static/Makefile
+index b6aa621c7..3e1e0a498 100644
+--- a/test/zdtm/static/Makefile
++++ b/test/zdtm/static/Makefile
+@@ -117,6 +117,7 @@ TST_NOFILE	:=				\
+ 		socket-linger			\
+ 		sock_opts00			\
+ 		sock_opts01			\
++		sock_opts02			\
+ 		sk-unix-unconn			\
+ 		ipc_namespace			\
+ 		selfexe00			\
+diff --git a/test/zdtm/static/sock_opts02.c b/test/zdtm/static/sock_opts02.c
+new file mode 100644
+index 000000000..21a81a28f
+--- /dev/null
++++ b/test/zdtm/static/sock_opts02.c
+@@ -0,0 +1,73 @@
++#include <stdio.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++
++#include "zdtmtst.h"
++
++const char *test_doc = "Check that SO_BUF_LOCK option dumped";
++const char *test_author = "Pavel Tikhomirov <ptikhomirov@virtuozzo.com>";
++
++#ifndef SO_BUF_LOCK
++#define SO_BUF_LOCK 72
++#endif
++
++#define NSOCK 4
++
++int main(int argc, char **argv)
++{
++	int sock[NSOCK];
++	uint32_t val[NSOCK];
++	int ret, i;
++	int exit_code = 1;
++
++	test_init(argc, argv);
++
++	for (i = 0; i < NSOCK; i++) {
++		sock[i] = -1;
++		val[i] = i;
++	}
++
++	for (i = 0; i < NSOCK; i++) {
++		sock[i] = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
++		if (sock[i] < 0) {
++			pr_perror("can't create socket %d", i);
++			goto err;
++		}
++
++		ret = setsockopt(sock[i], SOL_SOCKET, SO_BUF_LOCK, &val[i], sizeof(val[i]));
++		if (ret < 0) {
++			pr_perror("can't set SO_BUF_LOCK (%u) on socket %d", val[i], i);
++			goto err;
++		}
++	}
++
++	test_daemon();
++	test_waitsig();
++
++	for (i = 0; i < NSOCK; i++) {
++		uint32_t tmp;
++		socklen_t len;
++
++		len = sizeof(tmp);
++		ret = getsockopt(sock[i], SOL_SOCKET, SO_BUF_LOCK, &tmp, &len);
++		if (ret < 0) {
++			pr_perror("can't get SO_BUF_LOCK from socket %d", i);
++			goto err;
++		}
++
++		if (tmp != val[i]) {
++			fail("SO_BUF_LOCK missmatch %u != %u", tmp, val[i]);
++			goto err;
++		}
++	}
++
++	pass();
++	exit_code = 0;
++err:
++	for (i = 0; i < NSOCK; i++)
++		close(sock[i]);
++
++	return exit_code;
++}
+diff --git a/test/zdtm/static/sock_opts02.desc b/test/zdtm/static/sock_opts02.desc
+new file mode 100644
+index 000000000..37d3a6354
+--- /dev/null
++++ b/test/zdtm/static/sock_opts02.desc
+@@ -0,0 +1 @@
++{'flags': 'suid', 'feature': 'sockopt_buf_lock'}
+-- 
+2.34.1
+

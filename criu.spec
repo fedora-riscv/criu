@@ -10,6 +10,11 @@
 # parasite code breaks if annobin is enabled.
 %undefine _annotated_build
 
+# Disable automatic call to the set_build_flags macro
+# at the beginning of the build, check, and install.
+# This change was introduced in Fedora 36.
+%undefine _auto_set_build_flags
+
 Name: criu
 Version: 3.16.1
 Release: 6%{?dist}

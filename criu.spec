@@ -385,6 +385,11 @@ This script can help to workaround the so called "PID mismatch" problem.
 # that is fixed, disable LTO.
 %define _lto_cflags %{nil}
 
+# With GCC 12 the build fails with:
+#   Unexpected undefined symbol: `strlen'. External symbol in PIE?
+# '-ffreestanding' makes the compilation work with GCC 12.
+CFLAGS+=" -ffreestanding "
+
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_binary}

@@ -17,7 +17,7 @@
 
 Name: criu
 Version: 3.16.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -385,11 +385,6 @@ This script can help to workaround the so called "PID mismatch" problem.
 # that is fixed, disable LTO.
 %define _lto_cflags %{nil}
 
-# With GCC 12 the build fails with:
-#   Unexpected undefined symbol: `strlen'. External symbol in PIE?
-# '-ffreestanding' makes the compilation work with GCC 12.
-CFLAGS+=" -ffreestanding "
-
 # %{?_smp_mflags} does not work
 # -fstack-protector breaks build
 CFLAGS+=`echo %{optflags} | sed -e 's,-fstack-protector\S*,,g'` make V=1 WERROR=0 PREFIX=%{_prefix} RUNDIR=/run/criu PYTHON=%{py_binary}
@@ -466,6 +461,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Tue Feb 8 2022 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-7
+- Drop global -ffreestanding
+
 * Mon Jan 31 2022 Radostin Stoyanov <radostin@redhat.com> - 3.16.1-6
 - Fix typo in changelog
 - Replace `asciidoc` and `xmlto` with `asciidoctor`

@@ -1,7 +1,7 @@
-From 74f602b66fb6ae3559b570cfc369477a579367c8 Mon Sep 17 00:00:00 2001
+From b26dfea16373b8207f432bbebcfc836b09c05751 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Fri, 24 Dec 2021 18:57:54 +0300
-Subject: [PATCH 241/245] clone-noasan: unregister rseq at the thread start for
+Subject: [PATCH 241/249] clone-noasan: unregister rseq at the thread start for
  new glibc
 
 Fresh glibc does rseq registration by default during start_thread().

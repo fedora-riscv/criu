@@ -1,0 +1,50 @@
+From 0dfc8717477416fa14d87335f1be5f2e2f89a71e Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 21 Dec 2021 14:04:19 +0300
+Subject: [PATCH 213/249] mount: export global variables for mount-v2
+
+Export root_yard_mp and it's mntns_roots.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h | 3 +++
+ criu/mount.c         | 4 ++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 914024544..c16a5c293 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -223,4 +223,7 @@ extern int restore_ext_mount(struct mount_info *mi);
+ extern int cr_pivot_root(char *root);
+ extern int print_ns_root(struct ns_id *ns, int remap_id, char *buf, int bs);
+ 
++extern struct mount_info *root_yard_mp;
++extern char *mnt_roots;
++
+ #endif /* __CR_MOUNT_H__ */
+diff --git a/criu/mount.c b/criu/mount.c
+index 7549284d9..c39b44ac6 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -37,7 +37,7 @@
+ #define CONTEXT_OPT "context="
+ 
+ /* A helper mount_info entry for the roots yard */
+-static struct mount_info *root_yard_mp = NULL;
++struct mount_info *root_yard_mp = NULL;
+ 
+ static LIST_HEAD(delayed_unbindable);
+ 
+@@ -349,7 +349,7 @@ static bool mounts_equal(struct mount_info *a, struct mount_info *b)
+  * mnt_roots is a temporary directory for restoring sub-trees of
+  * non-root namespaces.
+  */
+-static char *mnt_roots;
++char *mnt_roots;
+ 
+ static struct mount_info *mnt_build_ids_tree(struct mount_info *list)
+ {
+-- 
+2.35.1
+

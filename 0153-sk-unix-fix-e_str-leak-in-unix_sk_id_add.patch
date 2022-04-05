@@ -1,0 +1,51 @@
+From dac5689422ed1422f33bf6a39b929f3f40d4c86b Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 11 Mar 2022 18:36:55 +0300
+Subject: [PATCH 153/249] sk-unix: fix e_str leak in unix_sk_id_add
+
+coverity CID 389191:
+
+int unix_sk_id_add(unsigned int ino)
+2327{
+2328        char *e_str;
+2329
+    1. alloc_fn: Storage is returned from allocation function malloc.
+    2. var_assign: Assigning: ___p = storage returned from malloc(20UL).
+    3. Condition !___p, taking false branch.
+    4. leaked_storage: Variable ___p going out of scope leaks the storage it points to.
+    5. var_assign: Assigning: e_str = ({...; ___p;}).
+2330        e_str = xmalloc(20);
+    6. Condition !e_str, taking false branch.
+2331        if (!e_str)
+2332                return -1;
+    7. noescape: Resource e_str is not freed or pointed-to in snprintf.
+2333        snprintf(e_str, 20, "unix[%u]", ino);
+    8. noescape: Resource e_str is not freed or pointed-to in add_external. [show details]
+    CID 389191 (#1 of 1): Resource leak (RESOURCE_LEAK)9. leaked_storage: Variable e_str going out of scope leaks the storage it points to.
+2334        return add_external(e_str);
+2335}
+
+We should free e_str string after we finish it's use in unix_sk_id_add,
+easiest way to do it is to use cleanup_free attribute.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/sk-unix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/sk-unix.c b/criu/sk-unix.c
+index 90c9eb11b..b2c2aaca0 100644
+--- a/criu/sk-unix.c
++++ b/criu/sk-unix.c
+@@ -2325,7 +2325,7 @@ static void try_resolve_unix_peer(struct unix_sk_info *ui)
+ 
+ int unix_sk_id_add(unsigned int ino)
+ {
+-	char *e_str;
++	cleanup_free char *e_str = NULL;
+ 
+ 	e_str = xmalloc(20);
+ 	if (!e_str)
+-- 
+2.35.1
+

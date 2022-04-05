@@ -1,0 +1,265 @@
+From cbbd1f1491be604b501ab93bc51b51853abdb7a8 Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Mon, 21 Feb 2022 15:15:52 +0300
+Subject: [PATCH 243/249] compel: add helpers to get/set instruction pointer
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ .../src/lib/include/uapi/asm/infect-types.h   |  9 +++++----
+ .../src/lib/include/uapi/asm/infect-types.h   |  9 +++++----
+ .../src/lib/include/uapi/asm/infect-types.h   |  9 +++++----
+ .../src/lib/include/uapi/asm/infect-types.h   |  9 +++++----
+ .../src/lib/include/uapi/asm/infect-types.h   |  7 ++++---
+ .../src/lib/include/uapi/asm/infect-types.h   |  9 +++++----
+ compel/include/uapi/infect.h                  |  6 ++++++
+ compel/src/lib/infect.c                       | 20 +++++++++++++++++++
+ criu/arch/aarch64/include/asm/types.h         |  2 ++
+ criu/arch/arm/include/asm/types.h             |  2 ++
+ criu/arch/mips/include/asm/types.h            |  2 ++
+ criu/arch/ppc64/include/asm/types.h           |  2 ++
+ criu/arch/s390/include/asm/types.h            |  2 ++
+ criu/arch/x86/include/asm/types.h             |  2 ++
+ 14 files changed, 67 insertions(+), 23 deletions(-)
+
+diff --git a/compel/arch/aarch64/src/lib/include/uapi/asm/infect-types.h b/compel/arch/aarch64/src/lib/include/uapi/asm/infect-types.h
+index f91e73dc4..9d4ce7e2e 100644
+--- a/compel/arch/aarch64/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/aarch64/src/lib/include/uapi/asm/infect-types.h
+@@ -23,10 +23,11 @@ typedef struct user_fpsimd_state user_fpregs_struct_t;
+ #define compel_arch_get_tls_task(ctl, tls)
+ #define compel_arch_get_tls_thread(tctl, tls)
+ 
+-#define REG_RES(r)	  ((uint64_t)(r).regs[0])
+-#define REG_IP(r)	  ((uint64_t)(r).pc)
+-#define REG_SP(r)	  ((uint64_t)((r).sp))
+-#define REG_SYSCALL_NR(r) ((uint64_t)(r).regs[8])
++#define REG_RES(r)	   ((uint64_t)(r).regs[0])
++#define REG_IP(r)	   ((uint64_t)(r).pc)
++#define SET_REG_IP(r, val) ((r).pc = (val))
++#define REG_SP(r)	   ((uint64_t)((r).sp))
++#define REG_SYSCALL_NR(r)  ((uint64_t)(r).regs[8])
+ 
+ #define user_regs_native(pregs) true
+ 
+diff --git a/compel/arch/arm/src/lib/include/uapi/asm/infect-types.h b/compel/arch/arm/src/lib/include/uapi/asm/infect-types.h
+index 159b6a9fb..8d328252e 100644
+--- a/compel/arch/arm/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/arm/src/lib/include/uapi/asm/infect-types.h
+@@ -56,10 +56,11 @@ struct user_vfp_exc {
+ 	unsigned long fpinst2;
+ };
+ 
+-#define REG_RES(regs)	     ((regs).ARM_r0)
+-#define REG_IP(regs)	     ((regs).ARM_pc)
+-#define REG_SP(regs)	     ((regs).ARM_sp)
+-#define REG_SYSCALL_NR(regs) ((regs).ARM_r7)
++#define REG_RES(regs)	      ((regs).ARM_r0)
++#define REG_IP(regs)	      ((regs).ARM_pc)
++#define SET_REG_IP(regs, val) ((regs).ARM_pc = (val))
++#define REG_SP(regs)	      ((regs).ARM_sp)
++#define REG_SYSCALL_NR(regs)  ((regs).ARM_r7)
+ 
+ #define user_regs_native(pregs) true
+ 
+diff --git a/compel/arch/mips/src/lib/include/uapi/asm/infect-types.h b/compel/arch/mips/src/lib/include/uapi/asm/infect-types.h
+index 70b3f85a5..481566a12 100644
+--- a/compel/arch/mips/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/mips/src/lib/include/uapi/asm/infect-types.h
+@@ -56,10 +56,11 @@ static inline bool user_regs_native(user_regs_struct_t *pregs)
+ #define compel_arch_get_tls_task(ctl, tls)
+ #define compel_arch_get_tls_thread(tctl, tls)
+ 
+-#define REG_RES(regs)	     ((regs).MIPS_v0)
+-#define REG_IP(regs)	     ((regs).cp0_epc)
+-#define REG_SP(regs)	     ((regs).MIPS_sp)
+-#define REG_SYSCALL_NR(regs) ((regs).MIPS_v0)
++#define REG_RES(regs)	      ((regs).MIPS_v0)
++#define REG_IP(regs)	      ((regs).cp0_epc)
++#define SET_REG_IP(regs, val) ((regs).cp0_epc = (val))
++#define REG_SP(regs)	      ((regs).MIPS_sp)
++#define REG_SYSCALL_NR(regs)  ((regs).MIPS_v0)
+ 
+ //#define __NR(syscall, compat)	((compat) ? __NR32_##syscall : __NR_##syscall)
+ #define __NR(syscall, compat) __NR_##syscall
+diff --git a/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h b/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
+index 8cf8a135f..25fc747e2 100644
+--- a/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
+@@ -72,10 +72,11 @@ typedef struct {
+ 	} tm;
+ } user_fpregs_struct_t;
+ 
+-#define REG_RES(regs)	     ((uint64_t)(regs).gpr[3])
+-#define REG_IP(regs)	     ((uint64_t)(regs).nip)
+-#define REG_SP(regs)	     ((uint64_t)(regs).gpr[1])
+-#define REG_SYSCALL_NR(regs) ((uint64_t)(regs).gpr[0])
++#define REG_RES(regs)	      ((uint64_t)(regs).gpr[3])
++#define REG_IP(regs)	      ((uint64_t)(regs).nip)
++#define SET_REG_IP(regs, val) ((regs).nip = (val))
++#define REG_SP(regs)	      ((uint64_t)(regs).gpr[1])
++#define REG_SYSCALL_NR(regs)  ((uint64_t)(regs).gpr[0])
+ 
+ #define user_regs_native(pregs) true
+ 
+diff --git a/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h b/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
+index 896d70ed1..87283bc6b 100644
+--- a/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
+@@ -62,9 +62,10 @@ typedef struct {
+ 	uint32_t system_call;
+ } user_regs_struct_t;
+ 
+-#define REG_RES(r) ((uint64_t)(r).prstatus.gprs[2])
+-#define REG_IP(r)  ((uint64_t)(r).prstatus.psw.addr)
+-#define REG_SP(r)  ((uint64_t)(r).prstatus.gprs[15])
++#define REG_RES(r)	   ((uint64_t)(r).prstatus.gprs[2])
++#define REG_IP(r)	   ((uint64_t)(r).prstatus.psw.addr)
++#define SET_REG_IP(r, val) ((r).prstatus.psw.addr = (val))
++#define REG_SP(r)	   ((uint64_t)(r).prstatus.gprs[15])
+ /*
+  * We assume that REG_SYSCALL_NR() is only used for pie code where we
+  * always use svc 0 with opcode in %r1.
+diff --git a/compel/arch/x86/src/lib/include/uapi/asm/infect-types.h b/compel/arch/x86/src/lib/include/uapi/asm/infect-types.h
+index 34b3ad061..b35504ff8 100644
+--- a/compel/arch/x86/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/x86/src/lib/include/uapi/asm/infect-types.h
+@@ -127,10 +127,11 @@ typedef struct {
+ 
+ typedef struct xsave_struct user_fpregs_struct_t;
+ 
+-#define REG_RES(regs)	     get_user_reg(&regs, ax)
+-#define REG_IP(regs)	     get_user_reg(&regs, ip)
+-#define REG_SP(regs)	     get_user_reg(&regs, sp)
+-#define REG_SYSCALL_NR(regs) get_user_reg(&regs, orig_ax)
++#define REG_RES(regs)	      get_user_reg(&regs, ax)
++#define REG_IP(regs)	      get_user_reg(&regs, ip)
++#define SET_REG_IP(regs, val) set_user_reg(&regs, ip, val)
++#define REG_SP(regs)	      get_user_reg(&regs, sp)
++#define REG_SYSCALL_NR(regs)  get_user_reg(&regs, orig_ax)
+ 
+ #define __NR(syscall, compat) ((compat) ? __NR32_##syscall : __NR_##syscall)
+ 
+diff --git a/compel/include/uapi/infect.h b/compel/include/uapi/infect.h
+index 7fa0bd8a0..e01b3a22c 100644
+--- a/compel/include/uapi/infect.h
++++ b/compel/include/uapi/infect.h
+@@ -168,4 +168,10 @@ extern unsigned long compel_task_size(void);
+ extern uint64_t compel_get_leader_sp(struct parasite_ctl *ctl);
+ extern uint64_t compel_get_thread_sp(struct parasite_thread_ctl *tctl);
+ 
++extern uint64_t compel_get_leader_ip(struct parasite_ctl *ctl);
++extern uint64_t compel_get_thread_ip(struct parasite_thread_ctl *tctl);
++
++void compel_set_leader_ip(struct parasite_ctl *ctl, uint64_t v);
++void compel_set_thread_ip(struct parasite_thread_ctl *tctl, uint64_t v);
++
+ #endif
+diff --git a/compel/src/lib/infect.c b/compel/src/lib/infect.c
+index 0fb9e715c..6a13cc1b4 100644
+--- a/compel/src/lib/infect.c
++++ b/compel/src/lib/infect.c
+@@ -1686,3 +1686,23 @@ uint64_t compel_get_thread_sp(struct parasite_thread_ctl *tctl)
+ {
+ 	return REG_SP(tctl->th.regs);
+ }
++
++uint64_t compel_get_leader_ip(struct parasite_ctl *ctl)
++{
++	return REG_IP(ctl->orig.regs);
++}
++
++uint64_t compel_get_thread_ip(struct parasite_thread_ctl *tctl)
++{
++	return REG_IP(tctl->th.regs);
++}
++
++void compel_set_leader_ip(struct parasite_ctl *ctl, uint64_t v)
++{
++	SET_REG_IP(ctl->orig.regs, v);
++}
++
++void compel_set_thread_ip(struct parasite_thread_ctl *tctl, uint64_t v)
++{
++	SET_REG_IP(tctl->th.regs, v);
++}
+diff --git a/criu/arch/aarch64/include/asm/types.h b/criu/arch/aarch64/include/asm/types.h
+index c860af1cf..363c1cae2 100644
+--- a/criu/arch/aarch64/include/asm/types.h
++++ b/criu/arch/aarch64/include/asm/types.h
+@@ -22,6 +22,8 @@ typedef UserAarch64RegsEntry UserRegsEntry;
+ 
+ #define TI_SP(core) ((core)->ti_aarch64->gpregs->sp)
+ 
++#define TI_IP(core) ((core)->ti_aarch64->gpregs->pc)
++
+ static inline void *decode_pointer(uint64_t v)
+ {
+ 	return (void *)v;
+diff --git a/criu/arch/arm/include/asm/types.h b/criu/arch/arm/include/asm/types.h
+index cfcb8a136..93d2dc23d 100644
+--- a/criu/arch/arm/include/asm/types.h
++++ b/criu/arch/arm/include/asm/types.h
+@@ -21,6 +21,8 @@ typedef UserArmRegsEntry UserRegsEntry;
+ 
+ #define TI_SP(core) ((core)->ti_arm->gpregs->sp)
+ 
++#define TI_IP(core) ((core)->ti_arm->gpregs->ip)
++
+ static inline void *decode_pointer(u64 v)
+ {
+ 	return (void *)(u32)v;
+diff --git a/criu/arch/mips/include/asm/types.h b/criu/arch/mips/include/asm/types.h
+index 237471f3c..2c75b6a92 100644
+--- a/criu/arch/mips/include/asm/types.h
++++ b/criu/arch/mips/include/asm/types.h
+@@ -18,6 +18,8 @@
+ 
+ #define CORE_THREAD_ARCH_INFO(core) core->ti_mips
+ 
++#define TI_IP(core) ((core)->ti_mips->gpregs->cp0_epc)
++
+ typedef UserMipsRegsEntry UserRegsEntry;
+ 
+ static inline u64 encode_pointer(void *p)
+diff --git a/criu/arch/ppc64/include/asm/types.h b/criu/arch/ppc64/include/asm/types.h
+index fedeff22a..d60aadde5 100644
+--- a/criu/arch/ppc64/include/asm/types.h
++++ b/criu/arch/ppc64/include/asm/types.h
+@@ -19,6 +19,8 @@ typedef UserPpc64RegsEntry UserRegsEntry;
+ 
+ #define CORE_THREAD_ARCH_INFO(core) core->ti_ppc64
+ 
++#define TI_IP(core) ((core)->ti_ppc64->gpregs->nip)
++
+ static inline void *decode_pointer(uint64_t v)
+ {
+ 	return (void *)v;
+diff --git a/criu/arch/s390/include/asm/types.h b/criu/arch/s390/include/asm/types.h
+index 7522cf2cd..abf12dec0 100644
+--- a/criu/arch/s390/include/asm/types.h
++++ b/criu/arch/s390/include/asm/types.h
+@@ -19,6 +19,8 @@ typedef UserS390RegsEntry UserRegsEntry;
+ 
+ #define CORE_THREAD_ARCH_INFO(core) core->ti_s390
+ 
++#define TI_IP(core) ((core)->ti_s390->gpregs->psw_addr)
++
+ static inline u64 encode_pointer(void *p)
+ {
+ 	return (u64)p;
+diff --git a/criu/arch/x86/include/asm/types.h b/criu/arch/x86/include/asm/types.h
+index a0a8ed987..8919d0ae6 100644
+--- a/criu/arch/x86/include/asm/types.h
++++ b/criu/arch/x86/include/asm/types.h
+@@ -28,6 +28,8 @@ static inline int core_is_compat(CoreEntry *c)
+ 
+ #define CORE_THREAD_ARCH_INFO(core) core->thread_info
+ 
++#define TI_IP(core) ((core)->thread_info->gpregs->ip)
++
+ typedef UserX86RegsEntry UserRegsEntry;
+ 
+ static inline u64 encode_pointer(void *p)
+-- 
+2.35.1
+

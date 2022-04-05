@@ -1,0 +1,49 @@
+From 2060c0cd9e1d7184597050ccab4c0d08b36bb2f4 Mon Sep 17 00:00:00 2001
+From: jiang wei <jwcesign@gmail.com>
+Date: Wed, 23 Mar 2022 21:48:16 +0800
+Subject: [PATCH 230/249] style: delete some redundant code
+
+There is some redundant in compel/src/main.c, making it better
+
+Signed-off-by: jiang wei <jwcesign@gmail.com>
+---
+ compel/src/main.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/compel/src/main.c b/compel/src/main.c
+index f461ff04d..632354582 100644
+--- a/compel/src/main.c
++++ b/compel/src/main.c
+@@ -94,7 +94,6 @@ static int piegen(void)
+ 	}
+ 
+ 	if (handle_binary(mem, st.st_size)) {
+-		close(fd), fd = -1;
+ 		unlink(opts.output_filename);
+ 		goto err;
+ 	}
+@@ -102,8 +101,7 @@ static int piegen(void)
+ 	ret = 0;
+ 
+ err:
+-	if (fd >= 0)
+-		close(fd);
++	close(fd);
+ 	if (opts.fout)
+ 		fclose(opts.fout);
+ 	if (!ret)
+@@ -347,11 +345,9 @@ int main(int argc, char *argv[])
+ 			printf("Version: %d.%d.%d\n", COMPEL_SO_VERSION_MAJOR, COMPEL_SO_VERSION_MINOR,
+ 			       COMPEL_SO_VERSION_SUBLEVEL);
+ 			exit(0);
+-			break;
+ 		default: // '?'
+ 			// error message already printed by getopt_long()
+ 			return usage(1);
+-			break;
+ 		}
+ 	}
+ 
+-- 
+2.35.1
+

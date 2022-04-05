@@ -1,0 +1,29 @@
+From e25f35ccb538c4b1542c608147c541efd2bf95c2 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Tue, 15 Feb 2022 18:09:27 +0000
+Subject: [PATCH 136/249] test: disable rseq also on Archlinux
+
+Seems like Archlinux also uses rseq now and that breaks CRIU.
+Also disable rseq on Archlinux.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ scripts/build/Dockerfile.archlinux | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/scripts/build/Dockerfile.archlinux b/scripts/build/Dockerfile.archlinux
+index d226244ee..b226d5701 100644
+--- a/scripts/build/Dockerfile.archlinux
++++ b/scripts/build/Dockerfile.archlinux
+@@ -1,5 +1,8 @@
+ FROM docker.io/library/archlinux:latest
+ 
++# FIXME: Temporary solution for https://github.com/checkpoint-restore/criu/issues/1696
++ENV GLIBC_TUNABLES=glibc.pthread.rseq=0
++
+ ARG CC=gcc
+ 
+ RUN pacman -Syu --noconfirm \
+-- 
+2.35.1
+

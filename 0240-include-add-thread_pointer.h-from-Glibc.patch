@@ -1,7 +1,7 @@
-From 7262d5ee6d82ecc9c53bc7b23f458de7e794f097 Mon Sep 17 00:00:00 2001
+From d49426d3dce173c61ede04cbd7a3caee8cd24a78 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 22 Feb 2022 14:58:10 +0300
-Subject: [PATCH 240/245] include: add thread_pointer.h from Glibc
+Subject: [PATCH 240/249] include: add thread_pointer.h from Glibc
 
 Implementation was taken from the Glibc.
 

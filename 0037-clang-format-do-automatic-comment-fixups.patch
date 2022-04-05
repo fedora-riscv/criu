@@ -1,0 +1,1889 @@
+From 901042439368aef3513407abcf2f91780fb609a4 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 28 Oct 2021 18:10:14 +0300
+Subject: [PATCH 037/249] clang-format: do automatic comment fixups
+
+Result of `make indent` after enabling AlignTrailingComments.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ compel/arch/aarch64/src/lib/infect.c          |   2 +-
+ compel/arch/arm/src/lib/infect.c              |   2 +-
+ compel/arch/mips/src/lib/include/ldsodefs.h   |  10 +-
+ .../mips/src/lib/include/uapi/asm/siginfo.h   |  14 +-
+ compel/arch/mips/src/lib/infect.c             |   2 +-
+ .../src/lib/include/uapi/asm/infect-types.h   |   6 +-
+ compel/arch/ppc64/src/lib/infect.c            |   2 +-
+ compel/arch/s390/src/lib/infect.c             |   4 +-
+ .../arch/x86/plugins/std/syscalls/syscall32.c |   6 +-
+ .../arch/x86/src/lib/include/uapi/asm/cpu.h   | 158 +++++++++---------
+ .../arch/x86/src/lib/include/uapi/asm/fpu.h   |  16 +-
+ compel/arch/x86/src/lib/infect.c              |   4 +-
+ compel/include/infect-priv.h                  |   2 +-
+ compel/include/rpc-pie-priv.h                 |   2 +-
+ compel/include/uapi/infect.h                  |   2 +-
+ compel/include/uapi/loglevels.h               |   6 +-
+ compel/include/uapi/ptrace.h                  |   2 +-
+ compel/src/lib/handle-elf.c                   |   2 +-
+ criu/arch/ppc64/restorer.c                    |   6 +-
+ criu/arch/ppc64/vdso-pie.c                    |   4 +-
+ criu/arch/s390/restorer.c                     |   6 +-
+ criu/arch/s390/vdso-pie.c                     |   6 +-
+ criu/arch/x86/include/asm/restorer.h          |   2 +-
+ criu/arch/x86/sigaction_compat.c              |   4 +-
+ criu/cgroup.c                                 |   4 +-
+ criu/cr-check.c                               |   2 +-
+ criu/cr-dump.c                                |   2 +-
+ criu/files-reg.c                              |   4 +-
+ criu/files.c                                  |   4 +-
+ criu/include/aio.h                            |   4 +-
+ criu/include/autofs.h                         |   2 +-
+ criu/include/bfd.h                            |   4 +-
+ criu/include/file-lock.h                      |   8 +-
+ criu/include/files.h                          |   4 +-
+ criu/include/image-desc.h                     |   4 +-
+ criu/include/inet_diag.h                      |   2 +-
+ criu/include/kcmp.h                           |   4 +-
+ criu/include/kerndat.h                        |   2 +-
+ criu/include/linux/mount.h                    |  14 +-
+ criu/include/mount.h                          |  12 +-
+ criu/include/namespaces.h                     |   4 +-
+ criu/include/page-pipe.h                      |  24 +--
+ criu/include/page-xfer.h                      |   2 +-
+ criu/include/pagemap-cache.h                  |  12 +-
+ criu/include/pstree.h                         |   4 +-
+ criu/include/restorer.h                       |   4 +-
+ criu/include/rst_info.h                       |   2 +-
+ criu/include/servicefd.h                      |   6 +-
+ criu/include/sk-inet.h                        |   2 +-
+ criu/include/sysfs_parse.h                    |   4 +-
+ criu/include/vma.h                            |  10 +-
+ criu/irmap.c                                  |   4 +-
+ criu/mount.c                                  |   2 +-
+ criu/net.c                                    |   4 +-
+ criu/pagemap.c                                |   6 +-
+ criu/shmem.c                                  |   2 +-
+ criu/sk-unix.c                                |   4 +-
+ criu/uffd.c                                   |   4 +-
+ criu/util.c                                   |   4 +-
+ include/common/arch/ppc64/asm/bitops.h        |   2 +-
+ include/common/arch/x86/asm/bitops.h          |   2 +-
+ include/common/asm-generic/bitops.h           |   2 +-
+ soccr/soccr.c                                 |  66 ++++----
+ soccr/soccr.h                                 |   6 +-
+ test/zdtm/static/aio01.c                      |   4 +-
+ test/zdtm/static/auto_dev-ioctl.h             |   2 +-
+ test/zdtm/static/file_locks00.c               |  18 +-
+ test/zdtm/static/ipc_namespace.c              |   8 +-
+ test/zdtm/static/netns-dev.c                  | 140 ++++++++--------
+ test/zdtm/static/s390x_regs_check.c           |  14 +-
+ test/zdtm/static/session01.c                  |  30 ++--
+ test/zdtm/static/sigpending.c                 |   2 +-
+ test/zdtm/transition/ptrace.c                 |   2 +-
+ 73 files changed, 374 insertions(+), 374 deletions(-)
+
+diff --git a/compel/arch/aarch64/src/lib/infect.c b/compel/arch/aarch64/src/lib/infect.c
+index 7cfa637eb..bd1ed0da3 100644
+--- a/compel/arch/aarch64/src/lib/infect.c
++++ b/compel/arch/aarch64/src/lib/infect.c
+@@ -19,7 +19,7 @@ unsigned __page_shift = 0;
+  */
+ const char code_syscall[] = {
+ 	0x01, 0x00, 0x00, 0xd4, /* SVC #0 */
+-	0x00, 0x00, 0x20, 0xd4 /* BRK #0 */
++	0x00, 0x00, 0x20, 0xd4	/* BRK #0 */
+ };
+ 
+ static const int code_syscall_aligned = round_up(sizeof(code_syscall), sizeof(long));
+diff --git a/compel/arch/arm/src/lib/infect.c b/compel/arch/arm/src/lib/infect.c
+index 6715afdb3..7700f52ca 100644
+--- a/compel/arch/arm/src/lib/infect.c
++++ b/compel/arch/arm/src/lib/infect.c
+@@ -18,7 +18,7 @@
+  */
+ const char code_syscall[] = {
+ 	0x00, 0x00, 0x00, 0xef, /* SVC #0  */
+-	0xf0, 0x01, 0xf0, 0xe7 /* UDF #32 */
++	0xf0, 0x01, 0xf0, 0xe7	/* UDF #32 */
+ };
+ 
+ static const int code_syscall_aligned = round_up(sizeof(code_syscall), sizeof(long));
+diff --git a/compel/arch/mips/src/lib/include/ldsodefs.h b/compel/arch/mips/src/lib/include/ldsodefs.h
+index 8cfde2496..97e79755d 100644
+--- a/compel/arch/mips/src/lib/include/ldsodefs.h
++++ b/compel/arch/mips/src/lib/include/ldsodefs.h
+@@ -69,8 +69,8 @@ struct La_mips_64_retval;
+ /* An entry in a 64 bit SHT_REL section.  */
+ 
+ typedef struct {
+-	Elf32_Word r_sym; /* Symbol index */
+-	unsigned char r_ssym; /* Special symbol for 2nd relocation */
++	Elf32_Word r_sym;      /* Symbol index */
++	unsigned char r_ssym;  /* Special symbol for 2nd relocation */
+ 	unsigned char r_type3; /* 3rd relocation type */
+ 	unsigned char r_type2; /* 2nd relocation type */
+ 	unsigned char r_type1; /* 1st relocation type */
+@@ -82,14 +82,14 @@ typedef union {
+ } _Elf64_Mips_R_Info_union;
+ 
+ typedef struct {
+-	Elf64_Addr r_offset; /* Address */
++	Elf64_Addr r_offset;		 /* Address */
+ 	_Elf64_Mips_R_Info_union r_info; /* Relocation type and symbol index */
+ } Elf64_Mips_Rel;
+ 
+ typedef struct {
+-	Elf64_Addr r_offset; /* Address */
++	Elf64_Addr r_offset;		 /* Address */
+ 	_Elf64_Mips_R_Info_union r_info; /* Relocation type and symbol index */
+-	Elf64_Sxword r_addend; /* Addend */
++	Elf64_Sxword r_addend;		 /* Addend */
+ } Elf64_Mips_Rela;
+ 
+ #define ELF64_MIPS_R_SYM(i) ((__extension__(_Elf64_Mips_R_Info_union)(i)).r_info_fields.r_sym)
+diff --git a/compel/arch/mips/src/lib/include/uapi/asm/siginfo.h b/compel/arch/mips/src/lib/include/uapi/asm/siginfo.h
+index 82ae6096b..6db1ddbd3 100644
+--- a/compel/arch/mips/src/lib/include/uapi/asm/siginfo.h
++++ b/compel/arch/mips/src/lib/include/uapi/asm/siginfo.h
+@@ -52,14 +52,14 @@ typedef struct siginfo {
+ 
+ 		/* kill() */
+ 		struct {
+-			__kernel_pid_t _pid; /* sender's pid */
++			__kernel_pid_t _pid;  /* sender's pid */
+ 			__ARCH_SI_UID_T _uid; /* sender's uid */
+ 		} _kill;
+ 
+ 		/* POSIX.1b timers */
+ 		struct {
+ 			__kernel_timer_t _tid; /* timer id */
+-			int _overrun; /* overrun count */
++			int _overrun;	       /* overrun count */
+ 			char _pad[sizeof(__ARCH_SI_UID_T) - sizeof(int)];
+ 			sigval_t _sigval; /* same as below */
+ 			int _sys_private; /* not to be passed to user */
+@@ -67,16 +67,16 @@ typedef struct siginfo {
+ 
+ 		/* POSIX.1b signals */
+ 		struct {
+-			__kernel_pid_t _pid; /* sender's pid */
++			__kernel_pid_t _pid;  /* sender's pid */
+ 			__ARCH_SI_UID_T _uid; /* sender's uid */
+ 			sigval_t _sigval;
+ 		} _rt;
+ 
+ 		/* SIGCHLD */
+ 		struct {
+-			__kernel_pid_t _pid; /* which child */
++			__kernel_pid_t _pid;  /* which child */
+ 			__ARCH_SI_UID_T _uid; /* sender's uid */
+-			int _status; /* exit code */
++			int _status;	      /* exit code */
+ 			__ARCH_SI_CLOCK_T _utime;
+ 			__ARCH_SI_CLOCK_T _stime;
+ 		} _sigchld;
+@@ -104,8 +104,8 @@ typedef struct siginfo {
+ 
+ 		/* SIGSYS */
+ 		struct {
+-			void *_call_addr; /* calling user insn */
+-			int _syscall; /* triggering system call number */
++			void *_call_addr;   /* calling user insn */
++			int _syscall;	    /* triggering system call number */
+ 			unsigned int _arch; /* AUDIT_ARCH_* of syscall */
+ 		} _sigsys;
+ 	} _sifields;
+diff --git a/compel/arch/mips/src/lib/infect.c b/compel/arch/mips/src/lib/infect.c
+index 68d0a2728..afa0f5ed5 100644
+--- a/compel/arch/mips/src/lib/infect.c
++++ b/compel/arch/mips/src/lib/infect.c
+@@ -24,7 +24,7 @@
+  */
+ const char code_syscall[] = {
+ 	0x0c, 0x00, 0x00, 0x00, /* syscall    */
+-	0x0d, 0x00, 0x00, 0x00 /*  break      */
++	0x0d, 0x00, 0x00, 0x00	/*  break      */
+ };
+ 
+ /* 10-byte legacy floating point register */
+diff --git a/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h b/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
+index fe6192e20..8cf8a135f 100644
+--- a/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/ppc64/src/lib/include/uapi/asm/infect-types.h
+@@ -21,13 +21,13 @@ typedef struct {
+ 	unsigned long xer;
+ 	unsigned long ccr;
+ 	unsigned long softe; /* Soft enabled/disabled */
+-	unsigned long trap; /* Reason for being here */
++	unsigned long trap;  /* Reason for being here */
+ 	/*
+ 	 * N.B. for critical exceptions on 4xx, the dar and dsisr
+ 	 * fields are overloaded to hold srr0 and srr1.
+ 	 */
+-	unsigned long dar; /* Fault registers */
+-	unsigned long dsisr; /* on 4xx/Book-E used for ESR */
++	unsigned long dar;    /* Fault registers */
++	unsigned long dsisr;  /* on 4xx/Book-E used for ESR */
+ 	unsigned long result; /* Result of a system call */
+ } user_regs_struct_t;
+ 
+diff --git a/compel/arch/ppc64/src/lib/infect.c b/compel/arch/ppc64/src/lib/infect.c
+index fc174d0dd..61cd6e985 100644
+--- a/compel/arch/ppc64/src/lib/infect.c
++++ b/compel/arch/ppc64/src/lib/infect.c
+@@ -30,7 +30,7 @@ unsigned __page_shift = 0;
+  */
+ const uint32_t code_syscall[] = {
+ 	0x44000002, /* sc 		*/
+-	0x0fe00000 /* twi 31,0,0	*/
++	0x0fe00000  /* twi 31,0,0	*/
+ };
+ 
+ static inline __always_unused void __check_code_syscall(void)
+diff --git a/compel/arch/s390/src/lib/infect.c b/compel/arch/s390/src/lib/infect.c
+index 77ace713a..3cd25e71d 100644
+--- a/compel/arch/s390/src/lib/infect.c
++++ b/compel/arch/s390/src/lib/infect.c
+@@ -624,8 +624,8 @@ enum kernel_ts_level {
+ };
+ 
+ /* See arch/s390/include/asm/processor.h */
+-#define TASK_SIZE_LEVEL_3 0x40000000000UL /* 4 TB */
+-#define TASK_SIZE_LEVEL_4 0x20000000000000UL /* 8 PB */
++#define TASK_SIZE_LEVEL_3 0x40000000000UL      /* 4 TB */
++#define TASK_SIZE_LEVEL_4 0x20000000000000UL   /* 8 PB */
+ #define TASK_SIZE_LEVEL_5 0xffffffffffffefffUL /* 16 EB - 0x1000 */
+ 
+ /*
+diff --git a/compel/arch/x86/plugins/std/syscalls/syscall32.c b/compel/arch/x86/plugins/std/syscalls/syscall32.c
+index 0f2fec3ff..d09fd38c7 100644
+--- a/compel/arch/x86/plugins/std/syscalls/syscall32.c
++++ b/compel/arch/x86/plugins/std/syscalls/syscall32.c
+@@ -1,9 +1,9 @@
+ #include "asm/types.h"
+ #include "syscall-32.h"
+ 
+-#define SYS_SOCKET     1 /* sys_socket(2)		*/
+-#define SYS_BIND       2 /* sys_bind(2)			*/
+-#define SYS_CONNECT    3 /* sys_connect(2)		*/
++#define SYS_SOCKET     1  /* sys_socket(2)		*/
++#define SYS_BIND       2  /* sys_bind(2)			*/
++#define SYS_CONNECT    3  /* sys_connect(2)		*/
+ #define SYS_SENDTO     11 /* sys_sendto(2)		*/
+ #define SYS_RECVFROM   12 /* sys_recvfrom(2)		*/
+ #define SYS_SHUTDOWN   13 /* sys_shutdown(2)		*/
+diff --git a/compel/arch/x86/src/lib/include/uapi/asm/cpu.h b/compel/arch/x86/src/lib/include/uapi/asm/cpu.h
+index 8d54516af..63ff83dbe 100644
+--- a/compel/arch/x86/src/lib/include/uapi/asm/cpu.h
++++ b/compel/arch/x86/src/lib/include/uapi/asm/cpu.h
+@@ -43,16 +43,16 @@ enum cpuid_leafs {
+ #define NCAPINTS_BITS (NCAPINTS * 32)
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000001 (EDX), word 0 */
+-#define X86_FEATURE_FPU	      (0 * 32 + 0) /* Onboard FPU */
+-#define X86_FEATURE_VME	      (0 * 32 + 1) /* Virtual Mode Extensions */
+-#define X86_FEATURE_DE	      (0 * 32 + 2) /* Debugging Extensions */
+-#define X86_FEATURE_PSE	      (0 * 32 + 3) /* Page Size Extensions */
+-#define X86_FEATURE_TSC	      (0 * 32 + 4) /* Time Stamp Counter */
+-#define X86_FEATURE_MSR	      (0 * 32 + 5) /* Model-Specific Registers */
+-#define X86_FEATURE_PAE	      (0 * 32 + 6) /* Physical Address Extensions */
+-#define X86_FEATURE_MCE	      (0 * 32 + 7) /* Machine Check Exception */
+-#define X86_FEATURE_CX8	      (0 * 32 + 8) /* CMPXCHG8 instruction */
+-#define X86_FEATURE_APIC      (0 * 32 + 9) /* Onboard APIC */
++#define X86_FEATURE_FPU	      (0 * 32 + 0)  /* Onboard FPU */
++#define X86_FEATURE_VME	      (0 * 32 + 1)  /* Virtual Mode Extensions */
++#define X86_FEATURE_DE	      (0 * 32 + 2)  /* Debugging Extensions */
++#define X86_FEATURE_PSE	      (0 * 32 + 3)  /* Page Size Extensions */
++#define X86_FEATURE_TSC	      (0 * 32 + 4)  /* Time Stamp Counter */
++#define X86_FEATURE_MSR	      (0 * 32 + 5)  /* Model-Specific Registers */
++#define X86_FEATURE_PAE	      (0 * 32 + 6)  /* Physical Address Extensions */
++#define X86_FEATURE_MCE	      (0 * 32 + 7)  /* Machine Check Exception */
++#define X86_FEATURE_CX8	      (0 * 32 + 8)  /* CMPXCHG8 instruction */
++#define X86_FEATURE_APIC      (0 * 32 + 9)  /* Onboard APIC */
+ #define X86_FEATURE_SEP	      (0 * 32 + 11) /* SYSENTER/SYSEXIT */
+ #define X86_FEATURE_MTRR      (0 * 32 + 12) /* Memory Type Range Registers */
+ #define X86_FEATURE_PGE	      (0 * 32 + 13) /* Page Global Enable */
+@@ -100,12 +100,12 @@ enum cpuid_leafs {
+ #define X86_FEATURE_CENTAUR_MCR (3 * 32 + 3) /* Centaur MCRs (= MTRRs) */
+ 
+ /* CPU types for specific tunings: */
+-#define X86_FEATURE_K8		   (3 * 32 + 4) /* "" Opteron, Athlon64 */
+-#define X86_FEATURE_K7		   (3 * 32 + 5) /* "" Athlon */
+-#define X86_FEATURE_P3		   (3 * 32 + 6) /* "" P3 */
+-#define X86_FEATURE_P4		   (3 * 32 + 7) /* "" P4 */
+-#define X86_FEATURE_CONSTANT_TSC   (3 * 32 + 8) /* TSC ticks at a constant rate */
+-#define X86_FEATURE_UP		   (3 * 32 + 9) /* SMP kernel running on UP */
++#define X86_FEATURE_K8		   (3 * 32 + 4)	 /* "" Opteron, Athlon64 */
++#define X86_FEATURE_K7		   (3 * 32 + 5)	 /* "" Athlon */
++#define X86_FEATURE_P3		   (3 * 32 + 6)	 /* "" P3 */
++#define X86_FEATURE_P4		   (3 * 32 + 7)	 /* "" P4 */
++#define X86_FEATURE_CONSTANT_TSC   (3 * 32 + 8)	 /* TSC ticks at a constant rate */
++#define X86_FEATURE_UP		   (3 * 32 + 9)	 /* SMP kernel running on UP */
+ #define X86_FEATURE_ART		   (3 * 32 + 10) /* Always running timer (ART) */
+ #define X86_FEATURE_ARCH_PERFMON   (3 * 32 + 11) /* Intel Architectural PerfMon */
+ #define X86_FEATURE_PEBS	   (3 * 32 + 12) /* Precise-Event Based Sampling */
+@@ -129,16 +129,16 @@ enum cpuid_leafs {
+ #define X86_FEATURE_TSC_KNOWN_FREQ (3 * 32 + 31) /* TSC has known frequency */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000001 (ECX), word 4 */
+-#define X86_FEATURE_XMM3	       (4 * 32 + 0) /* "pni" SSE-3 */
+-#define X86_FEATURE_PCLMULQDQ	       (4 * 32 + 1) /* PCLMULQDQ instruction */
+-#define X86_FEATURE_DTES64	       (4 * 32 + 2) /* 64-bit Debug Store */
+-#define X86_FEATURE_MWAIT	       (4 * 32 + 3) /* "monitor" MONITOR/MWAIT support */
+-#define X86_FEATURE_DSCPL	       (4 * 32 + 4) /* "ds_cpl" CPL-qualified (filtered) Debug Store */
+-#define X86_FEATURE_VMX		       (4 * 32 + 5) /* Hardware virtualization */
+-#define X86_FEATURE_SMX		       (4 * 32 + 6) /* Safer Mode eXtensions */
+-#define X86_FEATURE_EST		       (4 * 32 + 7) /* Enhanced SpeedStep */
+-#define X86_FEATURE_TM2		       (4 * 32 + 8) /* Thermal Monitor 2 */
+-#define X86_FEATURE_SSSE3	       (4 * 32 + 9) /* Supplemental SSE-3 */
++#define X86_FEATURE_XMM3	       (4 * 32 + 0)  /* "pni" SSE-3 */
++#define X86_FEATURE_PCLMULQDQ	       (4 * 32 + 1)  /* PCLMULQDQ instruction */
++#define X86_FEATURE_DTES64	       (4 * 32 + 2)  /* 64-bit Debug Store */
++#define X86_FEATURE_MWAIT	       (4 * 32 + 3)  /* "monitor" MONITOR/MWAIT support */
++#define X86_FEATURE_DSCPL	       (4 * 32 + 4)  /* "ds_cpl" CPL-qualified (filtered) Debug Store */
++#define X86_FEATURE_VMX		       (4 * 32 + 5)  /* Hardware virtualization */
++#define X86_FEATURE_SMX		       (4 * 32 + 6)  /* Safer Mode eXtensions */
++#define X86_FEATURE_EST		       (4 * 32 + 7)  /* Enhanced SpeedStep */
++#define X86_FEATURE_TM2		       (4 * 32 + 8)  /* Thermal Monitor 2 */
++#define X86_FEATURE_SSSE3	       (4 * 32 + 9)  /* Supplemental SSE-3 */
+ #define X86_FEATURE_CID		       (4 * 32 + 10) /* Context ID */
+ #define X86_FEATURE_SDBG	       (4 * 32 + 11) /* Silicon Debug */
+ #define X86_FEATURE_FMA		       (4 * 32 + 12) /* Fused multiply-add */
+@@ -162,28 +162,28 @@ enum cpuid_leafs {
+ #define X86_FEATURE_HYPERVISOR	       (4 * 32 + 31) /* Running on a hypervisor */
+ 
+ /* VIA/Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001, word 5 */
+-#define X86_FEATURE_XSTORE    (5 * 32 + 2) /* "rng" RNG present (xstore) */
+-#define X86_FEATURE_XSTORE_EN (5 * 32 + 3) /* "rng_en" RNG enabled */
+-#define X86_FEATURE_XCRYPT    (5 * 32 + 6) /* "ace" on-CPU crypto (xcrypt) */
+-#define X86_FEATURE_XCRYPT_EN (5 * 32 + 7) /* "ace_en" on-CPU crypto enabled */
+-#define X86_FEATURE_ACE2      (5 * 32 + 8) /* Advanced Cryptography Engine v2 */
+-#define X86_FEATURE_ACE2_EN   (5 * 32 + 9) /* ACE v2 enabled */
++#define X86_FEATURE_XSTORE    (5 * 32 + 2)  /* "rng" RNG present (xstore) */
++#define X86_FEATURE_XSTORE_EN (5 * 32 + 3)  /* "rng_en" RNG enabled */
++#define X86_FEATURE_XCRYPT    (5 * 32 + 6)  /* "ace" on-CPU crypto (xcrypt) */
++#define X86_FEATURE_XCRYPT_EN (5 * 32 + 7)  /* "ace_en" on-CPU crypto enabled */
++#define X86_FEATURE_ACE2      (5 * 32 + 8)  /* Advanced Cryptography Engine v2 */
++#define X86_FEATURE_ACE2_EN   (5 * 32 + 9)  /* ACE v2 enabled */
+ #define X86_FEATURE_PHE	      (5 * 32 + 10) /* PadLock Hash Engine */
+ #define X86_FEATURE_PHE_EN    (5 * 32 + 11) /* PHE enabled */
+ #define X86_FEATURE_PMM	      (5 * 32 + 12) /* PadLock Montgomery Multiplier */
+ #define X86_FEATURE_PMM_EN    (5 * 32 + 13) /* PMM enabled */
+ 
+ /* More extended AMD flags: CPUID level 0x80000001, ECX, word 6 */
+-#define X86_FEATURE_LAHF_LM	  (6 * 32 + 0) /* LAHF/SAHF in long mode */
+-#define X86_FEATURE_CMP_LEGACY	  (6 * 32 + 1) /* If yes HyperThreading not valid */
+-#define X86_FEATURE_SVM		  (6 * 32 + 2) /* Secure Virtual Machine */
+-#define X86_FEATURE_EXTAPIC	  (6 * 32 + 3) /* Extended APIC space */
+-#define X86_FEATURE_CR8_LEGACY	  (6 * 32 + 4) /* CR8 in 32-bit mode */
+-#define X86_FEATURE_ABM		  (6 * 32 + 5) /* Advanced bit manipulation */
+-#define X86_FEATURE_SSE4A	  (6 * 32 + 6) /* SSE-4A */
+-#define X86_FEATURE_MISALIGNSSE	  (6 * 32 + 7) /* Misaligned SSE mode */
+-#define X86_FEATURE_3DNOWPREFETCH (6 * 32 + 8) /* 3DNow prefetch instructions */
+-#define X86_FEATURE_OSVW	  (6 * 32 + 9) /* OS Visible Workaround */
++#define X86_FEATURE_LAHF_LM	  (6 * 32 + 0)	/* LAHF/SAHF in long mode */
++#define X86_FEATURE_CMP_LEGACY	  (6 * 32 + 1)	/* If yes HyperThreading not valid */
++#define X86_FEATURE_SVM		  (6 * 32 + 2)	/* Secure Virtual Machine */
++#define X86_FEATURE_EXTAPIC	  (6 * 32 + 3)	/* Extended APIC space */
++#define X86_FEATURE_CR8_LEGACY	  (6 * 32 + 4)	/* CR8 in 32-bit mode */
++#define X86_FEATURE_ABM		  (6 * 32 + 5)	/* Advanced bit manipulation */
++#define X86_FEATURE_SSE4A	  (6 * 32 + 6)	/* SSE-4A */
++#define X86_FEATURE_MISALIGNSSE	  (6 * 32 + 7)	/* Misaligned SSE mode */
++#define X86_FEATURE_3DNOWPREFETCH (6 * 32 + 8)	/* 3DNow prefetch instructions */
++#define X86_FEATURE_OSVW	  (6 * 32 + 9)	/* OS Visible Workaround */
+ #define X86_FEATURE_IBS		  (6 * 32 + 10) /* Instruction Based Sampling */
+ #define X86_FEATURE_XOP		  (6 * 32 + 11) /* extended AVX instructions */
+ #define X86_FEATURE_SKINIT	  (6 * 32 + 12) /* SKINIT/STGI instructions */
+@@ -202,14 +202,14 @@ enum cpuid_leafs {
+ #define X86_FEATURE_MWAITX	  (6 * 32 + 29) /* MWAIT extension (MONITORX/MWAITX instructions) */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+-#define X86_FEATURE_FSGSBASE   (9 * 32 + 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+-#define X86_FEATURE_TSC_ADJUST (9 * 32 + 1) /* TSC adjustment MSR 0x3B */
+-#define X86_FEATURE_BMI1       (9 * 32 + 3) /* 1st group bit manipulation extensions */
+-#define X86_FEATURE_HLE	       (9 * 32 + 4) /* Hardware Lock Elision */
+-#define X86_FEATURE_AVX2       (9 * 32 + 5) /* AVX2 instructions */
+-#define X86_FEATURE_SMEP       (9 * 32 + 7) /* Supervisor Mode Execution Protection */
+-#define X86_FEATURE_BMI2       (9 * 32 + 8) /* 2nd group bit manipulation extensions */
+-#define X86_FEATURE_ERMS       (9 * 32 + 9) /* Enhanced REP MOVSB/STOSB instructions */
++#define X86_FEATURE_FSGSBASE   (9 * 32 + 0)  /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
++#define X86_FEATURE_TSC_ADJUST (9 * 32 + 1)  /* TSC adjustment MSR 0x3B */
++#define X86_FEATURE_BMI1       (9 * 32 + 3)  /* 1st group bit manipulation extensions */
++#define X86_FEATURE_HLE	       (9 * 32 + 4)  /* Hardware Lock Elision */
++#define X86_FEATURE_AVX2       (9 * 32 + 5)  /* AVX2 instructions */
++#define X86_FEATURE_SMEP       (9 * 32 + 7)  /* Supervisor Mode Execution Protection */
++#define X86_FEATURE_BMI2       (9 * 32 + 8)  /* 2nd group bit manipulation extensions */
++#define X86_FEATURE_ERMS       (9 * 32 + 9)  /* Enhanced REP MOVSB/STOSB instructions */
+ #define X86_FEATURE_INVPCID    (9 * 32 + 10) /* Invalidate Processor Context ID */
+ #define X86_FEATURE_RTM	       (9 * 32 + 11) /* Restricted Transactional Memory */
+ #define X86_FEATURE_CQM	       (9 * 32 + 12) /* Cache QoS Monitoring */
+@@ -238,14 +238,14 @@ enum cpuid_leafs {
+ #define X86_FEATURE_XSAVES   (10 * 32 + 3) /* XSAVES/XRSTORS instructions */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (ECX), word 11 */
+-#define X86_FEATURE_PREFETCHWT1	     (11 * 32 + 0) /* PREFETCHWT1 Intel® Xeon PhiTM only */
+-#define X86_FEATURE_AVX512VBMI	     (11 * 32 + 1) /* AVX512 Vector Bit Manipulation instructions*/
+-#define X86_FEATURE_UMIP	     (11 * 32 + 2) /* User Mode Instruction Protection */
+-#define X86_FEATURE_PKU		     (11 * 32 + 3) /* Protection Keys for Userspace */
+-#define X86_FEATURE_OSPKE	     (11 * 32 + 4) /* OS Protection Keys Enable */
+-#define X86_FEATURE_AVX512_VBMI2     (11 * 32 + 6) /* Additional AVX512 Vector Bit Manipulation Instructions */
+-#define X86_FEATURE_GFNI	     (11 * 32 + 8) /* Galois Field New Instructions */
+-#define X86_FEATURE_VAES	     (11 * 32 + 9) /* Vector AES */
++#define X86_FEATURE_PREFETCHWT1	     (11 * 32 + 0)  /* PREFETCHWT1 Intel® Xeon PhiTM only */
++#define X86_FEATURE_AVX512VBMI	     (11 * 32 + 1)  /* AVX512 Vector Bit Manipulation instructions*/
++#define X86_FEATURE_UMIP	     (11 * 32 + 2)  /* User Mode Instruction Protection */
++#define X86_FEATURE_PKU		     (11 * 32 + 3)  /* Protection Keys for Userspace */
++#define X86_FEATURE_OSPKE	     (11 * 32 + 4)  /* OS Protection Keys Enable */
++#define X86_FEATURE_AVX512_VBMI2     (11 * 32 + 6)  /* Additional AVX512 Vector Bit Manipulation Instructions */
++#define X86_FEATURE_GFNI	     (11 * 32 + 8)  /* Galois Field New Instructions */
++#define X86_FEATURE_VAES	     (11 * 32 + 9)  /* Vector AES */
+ #define X86_FEATURE_VPCLMULQDQ	     (11 * 32 + 10) /* Carry-Less Multiplication Double Quadword */
+ #define X86_FEATURE_AVX512_VNNI	     (11 * 32 + 11) /* Vector Neural Network Instructions */
+ #define X86_FEATURE_AVX512_BITALG    (11 * 32 + 12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
+@@ -261,35 +261,35 @@ enum cpuid_leafs {
+ #define X86_FEATURE_CQM_MBM_LOCAL (12 * 32 + 2) /* LLC Local MBM monitoring */
+ 
+ /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 13 */
+-#define X86_FEATURE_CLZERO     (13 * 32 + 0) /* CLZERO instruction */
+-#define X86_FEATURE_IRPERF     (13 * 32 + 1) /* Instructions Retired Count */
+-#define X86_FEATURE_XSAVEERPTR (13 * 32 + 2) /* Always save/restore FP error pointers */
++#define X86_FEATURE_CLZERO     (13 * 32 + 0)  /* CLZERO instruction */
++#define X86_FEATURE_IRPERF     (13 * 32 + 1)  /* Instructions Retired Count */
++#define X86_FEATURE_XSAVEERPTR (13 * 32 + 2)  /* Always save/restore FP error pointers */
+ #define X86_FEATURE_IBPB       (13 * 32 + 12) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_IBRS       (13 * 32 + 14) /* Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_STIBP      (13 * 32 + 15) /* Single Thread Indirect Branch Predictors */
+ 
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+-#define X86_FEATURE_DTHERM	   (14 * 32 + 0) /* Digital Thermal Sensor */
+-#define X86_FEATURE_IDA		   (14 * 32 + 1) /* Intel Dynamic Acceleration */
+-#define X86_FEATURE_ARAT	   (14 * 32 + 2) /* Always Running APIC Timer */
+-#define X86_FEATURE_PLN		   (14 * 32 + 4) /* Intel Power Limit Notification */
+-#define X86_FEATURE_PTS		   (14 * 32 + 6) /* Intel Package Thermal Status */
+-#define X86_FEATURE_HWP		   (14 * 32 + 7) /* Intel Hardware P-states */
+-#define X86_FEATURE_HWP_NOTIFY	   (14 * 32 + 8) /* HWP Notification */
+-#define X86_FEATURE_HWP_ACT_WINDOW (14 * 32 + 9) /* HWP Activity Window */
++#define X86_FEATURE_DTHERM	   (14 * 32 + 0)  /* Digital Thermal Sensor */
++#define X86_FEATURE_IDA		   (14 * 32 + 1)  /* Intel Dynamic Acceleration */
++#define X86_FEATURE_ARAT	   (14 * 32 + 2)  /* Always Running APIC Timer */
++#define X86_FEATURE_PLN		   (14 * 32 + 4)  /* Intel Power Limit Notification */
++#define X86_FEATURE_PTS		   (14 * 32 + 6)  /* Intel Package Thermal Status */
++#define X86_FEATURE_HWP		   (14 * 32 + 7)  /* Intel Hardware P-states */
++#define X86_FEATURE_HWP_NOTIFY	   (14 * 32 + 8)  /* HWP Notification */
++#define X86_FEATURE_HWP_ACT_WINDOW (14 * 32 + 9)  /* HWP Activity Window */
+ #define X86_FEATURE_HWP_EPP	   (14 * 32 + 10) /* HWP Energy Perf. Preference */
+ #define X86_FEATURE_HWP_PKG_REQ	   (14 * 32 + 11) /* HWP Package Level Request */
+ #define X86_FEATURE_HDC		   (14 * 32 + 13) /* HDC base registers present */
+ 
+ /* AMD SVM Feature Identification, CPUID level 0x8000000a (EDX), word 15 */
+-#define X86_FEATURE_NPT		    (15 * 32 + 0) /* Nested Page Table support */
+-#define X86_FEATURE_LBRV	    (15 * 32 + 1) /* LBR Virtualization support */
+-#define X86_FEATURE_SVML	    (15 * 32 + 2) /* "svm_lock" SVM locking MSR */
+-#define X86_FEATURE_NRIPS	    (15 * 32 + 3) /* "nrip_save" SVM next_rip save */
+-#define X86_FEATURE_TSCRATEMSR	    (15 * 32 + 4) /* "tsc_scale" TSC scaling support */
+-#define X86_FEATURE_VMCBCLEAN	    (15 * 32 + 5) /* "vmcb_clean" VMCB clean bits support */
+-#define X86_FEATURE_FLUSHBYASID	    (15 * 32 + 6) /* flush-by-ASID support */
+-#define X86_FEATURE_DECODEASSISTS   (15 * 32 + 7) /* Decode Assists support */
++#define X86_FEATURE_NPT		    (15 * 32 + 0)  /* Nested Page Table support */
++#define X86_FEATURE_LBRV	    (15 * 32 + 1)  /* LBR Virtualization support */
++#define X86_FEATURE_SVML	    (15 * 32 + 2)  /* "svm_lock" SVM locking MSR */
++#define X86_FEATURE_NRIPS	    (15 * 32 + 3)  /* "nrip_save" SVM next_rip save */
++#define X86_FEATURE_TSCRATEMSR	    (15 * 32 + 4)  /* "tsc_scale" TSC scaling support */
++#define X86_FEATURE_VMCBCLEAN	    (15 * 32 + 5)  /* "vmcb_clean" VMCB clean bits support */
++#define X86_FEATURE_FLUSHBYASID	    (15 * 32 + 6)  /* flush-by-ASID support */
++#define X86_FEATURE_DECODEASSISTS   (15 * 32 + 7)  /* Decode Assists support */
+ #define X86_FEATURE_PAUSEFILTER	    (15 * 32 + 10) /* filtered pause intercept */
+ #define X86_FEATURE_PFTHRESHOLD	    (15 * 32 + 12) /* pause filter threshold */
+ #define X86_FEATURE_AVIC	    (15 * 32 + 13) /* Virtual Interrupt Controller */
+@@ -305,8 +305,8 @@ enum cpuid_leafs {
+ #define X86_FEATURE_SMCA	   (17 * 32 + 3) /* Scalable MCA */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
+-#define X86_FEATURE_AVX512_4VNNIW     (18 * 32 + 2) /* AVX-512 Neural Network Instructions */
+-#define X86_FEATURE_AVX512_4FMAPS     (18 * 32 + 3) /* AVX-512 Multiply Accumulation Single precision */
++#define X86_FEATURE_AVX512_4VNNIW     (18 * 32 + 2)  /* AVX-512 Neural Network Instructions */
++#define X86_FEATURE_AVX512_4FMAPS     (18 * 32 + 3)  /* AVX-512 Multiply Accumulation Single precision */
+ #define X86_FEATURE_PCONFIG	      (18 * 32 + 18) /* Intel PCONFIG */
+ #define X86_FEATURE_SPEC_CTRL	      (18 * 32 + 26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP	      (18 * 32 + 27) /* "" Single Thread Indirect Branch Predictors */
+diff --git a/compel/arch/x86/src/lib/include/uapi/asm/fpu.h b/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
+index d740e3c04..a16b658af 100644
+--- a/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
++++ b/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
+@@ -105,7 +105,7 @@ struct i387_fxsave_struct {
+ 			uint32_t fos; /* FPU Operand Selector		*/
+ 		};
+ 	};
+-	uint32_t mxcsr; /* MXCSR Register State */
++	uint32_t mxcsr;	     /* MXCSR Register State */
+ 	uint32_t mxcsr_mask; /* MXCSR Mask		*/
+ 
+ 	/* 8*16 bytes for each FP-reg = 128 bytes				*/
+@@ -277,13 +277,13 @@ typedef struct {
+ } fpu_state_64_t;
+ 
+ struct user_i387_ia32_struct {
+-	uint32_t cwd; /* FPU Control Word		*/
+-	uint32_t swd; /* FPU Status Word		*/
+-	uint32_t twd; /* FPU Tag Word			*/
+-	uint32_t fip; /* FPU IP Offset		*/
+-	uint32_t fcs; /* FPU IP Selector		*/
+-	uint32_t foo; /* FPU Operand Pointer Offset	*/
+-	uint32_t fos; /* FPU Operand Pointer Selector	*/
++	uint32_t cwd;	       /* FPU Control Word		*/
++	uint32_t swd;	       /* FPU Status Word		*/
++	uint32_t twd;	       /* FPU Tag Word			*/
++	uint32_t fip;	       /* FPU IP Offset		*/
++	uint32_t fcs;	       /* FPU IP Selector		*/
++	uint32_t foo;	       /* FPU Operand Pointer Offset	*/
++	uint32_t fos;	       /* FPU Operand Pointer Selector	*/
+ 	uint32_t st_space[20]; /* 8*10 bytes for each FP-reg = 80 bytes */
+ };
+ 
+diff --git a/compel/arch/x86/src/lib/infect.c b/compel/arch/x86/src/lib/infect.c
+index 1e344bf3a..2f6c557d0 100644
+--- a/compel/arch/x86/src/lib/infect.c
++++ b/compel/arch/x86/src/lib/infect.c
+@@ -34,12 +34,12 @@
+  * Injected syscall instruction
+  */
+ const char code_syscall[] = {
+-	0x0f, 0x05, /* syscall    */
++	0x0f, 0x05,			   /* syscall    */
+ 	0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc /* int 3, ... */
+ };
+ 
+ const char code_int_80[] = {
+-	0xcd, 0x80, /* int $0x80  */
++	0xcd, 0x80,			   /* int $0x80  */
+ 	0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc /* int 3, ... */
+ };
+ 
+diff --git a/compel/include/infect-priv.h b/compel/include/infect-priv.h
+index 1c03f4486..9d3442839 100644
+--- a/compel/include/infect-priv.h
++++ b/compel/include/infect-priv.h
+@@ -38,7 +38,7 @@ struct parasite_ctl {
+ 	unsigned long parasite_ip; /* service routine start ip */
+ 
+ 	unsigned int *cmd; /* address for command */
+-	void *args; /* address for arguments */
++	void *args;	   /* address for arguments */
+ 	unsigned long args_size;
+ 	int tsock; /* transport socket for transferring fds */
+ 
+diff --git a/compel/include/rpc-pie-priv.h b/compel/include/rpc-pie-priv.h
+index 2a239c613..5a6b337b2 100644
+--- a/compel/include/rpc-pie-priv.h
++++ b/compel/include/rpc-pie-priv.h
+@@ -3,7 +3,7 @@
+ struct ctl_msg {
+ 	uint32_t cmd; /* command itself */
+ 	uint32_t ack; /* ack on command */
+-	int32_t err; /* error code on reply */
++	int32_t err;  /* error code on reply */
+ };
+ 
+ #define ctl_msg_cmd(_cmd)    \
+diff --git a/compel/include/uapi/infect.h b/compel/include/uapi/infect.h
+index c3d2ee6a6..7fa0bd8a0 100644
+--- a/compel/include/uapi/infect.h
++++ b/compel/include/uapi/infect.h
+@@ -106,7 +106,7 @@ struct infect_ctx {
+ 
+ 	unsigned long task_size;
+ 	unsigned long syscall_ip; /* entry point of infection */
+-	unsigned long flags; /* fine-tune (e.g. faults) */
++	unsigned long flags;	  /* fine-tune (e.g. faults) */
+ 
+ 	void (*child_handler)(int, siginfo_t *, void *); /* hander for SIGCHLD deaths */
+ 	struct sigaction orig_handler;
+diff --git a/compel/include/uapi/loglevels.h b/compel/include/uapi/loglevels.h
+index e76c15657..7a49825d2 100644
+--- a/compel/include/uapi/loglevels.h
++++ b/compel/include/uapi/loglevels.h
+@@ -7,10 +7,10 @@
+  */
+ 
+ enum __compel_log_levels {
+-	COMPEL_LOG_MSG, /* Print message regardless of log level */
++	COMPEL_LOG_MSG,	  /* Print message regardless of log level */
+ 	COMPEL_LOG_ERROR, /* Errors only, when we're in trouble */
+-	COMPEL_LOG_WARN, /* Warnings */
+-	COMPEL_LOG_INFO, /* Informative, everything is fine */
++	COMPEL_LOG_WARN,  /* Warnings */
++	COMPEL_LOG_INFO,  /* Informative, everything is fine */
+ 	COMPEL_LOG_DEBUG, /* Debug only */
+ 
+ 	COMPEL_DEFAULT_LOGLEVEL = COMPEL_LOG_WARN
+diff --git a/compel/include/uapi/ptrace.h b/compel/include/uapi/ptrace.h
+index c5291d20d..533e0569f 100644
+--- a/compel/include/uapi/ptrace.h
++++ b/compel/include/uapi/ptrace.h
+@@ -62,7 +62,7 @@
+  */
+ typedef struct {
+ 	uint64_t filter_off; /* Input: which filter */
+-	uint64_t flags; /* Output: filter's flags */
++	uint64_t flags;	     /* Output: filter's flags */
+ } seccomp_metadata_t;
+ 
+ #ifdef PTRACE_EVENT_STOP
+diff --git a/compel/src/lib/handle-elf.c b/compel/src/lib/handle-elf.c
+index 9662751e0..22c8f2978 100644
+--- a/compel/src/lib/handle-elf.c
++++ b/compel/src/lib/handle-elf.c
+@@ -554,7 +554,7 @@ int __handle_elf(void *mem, size_t size)
+ #endif /* ELF_PPC64 */
+ 
+ #ifdef ELF_X86_64
+-			case R_X86_64_32: /* Symbol + Addend (4 bytes) */
++			case R_X86_64_32:  /* Symbol + Addend (4 bytes) */
+ 			case R_X86_64_32S: /* Symbol + Addend (4 bytes) */
+ 				pr_debug("\t\t\t\tR_X86_64_32       at 0x%-4lx val 0x%x\n", place, value32);
+ 				pr_out("	{ .offset = 0x%-8x, .type = COMPEL_TYPE_INT,  "
+diff --git a/criu/arch/ppc64/restorer.c b/criu/arch/ppc64/restorer.c
+index c17ba1669..56c09391e 100644
+--- a/criu/arch/ppc64/restorer.c
++++ b/criu/arch/ppc64/restorer.c
+@@ -45,10 +45,10 @@ unsigned long sys_shmat(int shmid, const void *shmaddr, int shmflg)
+ 	unsigned long raddr;
+ 	int ret;
+ 
+-	ret = sys_ipc(21 /*SHMAT */, shmid, /* first 		*/
+-		      shmflg, /* second 		*/
++	ret = sys_ipc(21 /*SHMAT */, shmid,  /* first 		*/
++		      shmflg,		     /* second 		*/
+ 		      (unsigned long)&raddr, /* third 		*/
+-		      shmaddr, /* ptr			*/
++		      shmaddr,		     /* ptr			*/
+ 		      0 /* fifth not used 	*/);
+ 
+ 	if (ret)
+diff --git a/criu/arch/ppc64/vdso-pie.c b/criu/arch/ppc64/vdso-pie.c
+index f01123efe..a84ae776b 100644
+--- a/criu/arch/ppc64/vdso-pie.c
++++ b/criu/arch/ppc64/vdso-pie.c
+@@ -110,9 +110,9 @@ static inline void put_trampoline_call(unsigned long at, unsigned long to, unsig
+ {
+ 	uint32_t *addr = (uint32_t *)at;
+ 
+-	*addr++ = 0x7C0802a6; /* mflr	r0 */
++	*addr++ = 0x7C0802a6;					  /* mflr	r0 */
+ 	*addr++ = 0x48000001 | ((long)(tr - at - 4) & 0x3fffffc); /* bl tr */
+-	*(uint64_t *)addr = to; /* the address to read by the trampoline */
++	*(uint64_t *)addr = to;					  /* the address to read by the trampoline */
+ 
+ 	invalidate_caches(at);
+ }
+diff --git a/criu/arch/s390/restorer.c b/criu/arch/s390/restorer.c
+index 6907ad75b..8b3bc44ba 100644
+--- a/criu/arch/s390/restorer.c
++++ b/criu/arch/s390/restorer.c
+@@ -23,10 +23,10 @@ unsigned long sys_shmat(int shmid, const void *shmaddr, int shmflg)
+ 	unsigned long raddr;
+ 	int ret;
+ 
+-	ret = sys_ipc(21 /*SHMAT */, shmid, /* first		*/
+-		      shmflg, /* second		*/
++	ret = sys_ipc(21 /*SHMAT */, shmid,  /* first		*/
++		      shmflg,		     /* second		*/
+ 		      (unsigned long)&raddr, /* third		*/
+-		      shmaddr, /* ptr			*/
++		      shmaddr,		     /* ptr			*/
+ 		      0 /* fifth not used	*/);
+ 
+ 	if (ret)
+diff --git a/criu/arch/s390/vdso-pie.c b/criu/arch/s390/vdso-pie.c
+index ad504beda..bf0366b0e 100644
+--- a/criu/arch/s390/vdso-pie.c
++++ b/criu/arch/s390/vdso-pie.c
+@@ -18,9 +18,9 @@
+  */
+ typedef struct {
+ 	u8 larl[6]; /* Load relative address of imm64 */
+-	u8 lg[6]; /* Load %r1 with imm64 */
+-	u8 br[2]; /* Branch to %r1 */
+-	u64 addr; /* Jump address */
++	u8 lg[6];   /* Load %r1 with imm64 */
++	u8 br[2];   /* Branch to %r1 */
++	u64 addr;   /* Jump address */
+ 	u32 guards; /* Guard bytes */
+ } __packed jmp_t;
+ 
+diff --git a/criu/arch/x86/include/asm/restorer.h b/criu/arch/x86/include/asm/restorer.h
+index 23438314f..f7a6d5058 100644
+--- a/criu/arch/x86/include/asm/restorer.h
++++ b/criu/arch/x86/include/asm/restorer.h
+@@ -13,7 +13,7 @@
+ extern void restore_tls(tls_t *ptls);
+ extern int arch_compat_rt_sigaction(void *stack32, int sig, rt_sigaction_t_compat *act);
+ extern int set_compat_robust_list(uint32_t head_ptr, uint32_t len);
+-#else /* CONFIG_COMPAT */
++#else  /* CONFIG_COMPAT */
+ static inline void restore_tls(tls_t *ptls)
+ {
+ }
+diff --git a/criu/arch/x86/sigaction_compat.c b/criu/arch/x86/sigaction_compat.c
+index f02b2cc0e..506a8d1bb 100644
+--- a/criu/arch/x86/sigaction_compat.c
++++ b/criu/arch/x86/sigaction_compat.c
+@@ -44,8 +44,8 @@ int arch_compat_rt_sigaction(void *stack32, int sig, rt_sigaction_t_compat *act)
+ 	memcpy(stack32, act, sizeof(rt_sigaction_t_compat));
+ 	arg.nr = __NR32_rt_sigaction;
+ 	arg.arg0 = sig;
+-	arg.arg1 = (uint32_t)act_stack; /* act */
+-	arg.arg2 = 0; /* oldact */
++	arg.arg1 = (uint32_t)act_stack;		      /* act */
++	arg.arg2 = 0;				      /* oldact */
+ 	arg.arg3 = (uint32_t)sizeof(act->rt_sa_mask); /* sigsetsize */
+ 
+ 	return do_full_int80(&arg);
+diff --git a/criu/cgroup.c b/criu/cgroup.c
+index ccac37fcc..82d9b16a2 100644
+--- a/criu/cgroup.c
++++ b/criu/cgroup.c
+@@ -81,7 +81,7 @@ static bool cg_set_compare(struct cg_set *set, struct list_head *ctls, int what)
+ 		if (l2->next != ctls)
+ 			c2 = list_first_entry(l2, struct cg_ctl, l);
+ 
+-		if (!c1 || !c2) /* Nowhere to move next */
++		if (!c1 || !c2)		   /* Nowhere to move next */
+ 			return !c1 && !c2; /* Both lists scanned -- match */
+ 
+ 		if (strcmp(c1->name, c2->name))
+@@ -860,7 +860,7 @@ static int dump_cg_dirs(struct list_head *dirs, size_t n_dirs, CgroupDirEntry **
+ 		cde->dir_perms->gid = cur->gid;
+ 
+ 		cde->dir_name = cur->path + poff;
+-		if (poff != 1) /* parent isn't "/" */
++		if (poff != 1)		 /* parent isn't "/" */
+ 			cde->dir_name++; /* leading / */
+ 		cde->n_children = cur->n_children;
+ 		if (cur->n_children > 0)
+diff --git a/criu/cr-check.c b/criu/cr-check.c
+index 3e268c439..e46c93815 100644
+--- a/criu/cr-check.c
++++ b/criu/cr-check.c
+@@ -1631,7 +1631,7 @@ void pr_check_features(const char *offset, const char *sep, int width)
+ 		}
+ 		pr_msg("%s", fl->name); // no \n
+ 		pos += len;
+-		if ((fl + 1)->name) { // not the last item
++		if ((fl + 1)->name) {	   // not the last item
+ 			pr_msg("%s", sep); // no \n
+ 			pos += sep_len;
+ 		}
+diff --git a/criu/cr-dump.c b/criu/cr-dump.c
+index 940f62246..ecc99f116 100644
+--- a/criu/cr-dump.c
++++ b/criu/cr-dump.c
+@@ -615,7 +615,7 @@ static int dump_task_kobj_ids(struct pstree_item *item)
+ 	TaskKobjIdsEntry *ids = item->ids;
+ 
+ 	elem.pid = pid;
+-	elem.idx = 0; /* really 0 for all */
++	elem.idx = 0;	/* really 0 for all */
+ 	elem.genid = 0; /* FIXME optimize */
+ 
+ 	new = 0;
+diff --git a/criu/files-reg.c b/criu/files-reg.c
+index ee54d1d7d..e330466f6 100644
+--- a/criu/files-reg.c
++++ b/criu/files-reg.c
+@@ -2236,8 +2236,8 @@ static struct filemap_ctx ctx;
+ void filemap_ctx_init(bool auto_close)
+ {
+ 	ctx.desc = NULL; /* to fail the first comparison in open_ */
+-	ctx.fd = -1; /* not to close random fd in _fini */
+-	ctx.vma = NULL; /* not to put spurious VMA_CLOSE in _fini */
++	ctx.fd = -1;	 /* not to close random fd in _fini */
++	ctx.vma = NULL;	 /* not to put spurious VMA_CLOSE in _fini */
+ 	/* flags may remain any */
+ 	ctx.close = auto_close;
+ }
+diff --git a/criu/files.c b/criu/files.c
+index 93754fb44..69ebc2e82 100644
+--- a/criu/files.c
++++ b/criu/files.c
+@@ -506,7 +506,7 @@ static int dump_one_file(struct pid *pid, int fd, int lfd, struct fd_opts *opts,
+ 	}
+ 
+ 	p.fd_ctl = ctl; /* Some dump_opts require this to talk to parasite */
+-	p.dfds = dfds; /* epoll needs to verify if target fd exist */
++	p.dfds = dfds;	/* epoll needs to verify if target fd exist */
+ 
+ 	if (S_ISSOCK(p.stat.st_mode))
+ 		return dump_socket(&p, lfd, e);
+@@ -1486,7 +1486,7 @@ int shared_fdt_prepare(struct pstree_item *item)
+ struct inherit_fd {
+ 	struct list_head inh_list;
+ 	char *inh_id; /* file identifier */
+-	int inh_fd; /* criu's descriptor to inherit */
++	int inh_fd;   /* criu's descriptor to inherit */
+ 	int inh_fd_id;
+ };
+ 
+diff --git a/criu/include/aio.h b/criu/include/aio.h
+index f8a59dfdf..d1655739d 100644
+--- a/criu/include/aio.h
++++ b/criu/include/aio.h
+@@ -13,8 +13,8 @@ struct task_restore_args;
+ int prepare_aios(struct pstree_item *t, struct task_restore_args *ta);
+ 
+ struct aio_ring {
+-	unsigned id; /* kernel internal index number */
+-	unsigned nr; /* number of io_events */
++	unsigned id;   /* kernel internal index number */
++	unsigned nr;   /* number of io_events */
+ 	unsigned head; /* Written to by userland or under ring_lock
+ 				 * mutex by aio_read_events_ring(). */
+ 	unsigned tail;
+diff --git a/criu/include/autofs.h b/criu/include/autofs.h
+index c4e0f23ed..b158025c7 100644
+--- a/criu/include/autofs.h
++++ b/criu/include/autofs.h
+@@ -96,7 +96,7 @@ struct args_ismountpoint {
+ struct autofs_dev_ioctl {
+ 	__u32 ver_major;
+ 	__u32 ver_minor;
+-	__u32 size; /* total size of data passed in
++	__u32 size;    /* total size of data passed in
+ 				 * including this struct */
+ 	__s32 ioctlfd; /* automount command fd */
+ 
+diff --git a/criu/include/bfd.h b/criu/include/bfd.h
+index 4268f74d4..2846ec628 100644
+--- a/criu/include/bfd.h
++++ b/criu/include/bfd.h
+@@ -5,8 +5,8 @@
+ 
+ struct bfd_buf;
+ struct xbuf {
+-	char *mem; /* buffer */
+-	char *data; /* position we see bytes at */
++	char *mem;	 /* buffer */
++	char *data;	 /* position we see bytes at */
+ 	unsigned int sz; /* bytes sitting after b->pos */
+ 	struct bfd_buf *buf;
+ };
+diff --git a/criu/include/file-lock.h b/criu/include/file-lock.h
+index 0ce2fa340..9ab79b66b 100644
+--- a/criu/include/file-lock.h
++++ b/criu/include/file-lock.h
+@@ -30,12 +30,12 @@
+ #define LOCK_SH 1 /* shared lock */
+ #define LOCK_EX 2 /* exclusive lock */
+ #define LOCK_NB \
+-	4 /* or'd with one of the above to prevent
++	4	  /* or'd with one of the above to prevent
+ 				   blocking */
+ #define LOCK_UN 8 /* remove lock */
+ 
+-#define LOCK_MAND  32 /* This is a mandatory flock ... */
+-#define LOCK_READ  64 /* which allows concurrent read operations */
++#define LOCK_MAND  32  /* This is a mandatory flock ... */
++#define LOCK_READ  64  /* which allows concurrent read operations */
+ #define LOCK_WRITE 128 /* which allows concurrent write operations */
+ #define LOCK_RW	   192 /* which allows concurrent read & write ops */
+ 
+@@ -47,7 +47,7 @@ struct file_lock {
+ 	int fl_kind;
+ 	int fl_ltype;
+ 
+-	pid_t fl_owner; /* process, which created the lock */
++	pid_t fl_owner;	 /* process, which created the lock */
+ 	pid_t fl_holder; /* pid of fd on whose the lock is found */
+ 	int maj, min;
+ 	unsigned long i_no;
+diff --git a/criu/include/files.h b/criu/include/files.h
+index 26ce1f42a..aadc09f73 100644
+--- a/criu/include/files.h
++++ b/criu/include/files.h
+@@ -82,8 +82,8 @@ enum {
+ 
+ struct fdinfo_list_entry {
+ 	struct list_head desc_list; /* To chain on  @fd_info_head */
+-	struct file_desc *desc; /* Associated file descriptor */
+-	struct list_head ps_list; /* To chain  per-task files */
++	struct file_desc *desc;	    /* Associated file descriptor */
++	struct list_head ps_list;   /* To chain  per-task files */
+ 	struct pstree_item *task;
+ 	FdinfoEntry *fe;
+ 	int pid;
+diff --git a/criu/include/image-desc.h b/criu/include/image-desc.h
+index 5045baee8..9f369be64 100644
+--- a/criu/include/image-desc.h
++++ b/criu/include/image-desc.h
+@@ -122,8 +122,8 @@ enum {
+ /* file descriptors template */
+ struct cr_fd_desc_tmpl {
+ 	const char *fmt; /* format for the name */
+-	u32 magic; /* magic in the header */
+-	int oflags; /* flags for image_open */
++	u32 magic;	 /* magic in the header */
++	int oflags;	 /* flags for image_open */
+ };
+ 
+ extern struct cr_fd_desc_tmpl imgset_template[CR_FD_MAX];
+diff --git a/criu/include/inet_diag.h b/criu/include/inet_diag.h
+index ea6f5e14e..4996dd556 100644
+--- a/criu/include/inet_diag.h
++++ b/criu/include/inet_diag.h
+@@ -31,7 +31,7 @@ struct inet_diag_req_compat {
+ 	struct inet_diag_sockid id;
+ 
+ 	__u32 idiag_states; /* States to dump */
+-	__u32 idiag_dbs; /* Tables to dump (NI) */
++	__u32 idiag_dbs;    /* Tables to dump (NI) */
+ };
+ 
+ struct inet_diag_req_v2 {
+diff --git a/criu/include/kcmp.h b/criu/include/kcmp.h
+index a6774be47..575135f80 100644
+--- a/criu/include/kcmp.h
++++ b/criu/include/kcmp.h
+@@ -18,8 +18,8 @@ enum kcmp_type {
+ 
+ /* Slot for KCMP_EPOLL_TFD */
+ typedef struct {
+-	uint32_t efd; /* epoll file descriptor */
+-	uint32_t tfd; /* target file number */
++	uint32_t efd;  /* epoll file descriptor */
++	uint32_t tfd;  /* target file number */
+ 	uint32_t toff; /* target offset within same numbered sequence */
+ } kcmp_epoll_slot_t;
+ 
+diff --git a/criu/include/kerndat.h b/criu/include/kerndat.h
+index 2ded7d1da..a28a95802 100644
+--- a/criu/include/kerndat.h
++++ b/criu/include/kerndat.h
+@@ -18,7 +18,7 @@ extern int kerndat_init(void);
+ 
+ enum pagemap_func {
+ 	PM_UNKNOWN,
+-	PM_DISABLED, /* /proc/pid/pagemap doesn't open (user mode) */
++	PM_DISABLED,   /* /proc/pid/pagemap doesn't open (user mode) */
+ 	PM_FLAGS_ONLY, /* pagemap zeroes pfn part (user mode) */
+ 	PM_FULL,
+ };
+diff --git a/criu/include/linux/mount.h b/criu/include/linux/mount.h
+index 840d6277e..9a3a28b10 100644
+--- a/criu/include/linux/mount.h
++++ b/criu/include/linux/mount.h
+@@ -8,13 +8,13 @@
+ #include <linux/mount.h>
+ #else
+ enum fsconfig_command {
+-	FSCONFIG_SET_FLAG = 0, /* Set parameter, supplying no value */
+-	FSCONFIG_SET_STRING = 1, /* Set parameter, supplying a string value */
+-	FSCONFIG_SET_BINARY = 2, /* Set parameter, supplying a binary blob value */
+-	FSCONFIG_SET_PATH = 3, /* Set parameter, supplying an object by path */
+-	FSCONFIG_SET_PATH_EMPTY = 4, /* Set parameter, supplying an object by (empty) path */
+-	FSCONFIG_SET_FD = 5, /* Set parameter, supplying an object by fd */
+-	FSCONFIG_CMD_CREATE = 6, /* Invoke superblock creation */
++	FSCONFIG_SET_FLAG = 0,	      /* Set parameter, supplying no value */
++	FSCONFIG_SET_STRING = 1,      /* Set parameter, supplying a string value */
++	FSCONFIG_SET_BINARY = 2,      /* Set parameter, supplying a binary blob value */
++	FSCONFIG_SET_PATH = 3,	      /* Set parameter, supplying an object by path */
++	FSCONFIG_SET_PATH_EMPTY = 4,  /* Set parameter, supplying an object by (empty) path */
++	FSCONFIG_SET_FD = 5,	      /* Set parameter, supplying an object by fd */
++	FSCONFIG_CMD_CREATE = 6,      /* Invoke superblock creation */
+ 	FSCONFIG_CMD_RECONFIGURE = 7, /* Invoke superblock reconfiguration */
+ };
+ #endif
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 29d80c2a7..833a75ca0 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -72,13 +72,13 @@ struct mount_info {
+ 	struct list_head children;
+ 	struct list_head siblings;
+ 
+-	struct list_head mnt_bind; /* circular list of derivatives of one real mount */
+-	struct list_head mnt_share; /* circular list of shared mounts */
++	struct list_head mnt_bind;	 /* circular list of derivatives of one real mount */
++	struct list_head mnt_share;	 /* circular list of shared mounts */
+ 	struct list_head mnt_slave_list; /* list of slave mounts */
+-	struct list_head mnt_slave; /* slave list entry */
+-	struct mount_info *mnt_master; /* slave is on master->mnt_slave_list */
+-	struct list_head mnt_propagate; /* circular list of mounts which propagate from each other */
+-	struct list_head mnt_notprop; /* temporary list used in can_mount_now */
++	struct list_head mnt_slave;	 /* slave list entry */
++	struct mount_info *mnt_master;	 /* slave is on master->mnt_slave_list */
++	struct list_head mnt_propagate;	 /* circular list of mounts which propagate from each other */
++	struct list_head mnt_notprop;	 /* temporary list used in can_mount_now */
+ 	struct list_head mnt_unbindable; /* list of mounts with delayed unbindable */
+ 
+ 	struct list_head postpone;
+diff --git a/criu/include/namespaces.h b/criu/include/namespaces.h
+index 034605917..e2ea6e17f 100644
+--- a/criu/include/namespaces.h
++++ b/criu/include/namespaces.h
+@@ -128,9 +128,9 @@ struct ns_id {
+ 			 */
+ 			union {
+ 				int nsfd_id; /* a namespace descriptor id in fdstore */
+-				int ns_fd; /* a namespace file descriptor */
++				int ns_fd;   /* a namespace file descriptor */
+ 			};
+-			int nlsk; /* for sockets collection */
++			int nlsk;  /* for sockets collection */
+ 			int seqsk; /* to talk to parasite daemons */
+ 			struct list_head ids;
+ 			struct list_head links;
+diff --git a/criu/include/page-pipe.h b/criu/include/page-pipe.h
+index 0917869d9..15178c015 100644
+--- a/criu/include/page-pipe.h
++++ b/criu/include/page-pipe.h
+@@ -90,14 +90,14 @@ struct kernel_pipe_buffer {
+  */
+ 
+ struct page_pipe_buf {
+-	int p[2]; /* pipe with pages */
++	int p[2];		/* pipe with pages */
+ 	unsigned int pipe_size; /* how many pages can be fit into pipe */
+-	unsigned int pipe_off; /* where this buf is started in a pipe */
+-	unsigned int pages_in; /* how many pages are there */
+-	unsigned int nr_segs; /* how many iov-s are busy */
++	unsigned int pipe_off;	/* where this buf is started in a pipe */
++	unsigned int pages_in;	/* how many pages are there */
++	unsigned int nr_segs;	/* how many iov-s are busy */
+ #define PPB_LAZY (1 << 0)
+ 	unsigned int flags;
+-	struct iovec *iov; /* vaddr:len map */
++	struct iovec *iov;  /* vaddr:len map */
+ 	struct list_head l; /* links into page_pipe->bufs */
+ };
+ 
+@@ -113,19 +113,19 @@ struct page_pipe_buf {
+ #define PP_HOLE_PARENT (1 << 0)
+ 
+ struct page_pipe {
+-	unsigned int nr_pipes; /* how many page_pipe_bufs in there */
+-	struct list_head bufs; /* list of bufs */
+-	struct list_head free_bufs; /* list of bufs */
++	unsigned int nr_pipes;			   /* how many page_pipe_bufs in there */
++	struct list_head bufs;			   /* list of bufs */
++	struct list_head free_bufs;		   /* list of bufs */
+ 	struct page_pipe_buf *prev[PP_PIPE_TYPES]; /* last ppb of each type for pipe sharing */
+-	unsigned int nr_iovs; /* number of iovs */
+-	unsigned int free_iov; /* first free iov */
++	unsigned int nr_iovs;			   /* number of iovs */
++	unsigned int free_iov;			   /* first free iov */
+ 
+ 	struct iovec *iovs; /* iovs. They are provided into create_page_pipe
+ 							   and all bufs have their iov-s in there */
+ 
+-	unsigned int nr_holes; /* number of holes allocated */
++	unsigned int nr_holes;	/* number of holes allocated */
+ 	unsigned int free_hole; /* number of holes in use */
+-	struct iovec *holes; /* holes */
++	struct iovec *holes;	/* holes */
+ 	unsigned int *hole_flags;
+ 	unsigned int flags; /* PP_FOO flags below */
+ };
+diff --git a/criu/include/page-xfer.h b/criu/include/page-xfer.h
+index e0303dfe0..1bcd4ff20 100644
+--- a/criu/include/page-xfer.h
++++ b/criu/include/page-xfer.h
+@@ -36,7 +36,7 @@ struct page_xfer {
+ 	union {
+ 		struct /* local */ {
+ 			struct cr_img *pmi; /* pagemaps */
+-			struct cr_img *pi; /* pages */
++			struct cr_img *pi;  /* pages */
+ 		};
+ 
+ 		struct /* page-server */ {
+diff --git a/criu/include/pagemap-cache.h b/criu/include/pagemap-cache.h
+index 7612ee0f4..1d8bbffaf 100644
+--- a/criu/include/pagemap-cache.h
++++ b/criu/include/pagemap-cache.h
+@@ -11,13 +11,13 @@ struct vma_area;
+ #define PAGEMAP_PFN_OFF(addr) (PAGE_PFN(addr) * sizeof(u64))
+ 
+ typedef struct {
+-	pid_t pid; /* which process it belongs */
+-	unsigned long start; /* start of area */
+-	unsigned long end; /* end of area */
++	pid_t pid;			  /* which process it belongs */
++	unsigned long start;		  /* start of area */
++	unsigned long end;		  /* end of area */
+ 	const struct list_head *vma_head; /* list head of VMAs we're serving */
+-	u64 *map; /* local buffer */
+-	size_t map_len; /* length of a buffer */
+-	int fd; /* file to read PMs from */
++	u64 *map;			  /* local buffer */
++	size_t map_len;			  /* length of a buffer */
++	int fd;				  /* file to read PMs from */
+ } pmc_t;
+ 
+ #define PMC_INIT \
+diff --git a/criu/include/pstree.h b/criu/include/pstree.h
+index c5b0fa7ea..c1c79867b 100644
+--- a/criu/include/pstree.h
++++ b/criu/include/pstree.h
+@@ -15,14 +15,14 @@
+ struct pstree_item {
+ 	struct pstree_item *parent;
+ 	struct list_head children; /* list of my children */
+-	struct list_head sibling; /* linkage in my parent's children list */
++	struct list_head sibling;  /* linkage in my parent's children list */
+ 
+ 	struct pid *pid;
+ 	pid_t pgid;
+ 	pid_t sid;
+ 	pid_t born_sid;
+ 
+-	int nr_threads; /* number of threads */
++	int nr_threads;	     /* number of threads */
+ 	struct pid *threads; /* array of threads */
+ 	CoreEntry **core;
+ 	TaskKobjIdsEntry *ids;
+diff --git a/criu/include/restorer.h b/criu/include/restorer.h
+index 934d60cf9..308a0b79b 100644
+--- a/criu/include/restorer.h
++++ b/criu/include/restorer.h
+@@ -138,7 +138,7 @@ struct task_restore_args {
+ 	bool has_thp_enabled;
+ 
+ 	/* threads restoration */
+-	int nr_threads; /* number of threads */
++	int nr_threads;				 /* number of threads */
+ 	thread_restore_fcall_t clone_restore_fn; /* helper address for clone() call */
+ 	struct thread_restore_args *thread_args; /* array of thread arguments */
+ 	struct task_entries *task_entries;
+@@ -211,7 +211,7 @@ struct task_restore_args {
+ 	bool can_map_vdso;
+ 	bool auto_dedup;
+ 	unsigned long vdso_rt_size;
+-	struct vdso_maps vdso_maps_rt; /* runtime vdso symbols */
++	struct vdso_maps vdso_maps_rt;	 /* runtime vdso symbols */
+ 	unsigned long vdso_rt_parked_at; /* safe place to keep vdso */
+ 	void **breakpoint;
+ 
+diff --git a/criu/include/rst_info.h b/criu/include/rst_info.h
+index 2e2107b0e..9664e0a1c 100644
+--- a/criu/include/rst_info.h
++++ b/criu/include/rst_info.h
+@@ -17,7 +17,7 @@ struct task_entries {
+ };
+ 
+ struct fdt {
+-	int nr; /* How many tasks share this fd table */
++	int nr;	   /* How many tasks share this fd table */
+ 	pid_t pid; /* Who should restore this fd table */
+ 	/*
+ 	 * The fd table is ready for restoing, if fdt_lock is equal to nr
+diff --git a/criu/include/servicefd.h b/criu/include/servicefd.h
+index e75e8444c..c6979de7f 100644
+--- a/criu/include/servicefd.h
++++ b/criu/include/servicefd.h
+@@ -22,10 +22,10 @@ enum sfd_type {
+ 				 *  - For dump -- target ns' proc
+ 				 *  - For restore -- CRIU ns' proc
+ 				 */
+-	ROOT_FD_OFF, /* Root of the namespace we dump/restore */
++	ROOT_FD_OFF,	/* Root of the namespace we dump/restore */
+ 	CGROUP_YARD,
+-	USERNSD_SK, /* Socket for usernsd */
+-	NS_FD_OFF, /* Node's net namespace fd */
++	USERNSD_SK,	  /* Socket for usernsd */
++	NS_FD_OFF,	  /* Node's net namespace fd */
+ 	TRANSPORT_FD_OFF, /* to transfer file descriptors */
+ 	RPC_SK_OFF,
+ 	FDSTORE_SK_OFF,
+diff --git a/criu/include/sk-inet.h b/criu/include/sk-inet.h
+index c832d6387..5dd2a6551 100644
+--- a/criu/include/sk-inet.h
++++ b/criu/include/sk-inet.h
+@@ -35,7 +35,7 @@ struct inet_sk_desc {
+ 	unsigned int dst_port;
+ 	unsigned int state;
+ 	unsigned int rqlen;
+-	unsigned int wqlen; /* sent + unsent data */
++	unsigned int wqlen;  /* sent + unsent data */
+ 	unsigned int uwqlen; /* unsent data */
+ 	unsigned int src_addr[4];
+ 	unsigned int dst_addr[4];
+diff --git a/criu/include/sysfs_parse.h b/criu/include/sysfs_parse.h
+index ff0e61148..f987d622f 100644
+--- a/criu/include/sysfs_parse.h
++++ b/criu/include/sysfs_parse.h
+@@ -2,9 +2,9 @@
+ #define __CR_SYSFS_PARSE_H__
+ 
+ #define SYSFS_AUFS	"/sys/fs/aufs/"
+-#define SBINFO_LEN	(3 + 16 + 1) /* si_%lx */
++#define SBINFO_LEN	(3 + 16 + 1)			 /* si_%lx */
+ #define SBINFO_PATH_LEN (sizeof SYSFS_AUFS + SBINFO_LEN) /* /sys/fs/aufs/<sbinfo> */
+-#define AUFSBR_PATH_LEN (SBINFO_PATH_LEN + 6 + 1) /* /sys/fs/aufs/<sbinfo>/br%3d */
++#define AUFSBR_PATH_LEN (SBINFO_PATH_LEN + 6 + 1)	 /* /sys/fs/aufs/<sbinfo>/br%3d */
+ 
+ struct mount_info;
+ struct vma_area;
+diff --git a/criu/include/vma.h b/criu/include/vma.h
+index ed9f31ef6..541d6d6fd 100644
+--- a/criu/include/vma.h
++++ b/criu/include/vma.h
+@@ -10,14 +10,14 @@
+ #include <string.h>
+ 
+ struct vm_area_list {
+-	struct list_head h; /* list of VMAs */
+-	unsigned nr; /* nr of all VMAs in the list */
++	struct list_head h;   /* list of VMAs */
++	unsigned nr;	      /* nr of all VMAs in the list */
+ 	unsigned int nr_aios; /* nr of AIOs VMAs in the list */
+ 	union {
+ 		unsigned long nr_priv_pages; /* dmp: nr of pages in private VMAs */
+ 		unsigned long rst_priv_size; /* rst: size of private VMAs */
+ 	};
+-	unsigned long nr_priv_pages_longest; /* nr of pages in longest private VMA */
++	unsigned long nr_priv_pages_longest;   /* nr of pages in longest private VMA */
+ 	unsigned long nr_shared_pages_longest; /* nr of pages in longest shared VMA */
+ };
+ 
+@@ -53,8 +53,8 @@ struct vma_area {
+ 		struct /* for restore */ {
+ 			int (*vm_open)(int pid, struct vma_area *vma);
+ 			struct file_desc *vmfd;
+-			struct vma_area *pvma; /* parent for inherited VMAs */
+-			unsigned long *page_bitmap; /* existent pages */
++			struct vma_area *pvma;	      /* parent for inherited VMAs */
++			unsigned long *page_bitmap;   /* existent pages */
+ 			unsigned long premmaped_addr; /* restore only */
+ 
+ 			/*
+diff --git a/criu/irmap.c b/criu/irmap.c
+index 09570c593..7b9d77bc1 100644
+--- a/criu/irmap.c
++++ b/criu/irmap.c
+@@ -160,8 +160,8 @@ static int irmap_update_dir(struct irmap *t)
+ 
+ 		k = &t->kids[nr - 1];
+ 
+-		k->kids = NULL; /* for xrealloc above */
+-		k->ino = 0; /* for irmap_update_stat */
++		k->kids = NULL;	 /* for xrealloc above */
++		k->ino = 0;	 /* for irmap_update_stat */
+ 		k->nr_kids = -1; /* for irmap_update_dir */
+ 		k->path = xsprintf("%s/%s", t->path, de->d_name);
+ 		if (!k->path)
+diff --git a/criu/mount.c b/criu/mount.c
+index ec31f02c2..93725e526 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -2561,7 +2561,7 @@ static LIST_HEAD(mnt_remap_list);
+ static int remap_id;
+ 
+ struct mnt_remap_entry {
+-	struct mount_info *mi; /* child is remaped into the root yards */
++	struct mount_info *mi;	   /* child is remaped into the root yards */
+ 	struct mount_info *parent; /* the origin parent for the child*/
+ 	struct list_head node;
+ };
+diff --git a/criu/net.c b/criu/net.c
+index 02115c4de..50655559d 100644
+--- a/criu/net.c
++++ b/criu/net.c
+@@ -1172,7 +1172,7 @@ struct newlink_req {
+  * request.
+  */
+ struct newlink_extras {
+-	int link; /* IFLA_LINK */
++	int link;	  /* IFLA_LINK */
+ 	int target_netns; /* IFLA_NET_NS_FD */
+ };
+ 
+@@ -1744,7 +1744,7 @@ static int __restore_link(struct ns_id *ns, struct net_link *link, int nlsk)
+ 
+ 	switch (nde->type) {
+ 	case ND_TYPE__LOOPBACK: /* fallthrough */
+-	case ND_TYPE__EXTLINK: /* see comment in images/netdev.proto */
++	case ND_TYPE__EXTLINK:	/* see comment in images/netdev.proto */
+ 		return restore_link_parms(link, nlsk);
+ 	case ND_TYPE__VENET:
+ 		return restore_one_link(ns, link, nlsk, venet_link_info, NULL);
+diff --git a/criu/pagemap.c b/criu/pagemap.c
+index 77e519dd1..d996db7fc 100644
+--- a/criu/pagemap.c
++++ b/criu/pagemap.c
+@@ -30,10 +30,10 @@
+  * One "job" for the preadv() syscall in pagemap.c
+  */
+ struct page_read_iov {
+-	off_t from; /* offset in pi file where to start reading from */
+-	off_t end; /* the end of the read == sum to.iov_len -s */
++	off_t from;	  /* offset in pi file where to start reading from */
++	off_t end;	  /* the end of the read == sum to.iov_len -s */
+ 	struct iovec *to; /* destination iovs */
+-	unsigned int nr; /* their number */
++	unsigned int nr;  /* their number */
+ 
+ 	struct list_head l;
+ };
+diff --git a/criu/shmem.c b/criu/shmem.c
+index bb48e436b..a9ee8d7eb 100644
+--- a/criu/shmem.c
++++ b/criu/shmem.c
+@@ -81,7 +81,7 @@ struct shmem_info {
+ 			 * an region. Each time when we	found a process with a smaller pid,
+ 			 * we reset self_count, so we can't have only one counter.
+ 			 */
+-			int count; /* the number of regions */
++			int count;	/* the number of regions */
+ 			int self_count; /* the number of regions, which belongs to "pid" */
+ 		};
+ 
+diff --git a/criu/sk-unix.c b/criu/sk-unix.c
+index f3fe60c6e..a819473b4 100644
+--- a/criu/sk-unix.c
++++ b/criu/sk-unix.c
+@@ -958,9 +958,9 @@ struct unix_sk_info {
+ 	struct unix_sk_info *peer;
+ 	struct pprep_head peer_resolve; /* XXX : union with the above? */
+ 	struct file_desc d;
+-	struct hlist_node hash; /* To lookup socket by ino */
++	struct hlist_node hash;	    /* To lookup socket by ino */
+ 	struct list_head connected; /* List of sockets, connected to me */
+-	struct list_head node; /* To link in peer's connected list  */
++	struct list_head node;	    /* To link in peer's connected list  */
+ 	struct list_head scm_fles;
+ 	struct list_head ghost_node;
+ 	size_t ghost_dir_pos;
+diff --git a/criu/uffd.c b/criu/uffd.c
+index 18bdc040f..f01e6999b 100644
+--- a/criu/uffd.c
++++ b/criu/uffd.c
+@@ -71,8 +71,8 @@ static mutex_t *lazy_sock_mutex;
+ 
+ struct lazy_iov {
+ 	struct list_head l;
+-	unsigned long start; /* run-time start address, tracks remaps */
+-	unsigned long end; /* run-time end address, tracks remaps */
++	unsigned long start;	 /* run-time start address, tracks remaps */
++	unsigned long end;	 /* run-time end address, tracks remaps */
+ 	unsigned long img_start; /* start address at the dump time */
+ };
+ 
+diff --git a/criu/util.c b/criu/util.c
+index 414879971..2917102fd 100644
+--- a/criu/util.c
++++ b/criu/util.c
+@@ -1669,8 +1669,8 @@ __attribute__((returns_twice)) static pid_t raw_legacy_clone(unsigned long flags
+ 		     */
+ 			"addx %%g0, 0, %%g1"
+ 			: "=r"(g1), "=r"(o0), "=r"(o1), "=r"(o2) /* outputs */
+-			: "r"(g1), "r"(o0), "r"(o1), "r"(o2) /* inputs */
+-			: "%cc"); /* clobbers */
++			: "r"(g1), "r"(o0), "r"(o1), "r"(o2)	 /* inputs */
++			: "%cc");				 /* clobbers */
+ 
+ 		is_error = g1;
+ 		retval = o0;
+diff --git a/include/common/arch/ppc64/asm/bitops.h b/include/common/arch/ppc64/asm/bitops.h
+index 704668263..dbfa6be7f 100644
+--- a/include/common/arch/ppc64/asm/bitops.h
++++ b/include/common/arch/ppc64/asm/bitops.h
+@@ -196,7 +196,7 @@ static inline unsigned long find_next_bit(const unsigned long *addr, unsigned lo
+ 
+ found_first:
+ 	tmp &= (~0UL >> (BITS_PER_LONG - size));
+-	if (tmp == 0UL) /* Are any bits set? */
++	if (tmp == 0UL)		      /* Are any bits set? */
+ 		return result + size; /* Nope. */
+ found_middle:
+ 	return result + __ffs(tmp);
+diff --git a/include/common/arch/x86/asm/bitops.h b/include/common/arch/x86/asm/bitops.h
+index d7a60589b..c13c1eb45 100644
+--- a/include/common/arch/x86/asm/bitops.h
++++ b/include/common/arch/x86/asm/bitops.h
+@@ -113,7 +113,7 @@ static inline unsigned long find_next_bit(const unsigned long *addr, unsigned lo
+ 
+ found_first:
+ 	tmp &= (~0UL >> (BITS_PER_LONG - size));
+-	if (tmp == 0UL) /* Are any bits set? */
++	if (tmp == 0UL)		      /* Are any bits set? */
+ 		return result + size; /* Nope. */
+ found_middle:
+ 	return result + __ffs(tmp);
+diff --git a/include/common/asm-generic/bitops.h b/include/common/asm-generic/bitops.h
+index 064ba4cc4..004da4c4e 100644
+--- a/include/common/asm-generic/bitops.h
++++ b/include/common/asm-generic/bitops.h
+@@ -97,7 +97,7 @@ static inline unsigned long find_next_bit(const unsigned long *addr, unsigned lo
+ 
+ found_first:
+ 	tmp &= (~0UL >> (BITS_PER_LONG - size));
+-	if (tmp == 0UL) /* Are any bits set? */
++	if (tmp == 0UL)		      /* Are any bits set? */
+ 		return result + size; /* Nope. */
+ found_middle:
+ 	return result + __ffs(tmp);
+diff --git a/soccr/soccr.c b/soccr/soccr.c
+index f6fb1946b..8be2d28e1 100644
+--- a/soccr/soccr.c
++++ b/soccr/soccr.c
+@@ -609,8 +609,8 @@ static int send_fin(struct libsoccr_sk *sk, struct libsoccr_sk_data *data, unsig
+ 		libnet_type = LIBNET_RAW4;
+ 
+ 	l = libnet_init(libnet_type, /* injection type */
+-			NULL, /* network interface */
+-			errbuf); /* errbuf */
++			NULL,	     /* network interface */
++			errbuf);     /* errbuf */
+ 	if (l == NULL) {
+ 		loge("libnet_init failed (%s)\n", errbuf);
+ 		return -1;
+@@ -623,17 +623,17 @@ static int send_fin(struct libsoccr_sk *sk, struct libsoccr_sk_data *data, unsig
+ 
+ 	ret = libnet_build_tcp(ntohs(sk->dst_addr->v4.sin_port), /* source port */
+ 			       ntohs(sk->src_addr->v4.sin_port), /* destination port */
+-			       data->inq_seq, /* sequence number */
+-			       data->outq_seq - data->outq_len, /* acknowledgement num */
+-			       flags, /* control flags */
+-			       data->rcv_wnd, /* window size */
+-			       0, /* checksum */
+-			       10, /* urgent pointer */
+-			       LIBNET_TCP_H + 20, /* TCP packet size */
+-			       NULL, /* payload */
+-			       0, /* payload size */
+-			       l, /* libnet handle */
+-			       0); /* libnet id */
++			       data->inq_seq,			 /* sequence number */
++			       data->outq_seq - data->outq_len,	 /* acknowledgement num */
++			       flags,				 /* control flags */
++			       data->rcv_wnd,			 /* window size */
++			       0,				 /* checksum */
++			       10,				 /* urgent pointer */
++			       LIBNET_TCP_H + 20,		 /* TCP packet size */
++			       NULL,				 /* payload */
++			       0,				 /* payload size */
++			       l,				 /* libnet handle */
++			       0);				 /* libnet id */
+ 	if (ret == -1) {
+ 		loge("Can't build TCP header: %s\n", libnet_geterror(l));
+ 		goto err;
+@@ -646,28 +646,28 @@ static int send_fin(struct libsoccr_sk *sk, struct libsoccr_sk_data *data, unsig
+ 		memcpy(&src, &sk->src_addr->v6.sin6_addr, sizeof(src));
+ 
+ 		ret = libnet_build_ipv6(0, 0, LIBNET_TCP_H, /* length */
+-					IPPROTO_TCP, /* protocol */
+-					64, /* hop limit */
+-					dst, /* source IP */
+-					src, /* destination IP */
+-					NULL, /* payload */
+-					0, /* payload size */
+-					l, /* libnet handle */
+-					0); /* libnet id */
++					IPPROTO_TCP,	    /* protocol */
++					64,		    /* hop limit */
++					dst,		    /* source IP */
++					src,		    /* destination IP */
++					NULL,		    /* payload */
++					0,		    /* payload size */
++					l,		    /* libnet handle */
++					0);		    /* libnet id */
+ 	} else if (family == AF_INET)
+ 		ret = libnet_build_ipv4(LIBNET_IPV4_H + LIBNET_TCP_H + 20, /* length */
+-					0, /* TOS */
+-					242, /* IP ID */
+-					0, /* IP Frag */
+-					64, /* TTL */
+-					IPPROTO_TCP, /* protocol */
+-					0, /* checksum */
+-					dst_v4, /* source IP */
+-					src_v4, /* destination IP */
+-					NULL, /* payload */
+-					0, /* payload size */
+-					l, /* libnet handle */
+-					0); /* libnet id */
++					0,				   /* TOS */
++					242,				   /* IP ID */
++					0,				   /* IP Frag */
++					64,				   /* TTL */
++					IPPROTO_TCP,			   /* protocol */
++					0,				   /* checksum */
++					dst_v4,				   /* source IP */
++					src_v4,				   /* destination IP */
++					NULL,				   /* payload */
++					0,				   /* payload size */
++					l,				   /* libnet handle */
++					0);				   /* libnet id */
+ 	else {
+ 		loge("Unknown socket family\n");
+ 		goto err;
+diff --git a/soccr/soccr.h b/soccr/soccr.h
+index 934d43827..e7091e591 100644
+--- a/soccr/soccr.h
++++ b/soccr/soccr.h
+@@ -1,9 +1,9 @@
+ #ifndef __LIBSOCCR_H__
+ #define __LIBSOCCR_H__
+-#include <netinet/in.h> /* sockaddr_in, sockaddr_in6 */
++#include <netinet/in.h>	 /* sockaddr_in, sockaddr_in6 */
+ #include <netinet/tcp.h> /* TCP_REPAIR_WINDOW, TCP_TIMESTAMP */
+-#include <stdint.h> /* uint32_t */
+-#include <sys/socket.h> /* sockaddr */
++#include <stdint.h>	 /* uint32_t */
++#include <sys/socket.h>	 /* sockaddr */
+ 
+ #include "common/config.h"
+ 
+diff --git a/test/zdtm/static/aio01.c b/test/zdtm/static/aio01.c
+index ed45192b9..100069b03 100644
+--- a/test/zdtm/static/aio01.c
++++ b/test/zdtm/static/aio01.c
+@@ -14,8 +14,8 @@ const char *test_doc = "Check head and tail restore correct";
+ const char *test_author = "Kirill Tkhai <ktkhai@virtuozzo.com>";
+ 
+ struct aio_ring {
+-	unsigned id; /* kernel internal index number */
+-	unsigned nr; /* number of io_events */
++	unsigned id;   /* kernel internal index number */
++	unsigned nr;   /* number of io_events */
+ 	unsigned head; /* Written to by userland or under ring_lock
+ 				 * mutex by aio_read_events_ring(). */
+ 	unsigned tail;
+diff --git a/test/zdtm/static/auto_dev-ioctl.h b/test/zdtm/static/auto_dev-ioctl.h
+index e65259b30..1b35fe2f7 100644
+--- a/test/zdtm/static/auto_dev-ioctl.h
++++ b/test/zdtm/static/auto_dev-ioctl.h
+@@ -95,7 +95,7 @@ struct args_ismountpoint {
+ struct autofs_dev_ioctl {
+ 	__u32 ver_major;
+ 	__u32 ver_minor;
+-	__u32 size; /* total size of data passed in
++	__u32 size;    /* total size of data passed in
+ 				 * including this struct */
+ 	__s32 ioctlfd; /* automount command fd */
+ 
+diff --git a/test/zdtm/static/file_locks00.c b/test/zdtm/static/file_locks00.c
+index 0b5d1313b..01782fa7a 100644
+--- a/test/zdtm/static/file_locks00.c
++++ b/test/zdtm/static/file_locks00.c
+@@ -23,10 +23,10 @@ static int lock_reg(int fd, int cmd, int type, int whence, off_t offset, off_t l
+ {
+ 	struct flock lock;
+ 
+-	lock.l_type = type; /* F_RDLCK, F_WRLCK, F_UNLCK */
++	lock.l_type = type;	/* F_RDLCK, F_WRLCK, F_UNLCK */
+ 	lock.l_whence = whence; /* SEEK_SET, SEEK_CUR, SEEK_END */
+-	lock.l_start = offset; /* byte offset, relative to l_whence */
+-	lock.l_len = len; /* #bytes (0 means to EOF) */
++	lock.l_start = offset;	/* byte offset, relative to l_whence */
++	lock.l_len = len;	/* #bytes (0 means to EOF) */
+ 
+ 	errno = 0;
+ 	return fcntl(fd, cmd, &lock);
+@@ -40,10 +40,10 @@ static int check_read_lock(int fd, int whence, off_t offset, off_t len)
+ 	struct flock lock;
+ 	int ret;
+ 
+-	lock.l_type = F_RDLCK; /* F_RDLCK, F_WRLCK, F_UNLCK */
++	lock.l_type = F_RDLCK;	/* F_RDLCK, F_WRLCK, F_UNLCK */
+ 	lock.l_whence = whence; /* SEEK_SET, SEEK_CUR, SEEK_END */
+-	lock.l_start = offset; /* byte offset, relative to l_whence */
+-	lock.l_len = len; /* #bytes (0 means to EOF) */
++	lock.l_start = offset;	/* byte offset, relative to l_whence */
++	lock.l_len = len;	/* #bytes (0 means to EOF) */
+ 	lock.l_pid = -1;
+ 
+ 	errno = 0;
+@@ -69,10 +69,10 @@ static int check_write_lock(int fd, int whence, off_t offset, off_t len)
+ 	int ret;
+ 	pid_t ppid = getppid();
+ 
+-	lock.l_type = F_WRLCK; /* F_RDLCK, F_WRLCK, F_UNLCK */
++	lock.l_type = F_WRLCK;	/* F_RDLCK, F_WRLCK, F_UNLCK */
+ 	lock.l_whence = whence; /* SEEK_SET, SEEK_CUR, SEEK_END */
+-	lock.l_start = offset; /* byte offset, relative to l_whence */
+-	lock.l_len = len; /* #bytes (0 means to EOF) */
++	lock.l_start = offset;	/* byte offset, relative to l_whence */
++	lock.l_len = len;	/* #bytes (0 means to EOF) */
+ 	lock.l_pid = -1;
+ 
+ 	errno = 0;
+diff --git a/test/zdtm/static/ipc_namespace.c b/test/zdtm/static/ipc_namespace.c
+index 4273951ae..b13b357ba 100644
+--- a/test/zdtm/static/ipc_namespace.c
++++ b/test/zdtm/static/ipc_namespace.c
+@@ -52,10 +52,10 @@ struct ipc_ns {
+ 
+ 	//	unsigned int    mq_queues_count;
+ 
+-	unsigned int mq_queues_max; /* initialized to DFLT_QUEUESMAX */
+-	unsigned int mq_msg_max; /* initialized to DFLT_MSGMAX */
+-	unsigned int mq_msgsize_max; /* initialized to DFLT_MSGSIZEMAX */
+-	unsigned int mq_msg_default; /* initialized to DFLT_MSG */
++	unsigned int mq_queues_max;	 /* initialized to DFLT_QUEUESMAX */
++	unsigned int mq_msg_max;	 /* initialized to DFLT_MSGMAX */
++	unsigned int mq_msgsize_max;	 /* initialized to DFLT_MSGSIZEMAX */
++	unsigned int mq_msg_default;	 /* initialized to DFLT_MSG */
+ 	unsigned int mq_msgsize_default; /* initialized to DFLT_MSGSIZE */
+ 
+ 	struct user_ns *user_ns;
+diff --git a/test/zdtm/static/netns-dev.c b/test/zdtm/static/netns-dev.c
+index e220daa7f..1e6ee1dea 100644
+--- a/test/zdtm/static/netns-dev.c
++++ b/test/zdtm/static/netns-dev.c
+@@ -55,36 +55,36 @@ struct range {
+ };
+ 
+ struct range rand_range4[] = {
+-	{ 0, 1 }, /* accept_local */
+-	{ -1, 0 }, /* accept_source_route */
+-	{ 0, 1 }, /* arp_accept */
+-	{ 0, 2 }, /* arp_announce */
+-	{ 0, 1 }, /* arp_filter */
+-	{ 0, 8 }, /* arp_ignore */
+-	{ 0, 1 }, /* arp_notify */
+-	{ 0, 1 }, /* bootp_relay */
+-	{ 0, 1 }, /* disable_policy */
+-	{ 0, 1 }, /* disable_xfrm */
+-	{ 0, 1 }, /* drop_gratuitous_arp */
+-	{ 0, 1 }, /* drop_unicast_in_l2_multicast */
+-	{ 0, INT_MAX }, /* force_igmp_version */
+-	{ 0, 1 }, /* forwarding */
+-	{ 0, 1 }, /* accept_redirects */
+-	{ 0, INT_MAX }, /* igmpv2_unsolicited_report_interval */
+-	{ 0, INT_MAX }, /* igmpv3_unsolicited_report_interval */
+-	{ 0, 1 }, /* ignore_routes_with_linkdown */
+-	{ 0, 1 }, /* log_martians */
+-	{ 0, 1 }, /* mc_forwarding */
+-	{ -1, INT_MAX }, /* medium_id */
+-	{ 0, 1 }, /* promote_secondaries */
+-	{ 0, 1 }, /* proxy_arp */
+-	{ 0, 1 }, /* proxy_arp_pvlan */
+-	{ 0, 1 }, /* route_localnet */
+-	{ 0, 2 }, /* rp_filter */
+-	{ 0, 1 }, /* secure_redirects */
+-	{ 0, 1 }, /* send_redirects */
+-	{ 0, 1 }, /* shared_media */
+-	{ 0, 1 }, /* src_valid_mark */
++	{ 0, 1 },	      /* accept_local */
++	{ -1, 0 },	      /* accept_source_route */
++	{ 0, 1 },	      /* arp_accept */
++	{ 0, 2 },	      /* arp_announce */
++	{ 0, 1 },	      /* arp_filter */
++	{ 0, 8 },	      /* arp_ignore */
++	{ 0, 1 },	      /* arp_notify */
++	{ 0, 1 },	      /* bootp_relay */
++	{ 0, 1 },	      /* disable_policy */
++	{ 0, 1 },	      /* disable_xfrm */
++	{ 0, 1 },	      /* drop_gratuitous_arp */
++	{ 0, 1 },	      /* drop_unicast_in_l2_multicast */
++	{ 0, INT_MAX },	      /* force_igmp_version */
++	{ 0, 1 },	      /* forwarding */
++	{ 0, 1 },	      /* accept_redirects */
++	{ 0, INT_MAX },	      /* igmpv2_unsolicited_report_interval */
++	{ 0, INT_MAX },	      /* igmpv3_unsolicited_report_interval */
++	{ 0, 1 },	      /* ignore_routes_with_linkdown */
++	{ 0, 1 },	      /* log_martians */
++	{ 0, 1 },	      /* mc_forwarding */
++	{ -1, INT_MAX },      /* medium_id */
++	{ 0, 1 },	      /* promote_secondaries */
++	{ 0, 1 },	      /* proxy_arp */
++	{ 0, 1 },	      /* proxy_arp_pvlan */
++	{ 0, 1 },	      /* route_localnet */
++	{ 0, 2 },	      /* rp_filter */
++	{ 0, 1 },	      /* secure_redirects */
++	{ 0, 1 },	      /* send_redirects */
++	{ 0, 1 },	      /* shared_media */
++	{ 0, 1 },	      /* src_valid_mark */
+ 	{ INT_MIN, INT_MAX }, /* tag */
+ };
+ 
+@@ -139,47 +139,47 @@ char *devconfs6[] = {
+ #define MAX_ADDRESSES 128
+ 
+ struct range rand_range6[] = {
+-	{ 0, 2 }, /* accept_dad */
+-	{ 0, 2 }, /* accept_ra */
+-	{ 0, 1 }, /* accept_ra_defrtr */
+-	{ 0, 1 }, /* accept_ra_from_local */
+-	{ 0, INT_MAX }, /* accept_ra_min_hop_limit */
+-	{ 0, 1 }, /* accept_ra_mtu */
+-	{ 0, 1 }, /* accept_ra_pinfo */
+-	{ 0, INT_MAX }, /* accept_ra_rt_info_max_plen */
+-	{ 0, 1 }, /* accept_ra_rtr_pref */
+-	{ -1, 0 }, /* accept_source_route */
+-	{ 0, 1 }, /* autoconf */
+-	{ 0, INT_MAX }, /* dad_transmits */
+-	{ 0, 1 }, /* disable_ipv6 */
+-	{ 0, 1 }, /* drop_unicast_in_l2_multicast */
+-	{ 0, 1 }, /* drop_unsolicited_na */
+-	{ 0, 2 }, /* force_mld_version */
+-	{ 0, 1 }, /* force_tllao */
+-	{ 0, 1 }, /* forwarding */
+-	{ 0, 1 }, /* accept_redirects */
+-	{ 1, 255 }, /* hop_limit */
+-	{ 0, 1 }, /* ignore_routes_with_linkdown */
+-	{ -1, 1 }, /* keep_addr_on_down */
+-	{ 0, MAX_ADDRESSES }, /* max_addresses */
+-	{ 0, INT_MAX }, /* max_desync_factor */
+-	{ 0, INT_MAX }, /* mldv1_unsolicited_report_interval */
+-	{ 0, INT_MAX }, /* mldv2_unsolicited_report_interval */
++	{ 0, 2 },			/* accept_dad */
++	{ 0, 2 },			/* accept_ra */
++	{ 0, 1 },			/* accept_ra_defrtr */
++	{ 0, 1 },			/* accept_ra_from_local */
++	{ 0, INT_MAX },			/* accept_ra_min_hop_limit */
++	{ 0, 1 },			/* accept_ra_mtu */
++	{ 0, 1 },			/* accept_ra_pinfo */
++	{ 0, INT_MAX },			/* accept_ra_rt_info_max_plen */
++	{ 0, 1 },			/* accept_ra_rtr_pref */
++	{ -1, 0 },			/* accept_source_route */
++	{ 0, 1 },			/* autoconf */
++	{ 0, INT_MAX },			/* dad_transmits */
++	{ 0, 1 },			/* disable_ipv6 */
++	{ 0, 1 },			/* drop_unicast_in_l2_multicast */
++	{ 0, 1 },			/* drop_unsolicited_na */
++	{ 0, 2 },			/* force_mld_version */
++	{ 0, 1 },			/* force_tllao */
++	{ 0, 1 },			/* forwarding */
++	{ 0, 1 },			/* accept_redirects */
++	{ 1, 255 },			/* hop_limit */
++	{ 0, 1 },			/* ignore_routes_with_linkdown */
++	{ -1, 1 },			/* keep_addr_on_down */
++	{ 0, MAX_ADDRESSES },		/* max_addresses */
++	{ 0, INT_MAX },			/* max_desync_factor */
++	{ 0, INT_MAX },			/* mldv1_unsolicited_report_interval */
++	{ 0, INT_MAX },			/* mldv2_unsolicited_report_interval */
+ 	{ IPV6_MIN_MTU, IPV6_MIN_MTU }, /* mtu */
+-	{ 0, 1 }, /* ndisc_notify */
+-	{ 0, 1 }, /* optimistic_dad */
+-	{ 0, 1 }, /* proxy_ndp */
+-	{ 0, INT_MAX }, /* regen_max_retry */
+-	{ 0, ROUTER_MAX }, /* router_probe_interval */
+-	{ 0, ROUTER_MAX }, /* router_solicitation_delay */
+-	{ 0, ROUTER_MAX }, /* router_solicitation_interval */
+-	{ 0, ROUTER_MAX }, /* router_solicitations */
+-	{ 0, 1 }, /* suppress_frag_ndisc */
+-	{ 0, INT_MAX }, /* temp_prefered_lft */
+-	{ 0, INT_MAX }, /* temp_valid_lft */
+-	{ 0, 1 }, /* use_oif_addrs_only */
+-	{ 0, 1 }, /* use_optimistic */
+-	{ 0, 2 }, /* use_tempaddr */
++	{ 0, 1 },			/* ndisc_notify */
++	{ 0, 1 },			/* optimistic_dad */
++	{ 0, 1 },			/* proxy_ndp */
++	{ 0, INT_MAX },			/* regen_max_retry */
++	{ 0, ROUTER_MAX },		/* router_probe_interval */
++	{ 0, ROUTER_MAX },		/* router_solicitation_delay */
++	{ 0, ROUTER_MAX },		/* router_solicitation_interval */
++	{ 0, ROUTER_MAX },		/* router_solicitations */
++	{ 0, 1 },			/* suppress_frag_ndisc */
++	{ 0, INT_MAX },			/* temp_prefered_lft */
++	{ 0, INT_MAX },			/* temp_valid_lft */
++	{ 0, 1 },			/* use_oif_addrs_only */
++	{ 0, 1 },			/* use_optimistic */
++	{ 0, 2 },			/* use_tempaddr */
+ };
+ 
+ struct test_conf {
+diff --git a/test/zdtm/static/s390x_regs_check.c b/test/zdtm/static/s390x_regs_check.c
+index 8d6b47997..40c480b3f 100644
+--- a/test/zdtm/static/s390x_regs_check.c
++++ b/test/zdtm/static/s390x_regs_check.c
+@@ -59,11 +59,11 @@ static int pipefd[2];
+  */
+ struct reg_set {
+ 	const char *name; /* Name of regset */
+-	int nr; /* Number of regset */
+-	void *data; /* Test data */
+-	int len; /* Number of bytes of test data */
+-	bool optional; /* Not all kernels/machines have this reg set */
+-	bool available; /* Current kernel/machine has this reg set */
++	int nr;		  /* Number of regset */
++	void *data;	  /* Test data */
++	int len;	  /* Number of bytes of test data */
++	bool optional;	  /* Not all kernels/machines have this reg set */
++	bool available;	  /* Current kernel/machine has this reg set */
+ };
+ 
+ /*
+@@ -397,8 +397,8 @@ static inline void send_tid_and_loop(int fd)
+ 
+ 	asm volatile("lgr	2,%0\n" /* Arg 1: fd */
+ 		     "la	3,%1\n" /* Arg 2: &tid */
+-		     "lghi	4,4\n" /* Arg 3: sizeof(int) */
+-		     "svc	4\n" /* __NR_write SVC: */
++		     "lghi	4,4\n"	/* Arg 3: sizeof(int) */
++		     "svc	4\n"	/* __NR_write SVC: */
+ 		     /* After SVC no more registers are changed */
+ 		     "0:	j 0b\n" /* Loop here */
+ 		     :
+diff --git a/test/zdtm/static/session01.c b/test/zdtm/static/session01.c
+index 0f727a9a6..31a617de9 100644
+--- a/test/zdtm/static/session01.c
++++ b/test/zdtm/static/session01.c
+@@ -40,22 +40,22 @@ enum {
+ static struct testcase *testcases;
+ static futex_t *fstate;
+ static struct testcase __testcases[] = {
+-	{ 2, 1, 2, 1, 2, 1 }, /* session00			*/
+-	{ 4, 2, 4, 2, 4, 1 }, /*  |\_session00		*/
+-	{ 15, 4, 4, 4, 15, 1 }, /*  |  |\_session00		*/
+-	{ 16, 4, 4, 4, 15, 1 }, /*  |   \_session00		*/
+-	{ 17, 4, 4, 4, 17, 0 }, /*  |  |\_session00		*/
+-	{ 18, 4, 4, 4, 17, 1 }, /*  |   \_session00		*/
+-	{ 5, 2, 2, 2, 2, 1 }, /*  |\_session00		*/
+-	{ 8, 2, 8, 2, 8, 1 }, /*  |\_session00		*/
+-	{ 9, 8, 2, 2, 2, 1 }, /*  |   \_session00		*/
+-	{ 10, 2, 10, 2, 10, 1 }, /*  |\_session00		*/
++	{ 2, 1, 2, 1, 2, 1 },	  /* session00			*/
++	{ 4, 2, 4, 2, 4, 1 },	  /*  |\_session00		*/
++	{ 15, 4, 4, 4, 15, 1 },	  /*  |  |\_session00		*/
++	{ 16, 4, 4, 4, 15, 1 },	  /*  |   \_session00		*/
++	{ 17, 4, 4, 4, 17, 0 },	  /*  |  |\_session00		*/
++	{ 18, 4, 4, 4, 17, 1 },	  /*  |   \_session00		*/
++	{ 5, 2, 2, 2, 2, 1 },	  /*  |\_session00		*/
++	{ 8, 2, 8, 2, 8, 1 },	  /*  |\_session00		*/
++	{ 9, 8, 2, 2, 2, 1 },	  /*  |   \_session00		*/
++	{ 10, 2, 10, 2, 10, 1 },  /*  |\_session00		*/
+ 	{ 11, 10, 11, 2, 11, 1 }, /*  |    \_session00		*/
+-	{ 12, 11, 2, 2, 2, 1 }, /*  |        \_session00	*/
+-	{ 13, 2, 2, 2, 2, 0 }, /*   \_session00		*/
+-	{ 3, 13, 2, 2, 2, 1 }, /* session00			*/
+-	{ 6, 2, 6, 2, 6, 0 }, /*   \_session00		*/
+-	{ 14, 6, 6, 6, 6, 1 }, /* session00			*/
++	{ 12, 11, 2, 2, 2, 1 },	  /*  |        \_session00	*/
++	{ 13, 2, 2, 2, 2, 0 },	  /*   \_session00		*/
++	{ 3, 13, 2, 2, 2, 1 },	  /* session00			*/
++	{ 6, 2, 6, 2, 6, 0 },	  /*   \_session00		*/
++	{ 14, 6, 6, 6, 6, 1 },	  /* session00			*/
+ };
+ 
+ #define TESTS (sizeof(__testcases) / sizeof(struct testcase))
+diff --git a/test/zdtm/static/sigpending.c b/test/zdtm/static/sigpending.c
+index 1641fdd86..ce03ff55c 100644
+--- a/test/zdtm/static/sigpending.c
++++ b/test/zdtm/static/sigpending.c
+@@ -18,7 +18,7 @@ static int numsig;
+ #define TESTSIG	  (SIGRTMAX)
+ #define THREADSIG (SIGRTMIN)
+ static siginfo_t share_infos[2];
+-static siginfo_t self_infos[64]; /* self */
++static siginfo_t self_infos[64];  /* self */
+ static siginfo_t thread_infos[3]; /* thread */
+ static int share_nr;
+ static int self_nr;
+diff --git a/test/zdtm/transition/ptrace.c b/test/zdtm/transition/ptrace.c
+index bf6344f1c..ee10c8004 100644
+--- a/test/zdtm/transition/ptrace.c
++++ b/test/zdtm/transition/ptrace.c
+@@ -31,7 +31,7 @@ int main(int argc, char **argv)
+ {
+ 	int pid, status, i, stopped;
+ #define PT_REGS_SIZE  4096 /* big enough for any arch */
+-#define PT_REGS_ALIGN 16 /* big enough for any arch */
++#define PT_REGS_ALIGN 16   /* big enough for any arch */
+ 	char regs[PT_REGS_SIZE] __attribute__((aligned(PT_REGS_ALIGN)));
+ 
+ 	int *pids;
+-- 
+2.35.1
+

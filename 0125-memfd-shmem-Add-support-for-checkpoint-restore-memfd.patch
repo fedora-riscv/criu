@@ -1,0 +1,151 @@
+From 18c10885c3cb1b39908361b9250330e21ebf119f Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Wed, 15 Dec 2021 23:01:29 +0700
+Subject: [PATCH 125/249] memfd, shmem: Add support for checkpoint/restore
+ memfd and anon shared memory
+
+Co-developed-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ criu/memfd.c       | 15 +++++++++------
+ criu/shmem.c       | 32 ++++++++++++++++++++++++++++----
+ images/memfd.proto |  1 +
+ 3 files changed, 38 insertions(+), 10 deletions(-)
+
+diff --git a/criu/memfd.c b/criu/memfd.c
+index cb3704499..84ea00c95 100644
+--- a/criu/memfd.c
++++ b/criu/memfd.c
+@@ -18,6 +18,7 @@
+ #include "file-ids.h"
+ #include "namespaces.h"
+ #include "shmem.h"
++#include "hugetlb.h"
+ 
+ #include "protobuf.h"
+ #include "images/memfd.pb-c.h"
+@@ -57,18 +58,13 @@ static u32 memfd_inode_ids = 1;
+ 
+ int is_memfd(dev_t dev)
+ {
+-	/*
+-	 * TODO When MAP_HUGETLB is used, the file device is not shmem_dev,
+-	 * Note that other parts of CRIU have similar issues, see
+-	 * is_anon_shmem_map().
+-	 */
+ 	return dev == kdat.shmem_dev;
+ }
+ 
+ static int dump_memfd_inode(int fd, struct memfd_dump_inode *inode, const char *name, const struct stat *st)
+ {
+ 	MemfdInodeEntry mie = MEMFD_INODE_ENTRY__INIT;
+-	int ret = -1;
++	int ret = -1, flag;
+ 	u32 shmid;
+ 
+ 	/*
+@@ -91,6 +87,10 @@ static int dump_memfd_inode(int fd, struct memfd_dump_inode *inode, const char *
+ 	mie.name = (char *)name;
+ 	mie.size = st->st_size;
+ 	mie.shmid = shmid;
++	if (is_hugetlb_dev(inode->dev, &flag)) {
++		mie.has_hugetlb_flag = true;
++		mie.hugetlb_flag = flag | MFD_HUGETLB;
++	}
+ 
+ 	mie.seals = fcntl(fd, F_GET_SEALS);
+ 	if (mie.seals == -1)
+@@ -258,6 +258,9 @@ static int memfd_open_inode_nocache(struct memfd_restore_inode *inode)
+ 		flags = MFD_ALLOW_SEALING;
+ 	}
+ 
++	if (mie->has_hugetlb_flag)
++		flags |= mie->hugetlb_flag;
++
+ 	fd = memfd_create(mie->name, flags);
+ 	if (fd < 0) {
+ 		pr_perror("Can't create memfd:%s", mie->name);
+diff --git a/criu/shmem.c b/criu/shmem.c
+index a9ee8d7eb..81e701586 100644
+--- a/criu/shmem.c
++++ b/criu/shmem.c
+@@ -26,6 +26,7 @@
+ #include "memfd.h"
+ #include "protobuf.h"
+ #include "images/pagemap.pb-c.h"
++#include "namespaces.h"
+ 
+ #ifndef SEEK_DATA
+ #define SEEK_DATA 3
+@@ -534,13 +535,24 @@ out:
+ 	return ret;
+ }
+ 
++struct open_map_file_args {
++	unsigned long addr, size;
++};
++
++static int open_map_file(void *args, int fd, pid_t pid)
++{
++	struct open_map_file_args *vma = args;
++
++	return open_proc_rw(pid, "map_files/%lx-%lx", vma->addr, vma->addr + vma->size);
++}
++
+ static int open_shmem(int pid, struct vma_area *vma)
+ {
+ 	VmaEntry *vi = vma->e;
+ 	struct shmem_info *si;
+ 	void *addr = MAP_FAILED;
+ 	int f = -1;
+-	int flags;
++	int flags, is_hugetlb, memfd_flag = 0;
+ 
+ 	si = shmem_find(vi->shmid);
+ 	pr_info("Search for %#016" PRIx64 " shmem 0x%" PRIx64 " %p/%d\n", vi->start, vi->shmid, si, si ? si->pid : -1);
+@@ -564,9 +576,17 @@ static int open_shmem(int pid, struct vma_area *vma)
+ 		goto out;
+ 	}
+ 
++	is_hugetlb = vi->flags & MAP_HUGETLB;
++
+ 	flags = MAP_SHARED;
+-	if (kdat.has_memfd) {
+-		f = memfd_create("", 0);
++	if (is_hugetlb) {
++		int size_flag = vi->flags & MAP_HUGETLB_SIZE_MASK;
++		flags |= MAP_HUGETLB | size_flag;
++		memfd_flag |= MFD_HUGETLB | size_flag;
++	}
++
++	if (kdat.has_memfd && (!is_hugetlb || kdat.has_memfd_hugetlb)) {
++		f = memfd_create("", memfd_flag);
+ 		if (f < 0) {
+ 			pr_perror("Unable to create memfd");
+ 			goto err;
+@@ -599,7 +619,11 @@ static int open_shmem(int pid, struct vma_area *vma)
+ 	}
+ 
+ 	if (f == -1) {
+-		f = open_proc_rw(getpid(), "map_files/%lx-%lx", (unsigned long)addr, (unsigned long)addr + si->size);
++		struct open_map_file_args args = {
++			.addr = (unsigned long)addr,
++			.size = si->size,
++		};
++		f = userns_call(open_map_file, UNS_FDOUT, &args, sizeof(args), -1);
+ 		if (f < 0)
+ 			goto err;
+ 	}
+diff --git a/images/memfd.proto b/images/memfd.proto
+index a944f145d..0e625416a 100644
+--- a/images/memfd.proto
++++ b/images/memfd.proto
+@@ -21,4 +21,5 @@ message memfd_inode_entry {
+ 	required uint32		shmid		= 5;
+ 	required uint32		seals		= 6 [(criu).flags = "seals.flags"];
+ 	required uint64		inode_id	= 7;
++	optional uint32		hugetlb_flag	= 8;
+ };
+-- 
+2.35.1
+

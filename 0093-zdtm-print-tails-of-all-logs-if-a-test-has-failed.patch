@@ -1,0 +1,38 @@
+From e7296cd2c631aec1b34b1411bd01b38b4a251b2b Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@gmail.com>
+Date: Wed, 22 Dec 2021 17:08:16 -0800
+Subject: [PATCH 093/249] zdtm: print tails of all logs if a test has failed
+
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ test/zdtm.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/zdtm.py b/test/zdtm.py
+index c0e24a41a..14e6aa1b0 100755
+--- a/test/zdtm.py
++++ b/test/zdtm.py
+@@ -1475,17 +1475,17 @@ class criu:
+             self.__lazy_pages_p.terminate()
+             print("criu lazy-pages exited with %s" %
+                   self.__lazy_pages_p.wait())
+-            grep_errors(os.path.join(self.__ddir(), "lazy-pages.log"))
++            grep_errors(os.path.join(self.__ddir(), "lazy-pages.log"), err=True)
+             self.__lazy_pages_p = None
+         if self.__page_server_p:
+             self.__page_server_p.terminate()
+             print("criu page-server exited with %s" %
+                   self.__page_server_p.wait())
+-            grep_errors(os.path.join(self.__ddir(), "page-server.log"))
++            grep_errors(os.path.join(self.__ddir(), "page-server.log"), err=True)
+             self.__page_server_p = None
+         if self.__dump_process:
+             self.__dump_process.terminate()
+-            print("criu dump exited with %s" % self.__dump_process.wait())
++            print("criu dump exited with %s" % self.__dump_process.wait(), err=True)
+             grep_errors(os.path.join(self.__ddir(), "dump.log"))
+             self.__dump_process = None
+         if self.__img_streamer_process:
+-- 
+2.35.1
+

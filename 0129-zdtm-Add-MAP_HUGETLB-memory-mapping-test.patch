@@ -1,0 +1,228 @@
+From 94453cdd46f5791fe1ecd1fa1624233b95d00941 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Tue, 26 Oct 2021 22:22:08 +0700
+Subject: [PATCH 129/249] zdtm: Add MAP_HUGETLB memory mapping test
+
+This commit add a test for checkpoint/restore MAP_HUGETLB memory mappings.
+A new zdtm helper get_mapping_dev() is added to get the device number of
+the memory mapping.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ test/zdtm.py              | 15 +++++++
+ test/zdtm/lib/Makefile    |  2 +-
+ test/zdtm/lib/mem.c       | 32 ++++++++++++++
+ test/zdtm/lib/zdtmtst.h   |  1 +
+ test/zdtm/static/Makefile |  1 +
+ test/zdtm/static/maps09.c | 89 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 139 insertions(+), 1 deletion(-)
+ create mode 100644 test/zdtm/lib/mem.c
+ create mode 100644 test/zdtm/static/maps09.c
+
+diff --git a/test/zdtm.py b/test/zdtm.py
+index 14e6aa1b0..cf73a17ae 100755
+--- a/test/zdtm.py
++++ b/test/zdtm.py
+@@ -2566,6 +2566,17 @@ def clean_stuff(opts):
+             f.clean()
+ 
+ 
++def set_nr_hugepages(nr):
++    orig_hugepages = 0
++    with open("/proc/sys/vm/nr_hugepages", "r") as f:
++        orig_hugepages = int(f.read())
++
++    with open("/proc/sys/vm/nr_hugepages", "w") as f:
++        f.write("{}\n".format(nr))
++
++    return orig_hugepages
++
++
+ #
+ # main() starts here
+ #
+@@ -2738,7 +2749,11 @@ if opts['action'] == 'run':
+ for tst in test_classes.values():
+     tst.available()
+ 
++orig_hugepages = set_nr_hugepages(20)
++
+ opts['action'](opts)
+ 
++set_nr_hugepages(orig_hugepages)
++
+ for tst in test_classes.values():
+     tst.cleanup()
+diff --git a/test/zdtm/lib/Makefile b/test/zdtm/lib/Makefile
+index ceec2b878..3ec58dfaf 100644
+--- a/test/zdtm/lib/Makefile
++++ b/test/zdtm/lib/Makefile
+@@ -4,7 +4,7 @@ CFLAGS	+= $(USERCFLAGS)
+ 
+ LIB	:= libzdtmtst.a
+ 
+-LIBSRC	:= datagen.c msg.c parseargs.c test.c streamutil.c lock.c ns.c tcp.c unix.c fs.c sysctl.c
++LIBSRC	:= datagen.c msg.c parseargs.c test.c streamutil.c lock.c ns.c tcp.c unix.c fs.c sysctl.c mem.c
+ 
+ PKG_CONFIG ?= pkg-config
+ pkg-config-check = $(shell sh -c '$(PKG_CONFIG) $(1) && echo y')
+diff --git a/test/zdtm/lib/mem.c b/test/zdtm/lib/mem.c
+new file mode 100644
+index 000000000..f612e7a15
+--- /dev/null
++++ b/test/zdtm/lib/mem.c
+@@ -0,0 +1,32 @@
++#include <sys/sysmacros.h>
++#include <string.h>
++#include <stdint.h>
++
++#include "zdtmtst.h"
++
++dev_t get_mapping_dev(void *addr)
++{
++	char buf[1024];
++	FILE *f;
++	unsigned int major, minor;
++	int ret;
++
++	f = fopen("/proc/self/maps", "r");
++	if (f == NULL) {
++		pr_perror("Failed to open maps file");
++		return (dev_t)-1;
++	}
++
++	while (fgets(buf, sizeof(buf), f)) {
++		if ((unsigned long)addr == strtoul(buf, NULL, 16)) {
++			ret = sscanf(buf, "%*x-%*x %*c%*c%*c%*c %*x %x:%x", &major, &minor);
++			if (ret != 2) {
++				pr_err("Can't parse /proc/self/maps\n");
++				return (dev_t)-1;
++			}
++			return makedev(major, minor);
++		}
++	}
++
++	return (dev_t)-1;
++}
+diff --git a/test/zdtm/lib/zdtmtst.h b/test/zdtm/lib/zdtmtst.h
+index c6d77011d..803d33e3d 100644
+--- a/test/zdtm/lib/zdtmtst.h
++++ b/test/zdtm/lib/zdtmtst.h
+@@ -164,6 +164,7 @@ extern const char *test_doc;
+ extern int tcp_init_server_with_opts(int family, int *port, struct zdtm_tcp_opts *opts);
+ extern pid_t sys_clone_unified(unsigned long flags, void *child_stack, void *parent_tid, void *child_tid,
+ 			       unsigned long newtls);
++extern dev_t get_mapping_dev(void *addr);
+ 
+ #define ssprintf(s, fmt, ...)                                        \
+ 	({                                                           \
+diff --git a/test/zdtm/static/Makefile b/test/zdtm/static/Makefile
+index 4a21978b5..0e5f096fa 100644
+--- a/test/zdtm/static/Makefile
++++ b/test/zdtm/static/Makefile
+@@ -131,6 +131,7 @@ TST_NOFILE	:=				\
+ 		maps02				\
+ 		maps04				\
+ 		maps05				\
++		maps09				\
+ 		mlock_setuid			\
+ 		xids00				\
+ 		groups				\
+diff --git a/test/zdtm/static/maps09.c b/test/zdtm/static/maps09.c
+new file mode 100644
+index 000000000..216263b4c
+--- /dev/null
++++ b/test/zdtm/static/maps09.c
+@@ -0,0 +1,89 @@
++#include <sys/mman.h>
++
++#include "zdtmtst.h"
++
++#define MEM_SIZE   (4UL * (1UL << 20)) /* 4MB */
++#define MEM_OFFSET (MEM_SIZE - PAGE_SIZE)
++
++const char *test_doc = "Test MAP_HUGETLB mapping";
++const char *test_author = "Bui Quang Minh <minhquangbui99@gmail.com>";
++
++int main(int argc, char **argv)
++{
++	void *m1, *m2;
++	dev_t dev1, dev2;
++	uint32_t crc;
++
++	test_init(argc, argv);
++	m1 = mmap(NULL, MEM_SIZE, PROT_READ | PROT_WRITE, MAP_HUGETLB | MAP_SHARED | MAP_ANONYMOUS, 0, 0);
++	if (m1 == MAP_FAILED) {
++		pr_perror("Failed to mmap %lu Mb anonymous shared memory", MEM_SIZE >> 20);
++		return 1;
++	}
++
++	dev1 = get_mapping_dev(m1);
++	if (dev1 == (dev_t)-1) {
++		fail("Can't get mapping dev");
++		return 1;
++	}
++
++	m2 = mmap(NULL, MEM_SIZE, PROT_READ | PROT_WRITE, MAP_HUGETLB | MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
++	if (m2 == MAP_FAILED) {
++		pr_perror("Failed to mmap %lu Mb anonymous private memory", MEM_SIZE >> 20);
++		return 1;
++	}
++
++	dev2 = get_mapping_dev(m2);
++	if (dev2 == (dev_t)-1) {
++		fail("Can't get mapping dev");
++		return 1;
++	}
++
++	crc = ~0;
++	datagen(m1, PAGE_SIZE, &crc);
++	crc = ~0;
++	datagen(m1 + MEM_OFFSET, PAGE_SIZE, &crc);
++	crc = ~0;
++	datagen(m2, PAGE_SIZE, &crc);
++	crc = ~0;
++	datagen(m2 + MEM_OFFSET, PAGE_SIZE, &crc);
++	crc = ~0;
++
++	test_daemon();
++	test_waitsig();
++
++	crc = ~0;
++	if (datachk(m1, PAGE_SIZE, &crc)) {
++		fail("Data mismatch");
++		return 1;
++	}
++	crc = ~0;
++	if (datachk(m1 + MEM_OFFSET, PAGE_SIZE, &crc)) {
++		fail("Data mismatch");
++		return 1;
++	}
++	crc = ~0;
++	if (datachk(m2, PAGE_SIZE, &crc)) {
++		fail("Data mismatch");
++		return 1;
++	}
++	crc = ~0;
++	if (datachk(m2 + MEM_OFFSET, PAGE_SIZE, &crc)) {
++		fail("Data mismatch");
++		return 1;
++	}
++
++	if (dev1 != get_mapping_dev(m1)) {
++		fail("Mapping dev mismatch");
++		return 1;
++	}
++
++	if (dev2 != get_mapping_dev(m2)) {
++		fail("Mapping dev mismatch");
++		return 1;
++	}
++
++	pass();
++
++	return 0;
++}
+-- 
+2.35.1
+

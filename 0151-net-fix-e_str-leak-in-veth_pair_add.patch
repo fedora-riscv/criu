@@ -1,0 +1,51 @@
+From fc4b654c9264ee5cb48437a96293695d05b89e5b Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 11 Mar 2022 19:57:06 +0300
+Subject: [PATCH 151/249] net: fix e_str leak in veth_pair_add
+
+coverity CID 389187:
+
+3193int veth_pair_add(char *in, char *out)
+3194{
+3195        char *e_str;
+3196
+    1. alloc_fn: Storage is returned from allocation function malloc.
+    2. var_assign: Assigning: ___p = storage returned from malloc(200UL).
+    3. Condition !___p, taking false branch.
+    4. leaked_storage: Variable ___p going out of scope leaks the storage it points to.
+    5. var_assign: Assigning: e_str = ({...; ___p;}).
+3197        e_str = xmalloc(200); /* For 3 IFNAMSIZ + 8 service characters */
+    6. Condition !e_str, taking false branch.
+3198        if (!e_str)
+3199                return -1;
+    7. noescape: Resource e_str is not freed or pointed-to in snprintf.
+3200        snprintf(e_str, 200, "veth[%s]:%s", in, out);
+    8. noescape: Resource e_str is not freed or pointed-to in add_external. [show details]
+    CID 389187 (#1 of 1): Resource leak (RESOURCE_LEAK)9. leaked_storage: Variable e_str going out of scope leaks the storage it points to.
+3201        return add_external(e_str);
+3202}
+
+We should free e_str string after we finish it's use in veth_pair_add,
+easiest way to do it is to use cleanup_free attribute.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/net.c b/criu/net.c
+index 50655559d..c82054037 100644
+--- a/criu/net.c
++++ b/criu/net.c
+@@ -3192,7 +3192,7 @@ void network_unlock(void)
+ 
+ int veth_pair_add(char *in, char *out)
+ {
+-	char *e_str;
++	cleanup_free char *e_str = NULL;
+ 
+ 	e_str = xmalloc(200); /* For 3 IFNAMSIZ + 8 service characters */
+ 	if (!e_str)
+-- 
+2.35.1
+

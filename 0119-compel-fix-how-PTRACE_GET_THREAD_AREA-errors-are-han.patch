@@ -1,0 +1,52 @@
+From fd30dd42a6ea39d1bde06fa51155e5f1bc286688 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Sun, 13 Feb 2022 08:48:07 +0200
+Subject: [PATCH 119/249] compel: fix how PTRACE_GET_THREAD_AREA errors are
+ handled
+
+When PTRACE_GET_THREAD_AREA errors on kernels with
+!CONFIG_IA32_EMULATION beacuse of missing support (-EIO), compel should
+ignore uch errors in native mode.
+
+However the check for error type uses return value of ptrace rather than
+errno, which will always result in error propagation.
+
+Use errno to detect type of error to fix this.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ compel/arch/x86/src/lib/thread_area.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/compel/arch/x86/src/lib/thread_area.c b/compel/arch/x86/src/lib/thread_area.c
+index 4750c6cdd..271d89dcd 100644
+--- a/compel/arch/x86/src/lib/thread_area.c
++++ b/compel/arch/x86/src/lib/thread_area.c
+@@ -53,15 +53,16 @@ int __compel_arch_fetch_thread_area(int tid, struct thread_ctx *th)
+ 		user_desc_t *d = &ptls->desc[i];
+ 
+ 		err = ptrace(PTRACE_GET_THREAD_AREA, tid, GDT_ENTRY_TLS_MIN + i, d);
+-		/*
+-		 * Ignoring absent syscall on !CONFIG_IA32_EMULATION
+-		 * where such mixed code can't run.
+-		 * XXX: Add compile CONFIG_X86_IGNORE_64BIT_TLS
+-		 * (for x86_64 systems with CONFIG_IA32_EMULATION)
+-		 */
+-		if (err == -EIO && native_mode)
+-			return 0;
+ 		if (err) {
++			/*
++			 * Ignoring absent syscall on !CONFIG_IA32_EMULATION
++			 * where such mixed code can't run.
++			 * XXX: Add compile CONFIG_X86_IGNORE_64BIT_TLS
++			 * (for x86_64 systems with CONFIG_IA32_EMULATION)
++			 */
++			if (errno == EIO && native_mode)
++				return 0;
++
+ 			pr_perror("get_thread_area failed for %d", tid);
+ 			return err;
+ 		}
+-- 
+2.35.1
+

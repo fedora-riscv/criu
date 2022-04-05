@@ -1,0 +1,55 @@
+From 711c1fb9385678320572e8bc35a6342d435cb2ba Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 11 Mar 2022 18:45:37 +0300
+Subject: [PATCH 152/249] files: fix inh leak in inherit_fd_add
+
+coverity CID 389190:
+
+1538int inherit_fd_add(int fd, char *key)
+1539{
+1540        struct inherit_fd *inh;
+...
+    2. alloc_fn: Storage is returned from allocation function malloc.
+    3. var_assign: Assigning: ___p = storage returned from malloc(32UL).
+    4. Condition !___p, taking false branch.
+    5. leaked_storage: Variable ___p going out of scope leaks the storage it points to.
+    6. var_assign: Assigning: inh = ({...; ___p;}).
+1548        inh = xmalloc(sizeof *inh);
+    7. Condition inh == NULL, taking false branch.
+1549        if (inh == NULL)
+1550                return -1;
+1551
+...
+    9. Condition !___p, taking true branch.
+1555        inh->inh_id = xstrdup(key);
+    10. Condition inh->inh_id == NULL, taking true branch.
+1556        if (inh->inh_id == NULL)
+    CID 389190 (#1 of 1): Resource leak (RESOURCE_LEAK)11. leaked_storage: Variable inh going out of scope leaks the storage it points to.
+1557                return -1;
+
+We should free inh on inh_id allocation error path in inherit_fd_add.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/files.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/criu/files.c b/criu/files.c
+index 7f4b90086..d317bc9ab 100644
+--- a/criu/files.c
++++ b/criu/files.c
+@@ -1553,8 +1553,10 @@ int inherit_fd_add(int fd, char *key)
+ 		inh_fd_max = fd;
+ 
+ 	inh->inh_id = xstrdup(key);
+-	if (inh->inh_id == NULL)
++	if (inh->inh_id == NULL) {
++		xfree(inh);
+ 		return -1;
++	}
+ 
+ 	inh->inh_fd = fd;
+ 	list_add_tail(&inh->inh_list, &opts.inherit_fds);
+-- 
+2.35.1
+

@@ -1,0 +1,119 @@
+From 8cf73188d2ce803a13712a10e9894efed7d32123 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 8 May 2020 14:33:13 +0300
+Subject: [PATCH 171/249] mount: add mnt_is_root_bind helper
+
+Helper mnt_is_root_bind indicates that mount can be bind-mounted from
+the root mount (which in it's turn from opts.root).
+
+Use it in validate_mounts: we should skip unsupported mount from fsroot check
+if we know it will be bindmounted from root mount, is_ns_root check was wrong.
+
+Also fix root mount check in dump_one_fs, root mounts in non root mntns should
+be dumped normally if they are not bind-mounts of root mount.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/25d078971
+
+Changes: switch to mnt_bind_pick helper, export to mount.h, also add
+mnt_get_root_bind helper for future use in mount-v2, remove excess root
+yard hunk.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h |  3 +++
+ criu/mount.c         | 37 +++++++++++++++++++++++++++----------
+ 2 files changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 7dffe5b2c..1ceb394b6 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -176,6 +176,9 @@ extern bool mnt_is_overmounted(struct mount_info *mi);
+ extern struct mount_info *mnt_get_external_bind(struct mount_info *mi);
+ extern bool mnt_is_external_bind(struct mount_info *mi);
+ extern bool has_mounted_external_bind(struct mount_info *mi);
++extern bool rst_mnt_is_root(struct mount_info *mi);
++extern struct mount_info *mnt_get_root_bind(struct mount_info *mi);
++extern bool mnt_is_root_bind(struct mount_info *mi);
+ 
+ extern struct mount_info *mnt_bind_pick(struct mount_info *mi,
+ 					bool (*pick)(struct mount_info *mi, struct mount_info *bind));
+diff --git a/criu/mount.c b/criu/mount.c
+index ff9b9b591..5591bb67c 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -609,6 +609,29 @@ bool has_mounted_external_bind(struct mount_info *mi)
+ 	return mnt_bind_pick(mi, __has_mounted_external_bind);
+ }
+ 
++bool rst_mnt_is_root(struct mount_info *mi)
++{
++	return (mi->is_ns_root && mi->nsid->id == root_item->ids->mnt_ns_id);
++}
++
++static bool __mnt_is_root_bind(struct mount_info *mi, struct mount_info *bind)
++{
++	if (rst_mnt_is_root(bind) && is_sub_path(mi->root, bind->root))
++		return true;
++
++	return false;
++}
++
++struct mount_info *mnt_get_root_bind(struct mount_info *mi)
++{
++	return mnt_bind_pick(mi, __mnt_is_root_bind);
++}
++
++bool mnt_is_root_bind(struct mount_info *mi)
++{
++	return mnt_get_root_bind(mi);
++}
++
+ /*
+  * Having two children with same mountpoint is unsupported. That can happen in
+  * case of mount propagation inside of shared mounts, in that case it is hard
+@@ -642,16 +665,15 @@ static int validate_mounts(struct mount_info *info, bool for_dump)
+ 	struct mount_info *m, *t;
+ 
+ 	for (m = info; m; m = m->next) {
+-		if (m->parent == NULL || m->is_ns_root)
+-			/* root mount can be any */
+-			continue;
+-
+ 		if (validate_children_collision(m))
+ 			return -1;
+ 
+ 		if (mnt_is_external_bind(m))
+ 			continue;
+ 
++		if (mnt_is_root_bind(m))
++			continue;
++
+ 		/*
+ 		 * Mountpoint can point to / of an FS. In that case this FS
+ 		 * should be of some known type so that we can just mount one.
+@@ -1662,7 +1684,7 @@ static int dump_one_fs(struct mount_info *mi)
+ 	struct mount_info *t;
+ 	bool first = true;
+ 
+-	if (mi->is_ns_root || mi->need_plugin || mnt_is_external_bind(mi) || !mi->fstype->dump)
++	if (mnt_is_root_bind(mi) || mi->need_plugin || mnt_is_external_bind(mi) || !mi->fstype->dump)
+ 		return 0;
+ 
+ 	/* mnt_bind is a cycled list, so list_for_each can't be used here. */
+@@ -2446,11 +2468,6 @@ err:
+ 	return exit_code;
+ }
+ 
+-static bool rst_mnt_is_root(struct mount_info *m)
+-{
+-	return (m->is_ns_root && m->nsid->id == root_item->ids->mnt_ns_id);
+-}
+-
+ static bool can_mount_now(struct mount_info *mi)
+ {
+ 	struct mount_info *ext;
+-- 
+2.35.1
+

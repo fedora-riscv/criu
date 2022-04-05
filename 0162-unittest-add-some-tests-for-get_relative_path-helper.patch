@@ -1,0 +1,138 @@
+From 9cb726827941e24a5e9f0ed12680d4b69e10551c Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 19 Jan 2022 12:34:51 +0300
+Subject: [PATCH 162/249] unittest: add some tests for get_relative_path helper
+
+v2: let's also mock kerndat_s.sysctl_nr_open field, to make aarch64
+clang ci happy
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/Makefile        |  1 +
+ criu/unittest/mock.c | 39 +++++++++++++++++++++++++++++++++++++++
+ criu/unittest/unit.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+)
+
+diff --git a/criu/Makefile b/criu/Makefile
+index db4e9d81f..55bdb1b7a 100644
+--- a/criu/Makefile
++++ b/criu/Makefile
+@@ -87,6 +87,7 @@ $(obj)/criu: $(PROGRAM-BUILTINS)
+ 	$(call msg-link, $@)
+ 	$(Q) $(CC) $(CFLAGS) $^ $(LIBS) $(WRAPFLAGS) $(LDFLAGS) $(GMONLDOPT) -rdynamic -o $@
+ 
++UNIT-BUILTINS		+= $(obj)/util.o
+ UNIT-BUILTINS		+= $(obj)/config.o
+ UNIT-BUILTINS		+= $(obj)/log.o
+ UNIT-BUILTINS		+= $(obj)/string.o
+diff --git a/criu/unittest/mock.c b/criu/unittest/mock.c
+index fb9d38494..127cc7498 100644
+--- a/criu/unittest/mock.c
++++ b/criu/unittest/mock.c
+@@ -97,3 +97,42 @@ int close_service_fd(int type)
+ void compel_log_init(int log_fn, unsigned int level)
+ {
+ }
++
++void set_cr_errno(int new_err)
++{
++}
++
++struct ns_desc {
++};
++struct ns_desc user_ns_desc;
++int switch_ns(int pid, struct ns_desc *nd, int *rst)
++{
++	return -1;
++}
++
++enum script_actions { ACT_FAKE };
++int run_scripts(enum script_actions act)
++{
++	return -1;
++}
++
++typedef struct VmaEntry VmaEntry;
++struct VmaEntry {
++};
++void vma_entry__init(VmaEntry *message)
++{
++}
++
++int clone_noasan(int (*fn)(void *), int flags, void *arg)
++{
++	return -1;
++}
++
++struct kerndat_s {
++	unsigned int sysctl_nr_open;
++};
++struct kerndat_s kdat = {};
++
++int service_fd_rlim_cur;
++
++unsigned __page_size;
+diff --git a/criu/unittest/unit.c b/criu/unittest/unit.c
+index 3ee141e25..54769e6f2 100644
+--- a/criu/unittest/unit.c
++++ b/criu/unittest/unit.c
+@@ -3,6 +3,7 @@
+ #include <assert.h>
+ 
+ #include "log.h"
++#include "util.h"
+ #include "criu-log.h"
+ 
+ int parse_statement(int i, char *line, char **configuration);
+@@ -100,6 +101,48 @@ int main(int argc, char *argv[], char *envp[])
+ 	i = parse_statement(0, "a b c d e f g h i\n", configuration);
+ 	assert(i == -1);
+ 
++	/* get_relative_path */
++	/* different kinds of representation of "/" */
++	assert(!strcmp(get_relative_path("/", "/"), ""));
++	assert(!strcmp(get_relative_path("/", ""), ""));
++	assert(!strcmp(get_relative_path("", "/"), ""));
++	assert(!strcmp(get_relative_path(".", "/"), ""));
++	assert(!strcmp(get_relative_path("/", "."), ""));
++	assert(!strcmp(get_relative_path("/", "./"), ""));
++	assert(!strcmp(get_relative_path("./", "/"), ""));
++	assert(!strcmp(get_relative_path("/.", "./"), ""));
++	assert(!strcmp(get_relative_path("./", "/."), ""));
++	assert(!strcmp(get_relative_path(".//////.", ""), ""));
++	assert(!strcmp(get_relative_path("/./", ""), ""));
++
++	/* all relative paths given are assumed relative to "/" */
++	assert(!strcmp(get_relative_path("/a/b/c", "a/b/c"), ""));
++
++	/* multiple slashes are ignored, only directory names matter */
++	assert(!strcmp(get_relative_path("///alfa///beta///gamma///", "//alfa//beta//gamma//"), ""));
++
++	/* returned path is always relative */
++	assert(!strcmp(get_relative_path("/a/b/c", "/"), "a/b/c"));
++	assert(!strcmp(get_relative_path("/a/b/c", "/a/b"), "c"));
++
++	/* single dots supported */
++	assert(!strcmp(get_relative_path("./a/b", "a/"), "b"));
++
++	/* double dots are partially supported */
++	assert(!strcmp(get_relative_path("a/../b", "a"), "../b"));
++	assert(!strcmp(get_relative_path("a/../b", "a/.."), "b"));
++	assert(!get_relative_path("a/../b/c", "b"));
++
++	/* if second path is not subpath - NULL returned */
++	assert(!get_relative_path("/a/b/c", "/a/b/d"));
++	assert(!get_relative_path("/a/b", "/a/b/c"));
++	assert(!get_relative_path("/a/b/c/d", "b/c/d"));
++
++	assert(!strcmp(get_relative_path("./a////.///./b//././c", "///./a/b"), "c"));
++
++	/* leaves punctuation in returned string as is */
++	assert(!strcmp(get_relative_path("./a////.///./b//././c", "a"), "b//././c"));
++
+ 	pr_msg("OK\n");
+ 	return 0;
+ }
+-- 
+2.35.1
+

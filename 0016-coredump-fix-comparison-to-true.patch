@@ -1,0 +1,29 @@
+From da13809e3122ffde0c3657facb978ba7b54bf3a5 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 22:42:19 +0100
+Subject: [PATCH 016/249] coredump: fix comparison to true
+
+Comparison to true should be 'if cond is true:' or 'if cond:'
+https://www.flake8rules.com/rules/E712.html
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/criu_coredump/coredump.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/coredump/criu_coredump/coredump.py b/coredump/criu_coredump/coredump.py
+index a232132fd..41d102db7 100644
+--- a/coredump/criu_coredump/coredump.py
++++ b/coredump/criu_coredump/coredump.py
+@@ -653,7 +653,7 @@ class coredump_generator:
+             if not found:
+                 continue
+ 
+-            if "in_parent" in m and m["in_parent"] == True:
++            if "in_parent" in m and m["in_parent"]:
+                 ppid = self.pstree[pid]["ppid"]
+                 return self._get_page(ppid, page_no)
+             else:
+-- 
+2.35.1
+

@@ -1,0 +1,27 @@
+From 35f5403cef372bab0f593747c3b0348fc1d10c17 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 21 Dec 2021 12:43:42 +0300
+Subject: [PATCH 210/249] mount: remove double ns_id declaration
+
+Fixes: d0d117986 ("mount: move functions about mounts from proc_parse.h")
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 588aedf99..562b0cd9b 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -172,7 +172,6 @@ extern void clean_cr_time_mounts(void);
+ extern char *get_plain_mountpoint(int mnt_id, char *name);
+ 
+ extern bool add_skip_mount(const char *mountpoint);
+-struct ns_id;
+ extern int get_sdev_from_fd(int fd, unsigned int *sdev, bool parse_mountinfo);
+ extern struct mount_info *parse_mountinfo(pid_t pid, struct ns_id *nsid, bool for_dump);
+ 
+-- 
+2.35.1
+

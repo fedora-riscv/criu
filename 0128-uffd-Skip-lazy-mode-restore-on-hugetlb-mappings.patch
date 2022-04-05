@@ -1,0 +1,32 @@
+From 70a0a2dd7257c6969f040e18e37c4d8eca4dc224 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Wed, 9 Feb 2022 22:12:53 +0700
+Subject: [PATCH 128/249] uffd: Skip lazy-mode restore on hugetlb mappings
+
+As hugetlb mappings are not premapped, they are not registered to uffd service
+in restorer code. We must not mark these mappings as PPB_LAZY in generate_iovs()
+otherwise when restoring content of these mappings, we will keep looking for in
+uffd and get ENOENT because they are not registered.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ criu/include/vma.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/criu/include/vma.h b/criu/include/vma.h
+index 541d6d6fd..106c56af2 100644
+--- a/criu/include/vma.h
++++ b/criu/include/vma.h
+@@ -122,7 +122,8 @@ static inline struct vma_area *vma_next(struct vma_area *vma)
+ static inline bool vma_entry_can_be_lazy(VmaEntry *e)
+ {
+ 	return ((e->flags & MAP_ANONYMOUS) && (e->flags & MAP_PRIVATE) && !(e->flags & MAP_LOCKED) &&
+-		!(vma_entry_is(e, VMA_AREA_VDSO)) && !(vma_entry_is(e, VMA_AREA_VSYSCALL)));
++		!(vma_entry_is(e, VMA_AREA_VDSO)) && !(vma_entry_is(e, VMA_AREA_VSYSCALL)) &&
++		!(e->flags & MAP_HUGETLB));
+ }
+ 
+ #endif /* __CR_VMA_H__ */
+-- 
+2.35.1
+

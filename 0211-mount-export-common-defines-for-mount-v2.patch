@@ -1,0 +1,74 @@
+From da341d7cd3e0a9ab312ce9ea18755a938d61e1bb Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 21 Dec 2021 12:46:57 +0300
+Subject: [PATCH 211/249] mount: export common defines for mount-v2
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h | 14 ++++++++++++++
+ criu/mount.c         | 14 --------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 562b0cd9b..dfb9989c0 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -10,6 +10,20 @@ struct pstree_item;
+ struct fstype;
+ struct ns_id;
+ 
++#define MS_PROPAGATE (MS_SHARED | MS_PRIVATE | MS_UNBINDABLE | MS_SLAVE)
++
++/*
++ * Here are a set of flags which we know how to handle for the one mount call.
++ * All of them except MS_RDONLY are set only as mnt flags.
++ * MS_RDONLY is set for both mnt ans sb flags, so we can restore it for one
++ * mount call only if it set for both masks.
++ */
++#define MS_MNT_KNOWN_FLAGS (MS_NOSUID | MS_NOEXEC | MS_NODEV | MS_NOATIME | MS_NODIRATIME | MS_RELATIME | MS_RDONLY)
++
++#define BINFMT_MISC_HOME "proc/sys/fs/binfmt_misc"
++
++#define HELPER_MNT_ID 0
++
+ #define MOUNT_INVALID_DEV (0)
+ 
+ #define MNT_UNREACHABLE INT_MIN
+diff --git a/criu/mount.c b/criu/mount.c
+index 64ef2f233..d796c9341 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -31,15 +31,9 @@
+ 
+ #include "images/mnt.pb-c.h"
+ 
+-#define MS_PROPAGATE (MS_SHARED | MS_PRIVATE | MS_UNBINDABLE | MS_SLAVE)
+-
+ #undef LOG_PREFIX
+ #define LOG_PREFIX "mnt: "
+ 
+-#define BINFMT_MISC_HOME "proc/sys/fs/binfmt_misc"
+-
+-#define HELPER_MNT_ID 0
+-
+ #define CONTEXT_OPT "context="
+ 
+ /* A helper mount_info entry for the roots yard */
+@@ -2210,14 +2204,6 @@ static int fetch_rt_stat(struct mount_info *m, const char *where)
+ 	return 0;
+ }
+ 
+-/*
+- * Here are a set of flags which we know how to handle for the one mount call.
+- * All of them except MS_RDONLY are set only as mnt flags.
+- * MS_RDONLY is set for both mnt ans sb flags, so we can restore it for one
+- * mount call only if it set for both masks.
+- */
+-#define MS_MNT_KNOWN_FLAGS (MS_NOSUID | MS_NOEXEC | MS_NODEV | MS_NOATIME | MS_NODIRATIME | MS_RELATIME | MS_RDONLY)
+-
+ static int do_simple_mount(struct mount_info *mi, const char *src, const char *fstype, unsigned long mountflags)
+ {
+ 	int ret = mount(src, service_mountpoint(mi), fstype, mountflags, mi->options);
+-- 
+2.35.1
+

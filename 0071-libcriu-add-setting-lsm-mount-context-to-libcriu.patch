@@ -1,0 +1,67 @@
+From bee106f22237800350009d4875be5361c02108c0 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Wed, 1 Dec 2021 11:08:53 +0000
+Subject: [PATCH 071/249] libcriu: add setting lsm-mount-context to libcriu
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ lib/c/criu.c | 15 +++++++++++++++
+ lib/c/criu.h |  2 ++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/lib/c/criu.c b/lib/c/criu.c
+index ddc6e0731..4ee189aca 100644
+--- a/lib/c/criu.c
++++ b/lib/c/criu.c
+@@ -238,6 +238,7 @@ void criu_local_free_opts(criu_opts *opts)
+ 	free(opts->rpc->freeze_cgroup);
+ 	free(opts->rpc->log_file);
+ 	free(opts->rpc->lsm_profile);
++	free(opts->rpc->lsm_mount_context);
+ 	free(opts->rpc);
+ 	criu_free_service(opts);
+ 	free(opts);
+@@ -651,6 +652,20 @@ int criu_set_lsm_profile(const char *name)
+ 	return criu_local_set_lsm_profile(global_opts, name);
+ }
+ 
++int criu_local_set_lsm_mount_context(criu_opts *opts, const char *name)
++{
++	opts->rpc->lsm_mount_context = strdup(name);
++	if (opts->rpc->lsm_mount_context == NULL) {
++		return -ENOMEM;
++	}
++	return 0;
++}
++
++int criu_set_lsm_mount_context(const char *name)
++{
++	return criu_local_set_lsm_mount_context(global_opts, name);
++}
++
+ void criu_local_set_timeout(criu_opts *opts, unsigned int timeout)
+ {
+ 	opts->rpc->timeout = timeout;
+diff --git a/lib/c/criu.h b/lib/c/criu.h
+index 949902f55..a374b37f8 100644
+--- a/lib/c/criu.h
++++ b/lib/c/criu.h
+@@ -92,6 +92,7 @@ void criu_set_manage_cgroups(bool manage);
+ void criu_set_manage_cgroups_mode(enum criu_cg_mode mode);
+ int criu_set_freeze_cgroup(const char *name);
+ int criu_set_lsm_profile(const char *name);
++int criu_set_lsm_mount_context(const char *name);
+ void criu_set_timeout(unsigned int timeout);
+ void criu_set_auto_ext_mnt(bool val);
+ void criu_set_ext_sharing(bool val);
+@@ -249,6 +250,7 @@ void criu_local_set_manage_cgroups(criu_opts *opts, bool manage);
+ void criu_local_set_manage_cgroups_mode(criu_opts *opts, enum criu_cg_mode mode);
+ int criu_local_set_freeze_cgroup(criu_opts *opts, const char *name);
+ int criu_local_set_lsm_profile(criu_opts *opts, const char *name);
++int criu_local_set_lsm_mount_context(criu_opts *opts, const char *name);
+ void criu_local_set_timeout(criu_opts *opts, unsigned int timeout);
+ void criu_local_set_auto_ext_mnt(criu_opts *opts, bool val);
+ void criu_local_set_ext_sharing(criu_opts *opts, bool val);
+-- 
+2.35.1
+

@@ -1,0 +1,169 @@
+From 54b25b72065f17594216642bcf8a3267a0a0a489 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 28 Oct 2021 17:17:44 +0300
+Subject: [PATCH 036/249] clang-format: do several manual comment fixups
+
+Automatic AlignTrailingComments fails to make those comments look right,
+so let's do it manually, so that they both satisfy AlignTrailingComments
+and also are human-readable.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/files.h             | 10 +++++-----
+ criu/include/page-pipe.h         |  6 ++----
+ criu/include/pagemap.h           | 19 ++++++++----------
+ criu/include/pipes.h             |  4 ++--
+ criu/shmem.c                     |  3 ++-
+ test/zdtm/static/ipc_namespace.c | 33 ++++++++++++++++----------------
+ 6 files changed, 36 insertions(+), 39 deletions(-)
+
+diff --git a/criu/include/files.h b/criu/include/files.h
+index 96face71b..26ce1f42a 100644
+--- a/criu/include/files.h
++++ b/criu/include/files.h
+@@ -121,12 +121,12 @@ unsigned int find_unused_fd(struct pstree_item *, int hint_fd);
+ struct fdinfo_list_entry *find_used_fd(struct pstree_item *, int fd);
+ 
+ struct file_desc {
+-	u32 id; /* File id, unique */
+-	struct hlist_node hash; /* Descriptor hashing and lookup */
+-	struct list_head fd_info_head; /* Chain of fdinfo_list_entry-s with same ID and type but different pids */
+-	struct file_desc_ops *ops; /* Associated operations */
++	u32 id;				   /* File id, unique */
++	struct hlist_node hash;		   /* Descriptor hashing and lookup */
++	struct list_head fd_info_head;	   /* Chain of fdinfo_list_entry-s with same ID and type but different pids */
++	struct file_desc_ops *ops;	   /* Associated operations */
+ 	struct list_head fake_master_list; /* To chain in the list of file_desc, which don't
+-						    have a fle in a task, that having permissions */
++					    * have a fle in a task, that having permissions */
+ };
+ 
+ struct fdtype_ops {
+diff --git a/criu/include/page-pipe.h b/criu/include/page-pipe.h
+index a5f97678e..0917869d9 100644
+--- a/criu/include/page-pipe.h
++++ b/criu/include/page-pipe.h
+@@ -130,10 +130,8 @@ struct page_pipe {
+ 	unsigned int flags; /* PP_FOO flags below */
+ };
+ 
+-#define PP_CHUNK_MODE \
+-	0x1 /* Restrict the maximum buffer size of pipes
+-				   and dump memory for a few iterations */
+-#define PP_OWN_IOVS 0x4 /* create_page_pipe allocated IOVs memory */
++#define PP_CHUNK_MODE 0x1 /* Restrict the maximum buffer size of pipes and dump memory for a few iterations */
++#define PP_OWN_IOVS   0x4 /* create_page_pipe allocated IOVs memory */
+ 
+ struct page_pipe *create_page_pipe(unsigned int nr_segs, struct iovec *iovs, unsigned flags);
+ extern void destroy_page_pipe(struct page_pipe *p);
+diff --git a/criu/include/pagemap.h b/criu/include/pagemap.h
+index c39c25d0c..8c7180559 100644
+--- a/criu/include/pagemap.h
++++ b/criu/include/pagemap.h
+@@ -63,17 +63,14 @@ struct page_read {
+ 	struct cr_img *pi;
+ 	u32 pages_img_id;
+ 
+-	PagemapEntry *pe; /* current pagemap we are on */
+-	struct page_read *parent; /* parent pagemap (if ->in_parent
+-					   pagemap is met in image, then
+-					   go to this guy for page, see
+-					   read_pagemap_page */
+-	unsigned long cvaddr; /* vaddr we are on */
+-	off_t pi_off; /* current offset in pages file */
+-
+-	struct iovec bunch; /* record consequent neighbour
+-					   iovecs to punch together */
+-	unsigned id; /* for logging */
++	PagemapEntry *pe;	  /* current pagemap we are on */
++	struct page_read *parent; /* parent pagemap (if ->in_parent pagemap is met in image,
++				   * then go to this guy for page, see read_pagemap_page */
++	unsigned long cvaddr;	  /* vaddr we are on */
++	off_t pi_off;		  /* current offset in pages file */
++
++	struct iovec bunch;   /* record consequent neighbour iovecs to punch together */
++	unsigned id;	      /* for logging */
+ 	unsigned long img_id; /* pagemap image file ID */
+ 
+ 	PagemapEntry **pmes;
+diff --git a/criu/include/pipes.h b/criu/include/pipes.h
+index 6e6310e14..f442d7f65 100644
+--- a/criu/include/pipes.h
++++ b/criu/include/pipes.h
+@@ -49,8 +49,8 @@ extern int restore_pipe_data(int img_type, int pfd, u32 id, struct pipe_data_rst
+ struct pipe_info {
+ 	PipeEntry *pe;
+ 	struct list_head pipe_list; /* All pipe_info with the same pipe_id
+-						 * This is pure circular list without head */
+-	struct list_head list; /* global list of pipes */
++				     * This is pure circular list without head */
++	struct list_head list;	    /* global list of pipes */
+ 	struct file_desc d;
+ 	unsigned int create : 1, reopen : 1;
+ };
+diff --git a/criu/shmem.c b/criu/shmem.c
+index 1b83327ef..bb48e436b 100644
+--- a/criu/shmem.c
++++ b/criu/shmem.c
+@@ -85,7 +85,8 @@ struct shmem_info {
+ 			int self_count; /* the number of regions, which belongs to "pid" */
+ 		};
+ 
+-		struct { /* For sysvipc restore */
++		/* For sysvipc restore */
++		struct {
+ 			struct list_head att; /* list of shmem_sysv_att-s */
+ 			int want_write;
+ 		};
+diff --git a/test/zdtm/static/ipc_namespace.c b/test/zdtm/static/ipc_namespace.c
+index 98241d816..4273951ae 100644
+--- a/test/zdtm/static/ipc_namespace.c
++++ b/test/zdtm/static/ipc_namespace.c
+@@ -19,27 +19,28 @@ extern int shmctl(int __shmid, int __cmd, struct shmid_ds *__buf);
+ 
+ struct ipc_ids {
+ 	int in_use; /* TODO: Check for 0 */
+-	//	unsigned short seq;
+-	//	unsigned short seq_max;
+-	//	struct rw_semaphore rw_mutex;
+-	//	struct idr ipcs_idr;		/* TODO */
++
++	// unsigned short seq;
++	// unsigned short seq_max;
++	// struct rw_semaphore rw_mutex;
++	// struct idr ipcs_idr; /* TODO */
+ };
+ 
+ struct ipc_ns {
+ 	struct ipc_ids ids[3];
+ 
+-	int sem_ctls[4]; // +
+-	int used_sems; // +
+-
+-	int msg_ctlmax; // +
+-	int msg_ctlmnb; // +
+-	int msg_ctlmni; // +
+-	int msg_bytes; // +
+-	int msg_hdrs; // +
+-	int auto_msgmni; // +
+-	int msg_next_id; // +
+-	int sem_next_id; // +
+-	int shm_next_id; // +
++	int sem_ctls[4];
++	int used_sems;
++
++	int msg_ctlmax;
++	int msg_ctlmnb;
++	int msg_ctlmni;
++	int msg_bytes;
++	int msg_hdrs;
++	int auto_msgmni;
++	int msg_next_id;
++	int sem_next_id;
++	int shm_next_id;
+ 
+ 	size_t shm_ctlmax;
+ 	size_t shm_ctlall;
+-- 
+2.35.1
+

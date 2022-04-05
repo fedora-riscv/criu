@@ -1,0 +1,29 @@
+From 20c65ae87263315214c48a636dc20b4dbac03215 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Thu, 4 Nov 2021 09:18:31 +0000
+Subject: [PATCH 028/249] ci: use Fedora 34 for lint CI runs
+
+Fedora 35 comes with clang 13 which provides different results for
+clang-format than clang 12 in Fedora 34.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ .github/workflows/lint.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.github/workflows/lint.yml b/.github/workflows/lint.yml
+index 50b241e9f..49eb6aaac 100644
+--- a/.github/workflows/lint.yml
++++ b/.github/workflows/lint.yml
+@@ -6,7 +6,7 @@ jobs:
+   build:
+     runs-on: ubuntu-latest
+     container:
+-      image: registry.fedoraproject.org/fedora:latest
++      image: registry.fedoraproject.org/fedora:34
+     steps:
+     - name: Install tools
+       run: sudo dnf -y install git make python3-flake8 ShellCheck clang-tools-extra which findutils
+-- 
+2.35.1
+

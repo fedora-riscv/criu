@@ -1,0 +1,72 @@
+From f1115a8e679c56269e363a609e1b86bc3052963a Mon Sep 17 00:00:00 2001
+From: Liu Hua <weldonliu@tencent.com>
+Date: Fri, 5 Nov 2021 17:08:51 +0800
+Subject: [PATCH 044/249] seize: restore cgroup freezer to right state
+
+The new freezer_state is a complete equivalent of old freezer_thawed
+except for the initial value. If old freezer_thawed was not initialized
+it was 0 and in freezer_restore_state were threated as if we need to
+freeze cgroup "back", thus before this patch if criu dump failed before
+freezing dumpee, criu always freeze dumpee in cr_dump_finish which is
+wrong. Switching to freezer_state initialized with FREEZER_ERROR fixes
+the problem.
+
+v2: improve description, rename to origin_freezer_state
+
+Signed-off-by: Liu Hua <weldonliu@tencent.com>
+---
+ criu/seize.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/criu/seize.c b/criu/seize.c
+index 95bf9ef0c..58564ca74 100644
+--- a/criu/seize.c
++++ b/criu/seize.c
+@@ -131,11 +131,11 @@ static enum freezer_state get_freezer_state(int fd)
+ 	return get_freezer_v1_state(fd);
+ }
+ 
+-static bool freezer_thawed;
++static enum freezer_state origin_freezer_state = FREEZER_ERROR;
+ 
+ const char *get_real_freezer_state(void)
+ {
+-	return freezer_thawed ? thawed : frozen;
++	return origin_freezer_state == THAWED ? thawed : frozen;
+ }
+ 
+ static int freezer_write_state(int fd, enum freezer_state new_state)
+@@ -192,7 +192,7 @@ static int freezer_restore_state(void)
+ 	int fd;
+ 	int ret;
+ 
+-	if (!opts.freeze_cgroup || freezer_thawed)
++	if (!opts.freeze_cgroup || origin_freezer_state != FROZEN)
+ 		return 0;
+ 
+ 	fd = freezer_open();
+@@ -481,9 +481,10 @@ static int freeze_processes(void)
+ 		close(fd);
+ 		return -1;
+ 	}
+-	if (state == THAWED) {
+-		freezer_thawed = true;
+ 
++	origin_freezer_state = state == FREEZING ? FROZEN : state;
++
++	if (state == THAWED) {
+ 		if (freezer_write_state(fd, FROZEN)) {
+ 			close(fd);
+ 			return -1;
+@@ -534,7 +535,7 @@ static int freeze_processes(void)
+ 	}
+ 
+ err:
+-	if (exit_code == 0 || freezer_thawed)
++	if (exit_code == 0 || origin_freezer_state == THAWED)
+ 		exit_code = freezer_write_state(fd, THAWED);
+ 
+ 	if (close(fd)) {
+-- 
+2.35.1
+

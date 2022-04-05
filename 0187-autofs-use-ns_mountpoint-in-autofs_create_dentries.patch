@@ -1,0 +1,55 @@
+From f84949f68f001a1a06e9c612f34ec573d962e6c4 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 26 May 2020 16:40:57 +0300
+Subject: [PATCH 187/249] autofs: use ns_mountpoint in autofs_create_dentries
+
+Replace ->mountpoint with ->ns_mountpoint for determining relations
+between mounts.
+
+Also let's use get_relative_path in autofs_create_dentries as it is more
+robust, before that we've missed the case where mountpoint of child of
+autofs mount is multilevel subdirectory of parent mountpoint, and always
+created them as single level subdirectory.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/5d5462202
+
+Changes: skip children overmount as it does not need a subdirectory.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/autofs.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/criu/autofs.c b/criu/autofs.c
+index 71edc7bce..9d146b92b 100644
+--- a/criu/autofs.c
++++ b/criu/autofs.c
+@@ -725,14 +725,19 @@ static int autofs_create_dentries(const struct mount_info *mi, char *mnt_path)
+ 	struct mount_info *c;
+ 
+ 	list_for_each_entry(c, &mi->children, siblings) {
+-		char *path, *basename;
++		char *path, *rel_path;
+ 
+-		basename = strrchr(c->mountpoint, '/');
+-		if (!basename) {
+-			pr_info("%s: mount path \"%s\" doesn't have '/'\n", __func__, c->mountpoint);
++		rel_path = get_relative_path(c->ns_mountpoint, mi->ns_mountpoint);
++		if (!rel_path) {
++			pr_err("Can't get path %s relative to %s\n", c->ns_mountpoint, mi->ns_mountpoint);
+ 			return -1;
+ 		}
+-		path = xsprintf("%s%s", mnt_path, basename);
++
++		/* Skip children-overmount */
++		if (*rel_path == '\0')
++			continue;
++
++		path = xsprintf("%s/%s", mnt_path, rel_path);
+ 		if (!path)
+ 			return -1;
+ 		if (mkdir(path, 0555) < 0) {
+-- 
+2.35.1
+

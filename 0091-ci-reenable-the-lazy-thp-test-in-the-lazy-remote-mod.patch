@@ -1,0 +1,30 @@
+From 5132edbd018755985e664b8a4ee230265ac8c1eb Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@gmail.com>
+Date: Wed, 22 Dec 2021 17:03:04 -0800
+Subject: [PATCH 091/249] ci: reenable the lazy-thp test in the lazy-remote
+ mode
+
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ scripts/ci/run-ci-tests.sh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/scripts/ci/run-ci-tests.sh b/scripts/ci/run-ci-tests.sh
+index bf7331142..7eab9f2dc 100755
+--- a/scripts/ci/run-ci-tests.sh
++++ b/scripts/ci/run-ci-tests.sh
+@@ -212,10 +212,8 @@ LAZY_OPTS="-p 2 -T $LAZY_TESTS $LAZY_EXCLUDE $ZDTM_OPTS"
+ ./test/zdtm.py run $LAZY_OPTS --lazy-pages
+ # shellcheck disable=SC2086
+ ./test/zdtm.py run $LAZY_OPTS --remote-lazy-pages
+-# FIXME: post-copy migration of THP over TLS (sometimes) fails with:
+-#     Error (criu/tls.c:321): tls: Pull callback recv failed: Connection reset by peer
+ # shellcheck disable=SC2086
+-./test/zdtm.py run $LAZY_OPTS --remote-lazy-pages --tls -x lazy-thp
++./test/zdtm.py run $LAZY_OPTS --remote-lazy-pages --tls
+ 
+ bash -x ./test/jenkins/criu-fault.sh
+ if [ "$UNAME_M" == "x86_64" ]; then
+-- 
+2.35.1
+

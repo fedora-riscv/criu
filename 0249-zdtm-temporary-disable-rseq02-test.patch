@@ -1,0 +1,41 @@
+From 149d70490d27bfa302ed977b40f55df4aecd36ea Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Tue, 5 Apr 2022 12:27:07 +0300
+Subject: [PATCH 249/249] zdtm: temporary disable rseq02 test
+
+That's strange but rseq02 test fails with:
+09:06:16.222:    51: exit 555f52082120 555f52082120
+09:06:16.282:    51: exit 555f52082120 555f52082120
+09:06:16.340:    51: exit 555f52082120 555f52082120
+09:06:16.397:    51: exit 555f52082120 555f52082120
+09:06:16.503:    51: exit 0 555f52082120
+09:06:16.503:    51: FAIL: rseq02.c:235: Failed to increment per-cpu counter (errno = 2 (No such file or directory))
+09:06:16.503:    51: FAIL: rseq02.c:246:  (errno = 16 (Device or resource busy))
+
+It means that rseq_cs pointer was cleaned up by the kernel despite of
+NO_RESTART* flags. That's a hardly reproducible and I will investigate that.
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ test/zdtm/transition/rseq02.desc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ mode change 120000 => 100644 test/zdtm/transition/rseq02.desc
+
+diff --git a/test/zdtm/transition/rseq02.desc b/test/zdtm/transition/rseq02.desc
+deleted file mode 120000
+index b888f0da7..000000000
+--- a/test/zdtm/transition/rseq02.desc
++++ /dev/null
+@@ -1 +0,0 @@
+-rseq01.desc
+\ No newline at end of file
+diff --git a/test/zdtm/transition/rseq02.desc b/test/zdtm/transition/rseq02.desc
+new file mode 100644
+index 000000000..1ce7f240f
+--- /dev/null
++++ b/test/zdtm/transition/rseq02.desc
+@@ -0,0 +1 @@
++{'flavor': 'h', 'arch': 'x86_64', 'feature': 'get_rseq_conf', 'flags': 'noauto'}
+-- 
+2.35.1
+

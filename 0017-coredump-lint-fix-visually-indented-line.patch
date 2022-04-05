@@ -1,0 +1,52 @@
+From c9c55b3b33dc7e4295e68e816001216b7568c19e Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 22:47:59 +0100
+Subject: [PATCH 017/249] coredump: lint fix visually indented line
+
+Continuation line over-indented for visual indent
+https://www.flake8rules.com/rules/E127.html
+
+Visually indented line with same indent as next logical line
+https://www.flake8rules.com/rules/E129.html
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/criu_coredump/coredump.py | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/coredump/criu_coredump/coredump.py b/coredump/criu_coredump/coredump.py
+index 41d102db7..881c40b0a 100644
+--- a/coredump/criu_coredump/coredump.py
++++ b/coredump/criu_coredump/coredump.py
+@@ -781,19 +781,19 @@ class coredump_generator:
+         """
+         Calculate amount of vma to put into core dump.
+         """
+-        if vma["status"] & status["VMA_AREA_VVAR"] or \
+-           vma["status"] & status["VMA_AREA_VSYSCALL"] or \
+-           vma["status"] & status["VMA_AREA_VDSO"]:
++        if (vma["status"] & status["VMA_AREA_VVAR"] or
++                vma["status"] & status["VMA_AREA_VSYSCALL"] or
++                vma["status"] & status["VMA_AREA_VDSO"]):
+             size = vma["end"] - vma["start"]
+         elif vma["prot"] == 0:
+             size = 0
+-        elif vma["prot"] & prot["PROT_READ"] and \
+-             vma["prot"] & prot["PROT_EXEC"]:
++        elif (vma["prot"] & prot["PROT_READ"] and
++              vma["prot"] & prot["PROT_EXEC"]):
+             size = PAGESIZE
+-        elif vma["status"] & status["VMA_ANON_SHARED"] or \
+-             vma["status"] & status["VMA_FILE_SHARED"] or \
+-             vma["status"] & status["VMA_ANON_PRIVATE"] or \
+-             vma["status"] & status["VMA_FILE_PRIVATE"]:
++        elif (vma["status"] & status["VMA_ANON_SHARED"] or
++              vma["status"] & status["VMA_FILE_SHARED"] or
++              vma["status"] & status["VMA_ANON_PRIVATE"] or
++              vma["status"] & status["VMA_FILE_PRIVATE"]):
+             size = vma["end"] - vma["start"]
+         else:
+             size = 0
+-- 
+2.35.1
+

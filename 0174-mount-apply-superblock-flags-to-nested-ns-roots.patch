@@ -1,0 +1,35 @@
+From af12f2ef7c38bc06cd9ce43b7feb40bc968ec251 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 27 May 2020 13:43:49 +0300
+Subject: [PATCH 174/249] mount: apply superblock flags to nested ns roots
+
+Before this change we didn't apply sb-flags if we mount the root mount of
+non-root mntns. There is no point in it, if we got to do_new_mount this root
+mount is not external bind, so we won't change sb-flags on host if we change it
+for this mount. So we just loose sb-flags on some regular container mount for
+no reason. Fix it.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/e7ffe4c60
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 97a903934..dc846a68e 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -2213,7 +2213,7 @@ static int do_new_mount(struct mount_info *mi)
+ 		goto out;
+ 	}
+ 
+-	if (!mi->is_ns_root && remount_ro) {
++	if (remount_ro) {
+ 		int fd;
+ 
+ 		fd = open(mi->mountpoint, O_PATH);
+-- 
+2.35.1
+

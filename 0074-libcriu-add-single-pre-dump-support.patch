@@ -1,0 +1,185 @@
+From 7728a658b207bfa2b4910de7d9781bca993be8dd Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Fri, 3 Dec 2021 14:32:33 +0000
+Subject: [PATCH 074/249] libcriu: add single pre-dump support
+
+In contrast to the CLI it is not possible to do a single pre-dump via
+RPC and thus libcriu. In cr-service.c pre-dump always goes into a
+pre-dump loop followed by a final dump. runc already works around this
+to only do a single pre-dump by killing the CRIU process waiting for the
+message for the final dump.
+
+Trying to implement pre-dump in crun via libcriu it is not as easy to
+work around CRIU's pre-dump loop expectations as with runc that directly
+talks to CRIU via RPC.
+
+We know that LXC/LXD also does single pre-dumps using the CLI and runc
+also only does single pre-dumps by misusing the pre-dump loop interface.
+
+With this commit it is possible to trigger a single pre-dump via RPC and
+libcriu without misusing the interface provided via cr-service.c. So
+this commit basically updates CRIU to the existing use cases.
+
+The existing pre-dump loop still sounds like a very good idea, but so
+far most tools have decided to implement the pre-dump loop themselves.
+
+With this change we can implement pre-dump in crun to match what is
+currently implemented in runc.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ criu/cr-service.c | 13 ++++++++-----
+ images/rpc.proto  |  2 ++
+ lib/c/criu.c      | 21 ++++++++++++++++++---
+ lib/c/criu.h      |  2 ++
+ 4 files changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/criu/cr-service.c b/criu/cr-service.c
+index 0f8bc4cc1..80d12c7b0 100644
+--- a/criu/cr-service.c
++++ b/criu/cr-service.c
+@@ -169,11 +169,11 @@ int send_criu_dump_resp(int socket_fd, bool success, bool restored)
+ 	return send_criu_msg(socket_fd, &msg);
+ }
+ 
+-static int send_criu_pre_dump_resp(int socket_fd, bool success)
++static int send_criu_pre_dump_resp(int socket_fd, bool success, bool single)
+ {
+ 	CriuResp msg = CRIU_RESP__INIT;
+ 
+-	msg.type = CRIU_REQ_TYPE__PRE_DUMP;
++	msg.type = single ? CRIU_REQ_TYPE__SINGLE_PRE_DUMP : CRIU_REQ_TYPE__PRE_DUMP;
+ 	msg.success = success;
+ 	set_resp_err(&msg);
+ 
+@@ -845,7 +845,7 @@ out:
+ 	return send_criu_msg(sk, &resp);
+ }
+ 
+-static int pre_dump_using_req(int sk, CriuOpts *req)
++static int pre_dump_using_req(int sk, CriuOpts *req, bool single)
+ {
+ 	int pid, status;
+ 	bool success = false;
+@@ -886,7 +886,7 @@ static int pre_dump_using_req(int sk, CriuOpts *req)
+ 
+ 	success = true;
+ out:
+-	if (send_criu_pre_dump_resp(sk, success) == -1) {
++	if (send_criu_pre_dump_resp(sk, success, single) == -1) {
+ 		pr_perror("Can't send pre-dump resp");
+ 		success = false;
+ 	}
+@@ -899,7 +899,7 @@ static int pre_dump_loop(int sk, CriuReq *msg)
+ 	int ret;
+ 
+ 	do {
+-		ret = pre_dump_using_req(sk, msg->opts);
++		ret = pre_dump_using_req(sk, msg->opts, false);
+ 		if (ret < 0)
+ 			return ret;
+ 
+@@ -1271,6 +1271,9 @@ more:
+ 	case CRIU_REQ_TYPE__VERSION:
+ 		ret = handle_version(sk, msg);
+ 		break;
++	case CRIU_REQ_TYPE__SINGLE_PRE_DUMP:
++		ret = pre_dump_using_req(sk, msg->opts, true);
++		break;
+ 
+ 	default:
+ 		send_criu_err(sk, "Invalid req");
+diff --git a/images/rpc.proto b/images/rpc.proto
+index a9f51ac4b..1d3befd23 100644
+--- a/images/rpc.proto
++++ b/images/rpc.proto
+@@ -172,6 +172,8 @@ enum criu_req_type {
+ 
+ 	WAIT_PID	= 11;
+ 	PAGE_SERVER_CHLD = 12;
++
++	SINGLE_PRE_DUMP = 13;
+ }
+ 
+ /*
+diff --git a/lib/c/criu.c b/lib/c/criu.c
+index 4ee189aca..500574e33 100644
+--- a/lib/c/criu.c
++++ b/lib/c/criu.c
+@@ -1527,7 +1527,7 @@ int criu_check(void)
+ 	return criu_local_check(global_opts);
+ }
+ 
+-int criu_local_dump(criu_opts *opts)
++static int dump(bool pre_dump, criu_opts *opts)
+ {
+ 	int ret = -1;
+ 	CriuReq req = CRIU_REQ__INIT;
+@@ -1535,7 +1535,7 @@ int criu_local_dump(criu_opts *opts)
+ 
+ 	saved_errno = 0;
+ 
+-	req.type = CRIU_REQ_TYPE__DUMP;
++	req.type = pre_dump ? CRIU_REQ_TYPE__SINGLE_PRE_DUMP : CRIU_REQ_TYPE__DUMP;
+ 	req.opts = opts->rpc;
+ 
+ 	ret = send_req_and_recv_resp(opts, &req, &resp);
+@@ -1543,7 +1543,7 @@ int criu_local_dump(criu_opts *opts)
+ 		goto exit;
+ 
+ 	if (resp->success) {
+-		if (resp->dump->has_restored && resp->dump->restored)
++		if (!pre_dump && resp->dump->has_restored && resp->dump->restored)
+ 			ret = 1;
+ 		else
+ 			ret = 0;
+@@ -1561,11 +1561,26 @@ exit:
+ 	return ret;
+ }
+ 
++int criu_local_dump(criu_opts *opts)
++{
++	return dump(false, opts);
++}
++
+ int criu_dump(void)
+ {
+ 	return criu_local_dump(global_opts);
+ }
+ 
++int criu_local_pre_dump(criu_opts *opts)
++{
++	return dump(true, opts);
++}
++
++int criu_pre_dump(void)
++{
++	return criu_local_pre_dump(global_opts);
++}
++
+ int criu_local_dump_iters(criu_opts *opts, int (*more)(criu_predump_info pi))
+ {
+ 	int ret = -1, fd = -1, uret;
+diff --git a/lib/c/criu.h b/lib/c/criu.h
+index a374b37f8..c6d4f50a8 100644
+--- a/lib/c/criu.h
++++ b/lib/c/criu.h
+@@ -161,6 +161,7 @@ int criu_get_orphan_pts_master_fd(void);
+  */
+ int criu_check(void);
+ int criu_dump(void);
++int criu_pre_dump(void);
+ int criu_restore(void);
+ int criu_restore_child(void);
+ 
+@@ -279,6 +280,7 @@ void criu_local_set_notify_cb(criu_opts *opts, int (*cb)(char *action, criu_noti
+ 
+ int criu_local_check(criu_opts *opts);
+ int criu_local_dump(criu_opts *opts);
++int criu_local_pre_dump(criu_opts *opts);
+ int criu_local_restore(criu_opts *opts);
+ int criu_local_restore_child(criu_opts *opts);
+ int criu_local_dump_iters(criu_opts *opts, int (*more)(criu_predump_info pi));
+-- 
+2.35.1
+

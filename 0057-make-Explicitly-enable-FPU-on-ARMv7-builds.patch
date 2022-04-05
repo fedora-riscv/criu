@@ -1,0 +1,48 @@
+From 205ba95597c1f538776e4ed6838f7e082178f5fe Mon Sep 17 00:00:00 2001
+From: Salvatore Bonaccorso <carnil@debian.org>
+Date: Sat, 4 Dec 2021 16:59:51 +0000
+Subject: [PATCH 057/249] make: Explicitly enable FPU on ARMv7 builds
+
+Starting with gcc-11, Debian's armhf compiler no longer builds with
+a default -mfpu= option. Instead it enables the FPU via an extension
+to the -march flag (--with-arch=armv7-a+fp). criu's Makefile explicitly
+passes its own -march=armv7-a setting, which overrides the +fp default,
+so we end up with no FPU:
+
+    cc1: error: '-mfloat-abi=hard': selected architecture lacks an FPU
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ Makefile               | 2 +-
+ test/zdtm/Makefile.inc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index c0b8b7e54..f08d9be3a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -39,7 +39,7 @@ ifeq ($(ARCH),arm)
+         endif
+ 
+         ifeq ($(ARMV),7)
+-                USERCFLAGS += -march=armv7-a
++                USERCFLAGS += -march=armv7-a+fp
+         endif
+ 
+         ifeq ($(ARMV),8)
+diff --git a/test/zdtm/Makefile.inc b/test/zdtm/Makefile.inc
+index 69154fdc9..d34523315 100644
+--- a/test/zdtm/Makefile.inc
++++ b/test/zdtm/Makefile.inc
+@@ -25,7 +25,7 @@ ifeq ($(ARCH),arm)
+         ifeq ($(ARMV),6)
+                 USERCFLAGS += -march=armv6
+         else ifeq ($(ARMV),7)
+-                USERCFLAGS += -march=armv7-a
++                USERCFLAGS += -march=armv7-a+fp
+         else ifeq ($(ARMV),8)
+                 # To build aarch32 on armv8 Travis-CI (see criu Makefile)
+                 USERCFLAGS += -march=armv7-a
+-- 
+2.35.1
+

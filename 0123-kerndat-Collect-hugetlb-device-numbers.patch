@@ -1,0 +1,414 @@
+From 2eb37a63d8ba56dee5da7acc9f3ccf0cb1a97eb3 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Wed, 15 Dec 2021 22:26:08 +0700
+Subject: [PATCH 123/249] kerndat: Collect hugetlb device numbers
+
+These numbers are used to determine whether a memory mapping is backed by
+hugetlb and its page size.
+
+As the hugepage can be allocated more after the first time we collect kerndat,
+we need to collect the missing device numbers every time we load the kerndat
+cache.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ criu/Makefile.crtools  |   1 +
+ criu/hugetlb.c         |  47 +++++++++++++++
+ criu/include/hugetlb.h |  55 +++++++++++++++++
+ criu/include/kerndat.h |   2 +
+ criu/include/sizes.h   |  50 ++++++++++++++++
+ criu/kerndat.c         | 130 ++++++++++++++++++++++++++++++++++++-----
+ 6 files changed, 269 insertions(+), 16 deletions(-)
+ create mode 100644 criu/hugetlb.c
+ create mode 100644 criu/include/hugetlb.h
+ create mode 100644 criu/include/sizes.h
+
+diff --git a/criu/Makefile.crtools b/criu/Makefile.crtools
+index 50a2fa9c5..46d7fd424 100644
+--- a/criu/Makefile.crtools
++++ b/criu/Makefile.crtools
+@@ -96,6 +96,7 @@ CFLAGS_pie-util-vdso-elf32.o	+= -DCONFIG_VDSO_32
+ obj-$(CONFIG_COMPAT)	+= vdso-compat.o
+ CFLAGS_REMOVE_vdso-compat.o	+= $(CFLAGS-ASAN) $(CFLAGS-GCOV)
+ obj-y			+= pidfd-store.o
++obj-y			+= hugetlb.o
+ 
+ PROTOBUF_GEN := scripts/protobuf-gen.sh
+ 
+diff --git a/criu/hugetlb.c b/criu/hugetlb.c
+new file mode 100644
+index 000000000..aa98662d8
+--- /dev/null
++++ b/criu/hugetlb.c
+@@ -0,0 +1,47 @@
++#include "hugetlb.h"
++#include "kerndat.h"
++#include "sizes.h"
++
++// clang-format off
++struct htlb_info hugetlb_info[HUGETLB_MAX] = {
++	[HUGETLB_16KB] = { SZ_16K, MAP_HUGETLB_16KB },
++	[HUGETLB_64KB] = { SZ_64K, MAP_HUGETLB_64KB },
++	[HUGETLB_512KB] = { SZ_512K, MAP_HUGETLB_512KB },
++	[HUGETLB_1MB] = { SZ_1M, MAP_HUGETLB_1MB },
++	[HUGETLB_2MB] = { SZ_2M, MAP_HUGETLB_2MB },
++	[HUGETLB_8MB] = { SZ_8M, MAP_HUGETLB_8MB },
++	[HUGETLB_16MB] = { SZ_16M, MAP_HUGETLB_16MB },
++	[HUGETLB_32MB] = { SZ_32M, MAP_HUGETLB_32MB },
++	[HUGETLB_256MB] = { SZ_256M, MAP_HUGETLB_256MB },
++	[HUGETLB_512MB] = { SZ_512M, MAP_HUGETLB_512MB },
++	[HUGETLB_1GB] = { SZ_1G, MAP_HUGETLB_1GB },
++	[HUGETLB_2GB] = { SZ_2G, MAP_HUGETLB_2GB },
++	[HUGETLB_16GB] = { SZ_16G, MAP_HUGETLB_16GB },
++};
++// clang-format on
++
++int is_hugetlb_dev(dev_t dev, int *hugetlb_size_flag)
++{
++	int i;
++
++	for (i = 0; i < HUGETLB_MAX; i++) {
++		if (kdat.hugetlb_dev[i] == dev) {
++			if (hugetlb_size_flag)
++				*hugetlb_size_flag = hugetlb_info[i].flag;
++			return 1;
++		}
++	}
++
++	return 0;
++}
++
++unsigned long get_size_from_hugetlb_flag(int flag)
++{
++	int i;
++
++	for (i = 0; i < HUGETLB_MAX; i++)
++		if (flag == hugetlb_info[i].flag)
++			return hugetlb_info[i].size;
++
++	return -1;
++}
+diff --git a/criu/include/hugetlb.h b/criu/include/hugetlb.h
+new file mode 100644
+index 000000000..c0e83652b
+--- /dev/null
++++ b/criu/include/hugetlb.h
+@@ -0,0 +1,55 @@
++#ifndef __CR_HUGETLB_H_
++#define __CR_HUGETLB_H_
++
++#include <sys/types.h>
++#include <stddef.h>
++
++enum hugepage_size {
++	HUGETLB_16KB,
++	HUGETLB_64KB,
++	HUGETLB_512KB,
++	HUGETLB_1MB,
++	HUGETLB_2MB,
++	HUGETLB_8MB,
++	HUGETLB_16MB,
++	HUGETLB_32MB,
++	HUGETLB_256MB,
++	HUGETLB_512MB,
++	HUGETLB_1GB,
++	HUGETLB_2GB,
++	HUGETLB_16GB,
++	HUGETLB_MAX
++};
++
++#define MAP_HUGETLB_SHIFT     26
++#define MAP_HUGETLB_SIZE_MASK (0x3f << MAP_HUGETLB_SHIFT)
++
++#define MAP_HUGETLB_16KB  (14 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_64KB  (16 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_512KB (19 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_1MB	  (20 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_2MB	  (21 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_8MB	  (23 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_16MB  (24 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_32MB  (25 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_256MB (28 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_512MB (29 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_1GB	  (30 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_2GB	  (31 << MAP_HUGETLB_SHIFT)
++#define MAP_HUGETLB_16GB  (34 << MAP_HUGETLB_SHIFT)
++
++struct htlb_info {
++	unsigned long long size;
++	int flag;
++};
++
++extern struct htlb_info hugetlb_info[HUGETLB_MAX];
++
++int is_hugetlb_dev(dev_t dev, int *hugetlb_size_flag);
++unsigned long get_size_from_hugetlb_flag(int flag);
++
++#ifndef MFD_HUGETLB
++#define MFD_HUGETLB 4
++#endif
++
++#endif
+diff --git a/criu/include/kerndat.h b/criu/include/kerndat.h
+index 0de5eb778..25825ee51 100644
+--- a/criu/include/kerndat.h
++++ b/criu/include/kerndat.h
+@@ -6,6 +6,7 @@
+ #include "common/config.h"
+ #include "asm/kerndat.h"
+ #include "util-vdso.h"
++#include "hugetlb.h"
+ 
+ struct stat;
+ 
+@@ -76,6 +77,7 @@ struct kerndat_s {
+ 	bool has_nspid;
+ 	bool has_nftables_concat;
+ 	bool has_sockopt_buf_lock;
++	dev_t hugetlb_dev[HUGETLB_MAX];
+ };
+ 
+ extern struct kerndat_s kdat;
+diff --git a/criu/include/sizes.h b/criu/include/sizes.h
+new file mode 100644
+index 000000000..0ec977fc0
+--- /dev/null
++++ b/criu/include/sizes.h
+@@ -0,0 +1,50 @@
++#ifndef __CR_SIZES_H__
++#define __CR_SIZES_H__
++
++/*
++ * Copied from the Linux kernel header include/linux/sizes.h
++ */
++
++#define SZ_1   0x00000001
++#define SZ_2   0x00000002
++#define SZ_4   0x00000004
++#define SZ_8   0x00000008
++#define SZ_16  0x00000010
++#define SZ_32  0x00000020
++#define SZ_64  0x00000040
++#define SZ_128 0x00000080
++#define SZ_256 0x00000100
++#define SZ_512 0x00000200
++
++#define SZ_1K	0x00000400
++#define SZ_2K	0x00000800
++#define SZ_4K	0x00001000
++#define SZ_8K	0x00002000
++#define SZ_16K	0x00004000
++#define SZ_32K	0x00008000
++#define SZ_64K	0x00010000
++#define SZ_128K 0x00020000
++#define SZ_256K 0x00040000
++#define SZ_512K 0x00080000
++
++#define SZ_1M	0x00100000
++#define SZ_2M	0x00200000
++#define SZ_4M	0x00400000
++#define SZ_8M	0x00800000
++#define SZ_16M	0x01000000
++#define SZ_32M	0x02000000
++#define SZ_64M	0x04000000
++#define SZ_128M 0x08000000
++#define SZ_256M 0x10000000
++#define SZ_512M 0x20000000
++
++#define SZ_1G 0x40000000
++#define SZ_2G 0x80000000
++
++#define SZ_4G  0x100000000ULL
++#define SZ_8G  0x200000000ULL
++#define SZ_16G 0x400000000ULL
++#define SZ_32G 0x800000000ULL
++#define SZ_64T 0x400000000000ULL
++
++#endif /* __CR_SIZES_H__ */
+diff --git a/criu/kerndat.c b/criu/kerndat.c
+index b13ebee81..da1fb5511 100644
+--- a/criu/kerndat.c
++++ b/criu/kerndat.c
+@@ -183,20 +183,12 @@ static int kerndat_files_stat(void)
+ 	return 0;
+ }
+ 
+-static int kerndat_get_shmemdev(void)
++static int kerndat_get_dev(dev_t *dev, char *map, size_t size)
+ {
+-	void *map;
+ 	char maps[128];
+ 	struct stat buf;
+-	dev_t dev;
+-
+-	map = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, 0, 0);
+-	if (map == MAP_FAILED) {
+-		pr_perror("Can't mmap memory for shmemdev test");
+-		return -1;
+-	}
+ 
+-	sprintf(maps, "/proc/self/map_files/%lx-%lx", (unsigned long)map, (unsigned long)map + page_size());
++	sprintf(maps, "/proc/self/map_files/%lx-%lx", (unsigned long)map, (unsigned long)map + size);
+ 	if (stat(maps, &buf) < 0) {
+ 		int e = errno;
+ 		if (errno == EPERM) {
+@@ -205,16 +197,34 @@ static int kerndat_get_shmemdev(void)
+ 			 * OK, let's go the slower route.
+ 			 */
+ 
+-			if (parse_self_maps((unsigned long)map, &dev) < 0) {
++			if (parse_self_maps((unsigned long)map, dev) < 0) {
+ 				pr_err("Can't read self maps\n");
+-				goto err;
++				return -1;
+ 			}
+ 		} else {
+ 			pr_perror("Can't stat self map_files %d", e);
+-			goto err;
++			return -1;
+ 		}
+-	} else
+-		dev = buf.st_dev;
++	} else {
++		*dev = buf.st_dev;
++	}
++
++	return 0;
++}
++
++static int kerndat_get_shmemdev(void)
++{
++	void *map;
++	dev_t dev;
++
++	map = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, 0, 0);
++	if (map == MAP_FAILED) {
++		pr_perror("Can't mmap memory for shmemdev test");
++		return -1;
++	}
++
++	if (kerndat_get_dev(&dev, map, PAGE_SIZE))
++		goto err;
+ 
+ 	munmap(map, PAGE_SIZE);
+ 	kdat.shmem_dev = dev;
+@@ -226,6 +236,60 @@ err:
+ 	return -1;
+ }
+ 
++/* Return -1 -- error
++ * Return 0 -- successful but can't get any new device's numbers
++ * Return 1 -- successful and get new device's numbers
++ *
++ * At first, all kdat.hugetlb_dev elements are initialized to 0.
++ * When the function finishes,
++ * kdat.hugetlb_dev[i] == -1 -- this hugetlb page size is not supported
++ * kdat.hugetlb_dev[i] == 0  -- this hugetlb page size is supported but can't collect device's number
++ * Otherwise, kdat.hugetlb_dev[i] contains the corresponding device's number
++ *
++ * Next time the function is called, it only tries to collect the device's number of hugetlb page size
++ * that is supported but can't be collected in the previous call (kdat.hugetlb_dev[i] == 0)
++ */
++static int kerndat_get_hugetlb_dev(void)
++{
++	void *map;
++	int i, flag, ret = 0;
++	unsigned long long size;
++	dev_t dev;
++
++	for (i = 0; i < HUGETLB_MAX; i++) {
++		/* Skip if this hugetlb size is not supported or the device's number has been collected */
++		if (kdat.hugetlb_dev[i])
++			continue;
++
++		size = hugetlb_info[i].size;
++		flag = hugetlb_info[i].flag;
++		map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | flag, 0, 0);
++		if (map == MAP_FAILED) {
++			if (errno == EINVAL) {
++				kdat.hugetlb_dev[i] = (dev_t)-1;
++				continue;
++			} else if (errno == ENOMEM) {
++				pr_info("Hugetlb size %llu Mb is supported but cannot get dev's number\n", size >> 20);
++				continue;
++			} else {
++				pr_perror("Unexpected result when get hugetlb dev");
++				return -1;
++			}
++		}
++
++		if (kerndat_get_dev(&dev, map, size)) {
++			munmap(map, size);
++			return -1;
++		}
++
++		munmap(map, size);
++		kdat.hugetlb_dev[i] = dev;
++		ret = 1;
++		pr_info("Found hugetlb device at %" PRIx64 "\n", kdat.hugetlb_dev[i]);
++	}
++	return ret;
++}
++
+ static dev_t get_host_dev(unsigned int which)
+ {
+ 	static struct kst {
+@@ -1260,13 +1324,43 @@ static int kerndat_has_nftables_concat(void)
+ #endif
+ }
+ 
++/*
++ * Some features depend on resource that can be dynamically changed
++ * at the OS runtime. There are cases that we cannot determine the
++ * availability of those features at the first time we run kerndat
++ * check. So in later kerndat checks, we need to retry to get those
++ * information. This function contains calls to those kerndat checks.
++ *
++ * Those kerndat checks must
++ * Return -1 on error
++ * Return 0 when the check is successful but no new information
++ * Return 1 when the check is successful and there is new information
++ */
++int kerndat_try_load_new(void)
++{
++	int ret;
++
++	ret = kerndat_get_hugetlb_dev();
++	if (ret < 0)
++		return ret;
++
++	/* New information is found, we need to save to the cache */
++	if (ret)
++		kerndat_save_cache();
++	return 0;
++}
++
+ int kerndat_init(void)
+ {
+ 	int ret;
+ 
+ 	ret = kerndat_try_load_cache();
+-	if (ret <= 0)
++	if (ret < 0)
+ 		return ret;
++
++	if (ret == 0)
++		return kerndat_try_load_new();
++
+ 	ret = 0;
+ 
+ 	/* kerndat_try_load_cache can leave some trash in kdat */
+@@ -1283,6 +1377,10 @@ int kerndat_init(void)
+ 		pr_err("kerndat_get_shmemdev failed when initializing kerndat.\n");
+ 		ret = -1;
+ 	}
++	if (!ret && kerndat_get_hugetlb_dev() < 0) {
++		pr_err("kerndat_get_hugetlb_dev failed when initializing kerndat.\n");
++		ret = -1;
++	}
+ 	if (!ret && kerndat_get_dirty_track()) {
+ 		pr_err("kerndat_get_dirty_track failed when initializing kerndat.\n");
+ 		ret = -1;
+-- 
+2.35.1
+

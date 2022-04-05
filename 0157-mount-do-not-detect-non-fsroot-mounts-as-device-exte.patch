@@ -1,0 +1,44 @@
+From ff991f4b5f369640408887dd7e2c9bc1c9ccc53b Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 16 Jan 2020 12:36:08 +0300
+Subject: [PATCH 157/249] mount: do not detect non-fsroot mounts as
+ device-external
+
+Device-external mounts are restored via do_new_mount(), but function
+do_new_mount only allows creating mounts with root "/", as it does
+simple mount (not bind) without any later root change. Restoring
+non-root mounts via do_new_mount is just imposible.
+
+So let's detect mounts as device-external only when they have fsroot
+root, all other non-fsroot binds of this device would be restored as
+bindmounts of fsroot ones.
+
+This is a cosmetic change as though non-root mounts were detected as
+device-external before this patch they anyway would not be created with
+do_new_mount() because of fsroot/bind check in can_mount_now orders them
+to be restored as binds.
+
+Cherry-picked one hunk from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/afd899539
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 7035d992a..7c42c1fc9 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -476,7 +476,7 @@ static int try_resolve_ext_mount(struct mount_info *info)
+ 
+ 	snprintf(devstr, sizeof(devstr), "dev[%d/%d]", kdev_major(info->s_dev), kdev_minor(info->s_dev));
+ 
+-	if (info->fstype->code == FSTYPE__UNSUPPORTED) {
++	if (info->fstype->code == FSTYPE__UNSUPPORTED && fsroot_mounted(info)) {
+ 		char *val;
+ 
+ 		val = external_lookup_by_key(devstr);
+-- 
+2.35.1
+

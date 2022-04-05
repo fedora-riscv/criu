@@ -1,0 +1,33 @@
+From 3d86ba5d0a0d5acdcfcc18ec6e0f9f95f9f934d2 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 13 Jan 2022 17:45:46 +0300
+Subject: [PATCH 177/249] mount/restore: leave ns_mountpoint NULL for aux
+ binfmt_misc mount
+
+On dump, yes, mountpoint and ns_mountpoint are the same, but on restore
+they don't and puting something like "<root_yard>/binfmt_misc" to
+ns_mountpoint is wrong, let's leave ns_mountpoint NULL, this mount
+should not be compared by ns_mountpoint with other mounts anyway.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 72b17bc1b..3b57622b6 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -1589,7 +1589,8 @@ static __maybe_unused struct mount_info *add_cr_time_mount(struct mount_info *ro
+ 	mi->mountpoint = xmalloc(len + strlen(path) + 1);
+ 	if (!mi->mountpoint)
+ 		goto err;
+-	mi->ns_mountpoint = mi->mountpoint;
++	if (!rst)
++		mi->ns_mountpoint = mi->mountpoint;
+ 	if (!add_slash)
+ 		sprintf(mi->mountpoint, "%s%s", root->mountpoint, path);
+ 	else
+-- 
+2.35.1
+

@@ -1,0 +1,574 @@
+From 2d459717d161abb3330133a8f00ac7b4b9672c42 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Thu, 16 Dec 2021 09:35:25 +0700
+Subject: [PATCH 084/249] zdtm: Add SOCK_SEQPACKET variants to unix socket
+ tests
+
+This commit simply makes copies of SOCK_STREAM unix socket tests and uses
+SOCK_SEQPACKET instead.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ test/zdtm/static/Makefile                     | 23 +++++++++++++++++++
+ test/zdtm/static/del_standalone_un.c          |  8 ++++++-
+ .../zdtm/static/del_standalone_un_seqpacket.c |  1 +
+ test/zdtm/static/scm03-seqpacket.c            |  1 +
+ test/zdtm/static/scm03.c                      |  8 ++++++-
+ test/zdtm/static/sk-unix-rel-seqpacket.c      |  1 +
+ test/zdtm/static/sk-unix-rel.c                | 10 ++++++--
+ test/zdtm/static/sk-unix-unconn-seqpacket.c   |  1 +
+ test/zdtm/static/sk-unix-unconn.c             | 10 ++++++--
+ test/zdtm/static/sk-unix01-seqpacket.c        |  1 +
+ test/zdtm/static/sk-unix01-seqpacket.desc     |  1 +
+ test/zdtm/static/sk-unix01.c                  | 12 +++++++---
+ test/zdtm/static/socket_queues.c              |  8 ++++++-
+ test/zdtm/static/socket_queues_seqpacket.c    |  1 +
+ test/zdtm/static/sockets00-seqpacket.c        |  1 +
+ test/zdtm/static/sockets00-seqpacket.desc     |  1 +
+ test/zdtm/static/sockets00.c                  | 12 +++++++---
+ test/zdtm/static/sockets01-seqpacket.c        |  1 +
+ test/zdtm/static/sockets01.c                  | 10 ++++++--
+ test/zdtm/static/sockets02-seqpacket.c        |  1 +
+ test/zdtm/static/sockets02.c                  |  8 ++++++-
+ test/zdtm/static/sockets03-seqpacket.c        |  1 +
+ test/zdtm/static/sockets03-seqpacket.desc     |  1 +
+ test/zdtm/static/sockets03.c                  | 10 ++++++--
+ test/zdtm/static/sockets_spair.c              |  8 ++++++-
+ test/zdtm/static/sockets_spair_seqpacket.c    |  1 +
+ 26 files changed, 122 insertions(+), 19 deletions(-)
+ create mode 120000 test/zdtm/static/del_standalone_un_seqpacket.c
+ create mode 120000 test/zdtm/static/scm03-seqpacket.c
+ create mode 120000 test/zdtm/static/sk-unix-rel-seqpacket.c
+ create mode 120000 test/zdtm/static/sk-unix-unconn-seqpacket.c
+ create mode 120000 test/zdtm/static/sk-unix01-seqpacket.c
+ create mode 120000 test/zdtm/static/sk-unix01-seqpacket.desc
+ create mode 120000 test/zdtm/static/socket_queues_seqpacket.c
+ create mode 120000 test/zdtm/static/sockets00-seqpacket.c
+ create mode 120000 test/zdtm/static/sockets00-seqpacket.desc
+ create mode 120000 test/zdtm/static/sockets01-seqpacket.c
+ create mode 120000 test/zdtm/static/sockets02-seqpacket.c
+ create mode 120000 test/zdtm/static/sockets03-seqpacket.c
+ create mode 120000 test/zdtm/static/sockets03-seqpacket.desc
+ create mode 120000 test/zdtm/static/sockets_spair_seqpacket.c
+
+diff --git a/test/zdtm/static/Makefile b/test/zdtm/static/Makefile
+index 3e1e0a498..4a21978b5 100644
+--- a/test/zdtm/static/Makefile
++++ b/test/zdtm/static/Makefile
+@@ -68,9 +68,13 @@ TST_NOFILE	:=				\
+ 		utsname				\
+ 		pstree				\
+ 		sockets01			\
++		sockets01-seqpacket		\
+ 		sockets02			\
++		sockets02-seqpacket		\
+ 		sockets_spair			\
++		sockets_spair_seqpacket		\
+ 		socket_queues			\
++		socket_queues_seqpacket		\
+ 		socket-raw			\
+ 		socket-tcp			\
+ 		socket-tcp-listen		\
+@@ -119,6 +123,7 @@ TST_NOFILE	:=				\
+ 		sock_opts01			\
+ 		sock_opts02			\
+ 		sk-unix-unconn			\
++		sk-unix-unconn-seqpacket	\
+ 		ipc_namespace			\
+ 		selfexe00			\
+ 		sem				\
+@@ -187,6 +192,7 @@ TST_NOFILE	:=				\
+ 		scm01				\
+ 		scm02				\
+ 		scm03				\
++		scm03-seqpacket			\
+ 		scm04				\
+ 		scm05				\
+ 		scm06				\
+@@ -284,6 +290,7 @@ TST_FILE	=				\
+ 		file_attr			\
+ 		deleted_unix_sock		\
+ 		sk-unix-rel			\
++		sk-unix-rel-seqpacket		\
+ 		deleted_dev			\
+ 		unlink_fstat00			\
+ 		unlink_fstat01			\
+@@ -311,7 +318,9 @@ TST_FILE	=				\
+ 		cow01				\
+ 		fdt_shared			\
+ 		sockets00			\
++		sockets00-seqpacket		\
+ 		sockets03			\
++		sockets03-seqpacket		\
+ 		sockets_dgram			\
+ 		file_lease00			\
+ 		file_lease01			\
+@@ -394,8 +403,10 @@ TST_DIR		=				\
+ 		mnt_enablefs			\
+ 		autofs				\
+ 		del_standalone_un		\
++		del_standalone_un_seqpacket	\
+ 		sk-unix-mntns			\
+ 		sk-unix01			\
++		sk-unix01-seqpacket		\
+ 		sk-unix-dgram-ghost		\
+ 		unsupported_children_collision  \
+ 		shared_slave_mount_children	\
+@@ -607,6 +618,18 @@ socket-tcp6-unconn:	CFLAGS += -D ZDTM_IPV6
+ socket-tcp4v6-last-ack:	CFLAGS += -D ZDTM_TCP_LAST_ACK -D ZDTM_IPV4V6
+ socket-tcp4v6-closing:	CFLAGS += -D ZDTM_IPV4V6
+ 
++sockets00-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sockets01-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sockets02-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sockets03-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sk-unix01-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sk-unix-rel-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sockets_spair_seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++socket_queues_seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++del_standalone_un_seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++sk-unix-unconn-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++scm03-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
++
+ pty-console:		CFLAGS += -D ZDTM_DEV_CONSOLE
+ 
+ shm-unaligned:		CFLAGS += -DZDTM_SHM_UNALIGNED
+diff --git a/test/zdtm/static/del_standalone_un.c b/test/zdtm/static/del_standalone_un.c
+index c9fa84870..b4f99e260 100644
+--- a/test/zdtm/static/del_standalone_un.c
++++ b/test/zdtm/static/del_standalone_un.c
+@@ -16,11 +16,17 @@ const char *test_author = "Tycho Andersen <tycho.andersen@canonical.com>";
+ char *dirname;
+ TEST_OPTION(dirname, string, "directory name", 1);
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ static int bind_and_listen(struct sockaddr_un *addr)
+ {
+ 	int sk;
+ 
+-	sk = socket(PF_UNIX, SOCK_STREAM, 0);
++	sk = socket(PF_UNIX, SOCK_TYPE, 0);
+ 	if (sk < 0) {
+ 		fail("socket");
+ 		return -1;
+diff --git a/test/zdtm/static/del_standalone_un_seqpacket.c b/test/zdtm/static/del_standalone_un_seqpacket.c
+new file mode 120000
+index 000000000..d88fcbad8
+--- /dev/null
++++ b/test/zdtm/static/del_standalone_un_seqpacket.c
+@@ -0,0 +1 @@
++del_standalone_un.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/scm03-seqpacket.c b/test/zdtm/static/scm03-seqpacket.c
+new file mode 120000
+index 000000000..f1f86dd8b
+--- /dev/null
++++ b/test/zdtm/static/scm03-seqpacket.c
+@@ -0,0 +1 @@
++scm03.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/scm03.c b/test/zdtm/static/scm03.c
+index a40fc0101..4453f7e93 100644
+--- a/test/zdtm/static/scm03.c
++++ b/test/zdtm/static/scm03.c
+@@ -9,6 +9,12 @@
+ const char *test_doc = "Check that SCM_RIGHTS are preserved";
+ const char *test_author = "Pavel Emelyanov <xemul@virtuozzo.com>";
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_DGRAM
++#endif
++
+ static int send_fd(int via, int fd1, int fd2)
+ {
+ 	struct msghdr h = {};
+@@ -105,7 +111,7 @@ int main(int argc, char **argv)
+ 
+ 	test_init(argc, argv);
+ 
+-	if (socketpair(PF_UNIX, SOCK_DGRAM, 0, sk) < 0) {
++	if (socketpair(PF_UNIX, SOCK_TYPE, 0, sk) < 0) {
+ 		pr_perror("Can't make unix pair");
+ 		exit(1);
+ 	}
+diff --git a/test/zdtm/static/sk-unix-rel-seqpacket.c b/test/zdtm/static/sk-unix-rel-seqpacket.c
+new file mode 120000
+index 000000000..1f98e3845
+--- /dev/null
++++ b/test/zdtm/static/sk-unix-rel-seqpacket.c
+@@ -0,0 +1 @@
++sk-unix-rel.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sk-unix-rel.c b/test/zdtm/static/sk-unix-rel.c
+index 10c19080a..7e4aeafe6 100644
+--- a/test/zdtm/static/sk-unix-rel.c
++++ b/test/zdtm/static/sk-unix-rel.c
+@@ -25,6 +25,12 @@ TEST_OPTION(filename, string, "socket file name", 1);
+ 
+ #define TEST_MODE 0640
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	struct sockaddr_un addr;
+@@ -54,8 +60,8 @@ int main(int argc, char *argv[])
+ 	memcpy(addr.sun_path, filename, addrlen);
+ 	addrlen += sizeof(addr.sun_family);
+ 
+-	sock[0] = socket(AF_UNIX, SOCK_STREAM, 0);
+-	sock[1] = socket(AF_UNIX, SOCK_STREAM, 0);
++	sock[0] = socket(AF_UNIX, SOCK_TYPE, 0);
++	sock[1] = socket(AF_UNIX, SOCK_TYPE, 0);
+ 	if (sock[0] < 0 || sock[1] < 0) {
+ 		fail("socket");
+ 		exit(1);
+diff --git a/test/zdtm/static/sk-unix-unconn-seqpacket.c b/test/zdtm/static/sk-unix-unconn-seqpacket.c
+new file mode 120000
+index 000000000..f5c276186
+--- /dev/null
++++ b/test/zdtm/static/sk-unix-unconn-seqpacket.c
+@@ -0,0 +1 @@
++sk-unix-unconn.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sk-unix-unconn.c b/test/zdtm/static/sk-unix-unconn.c
+index caad3d315..62e48247f 100644
+--- a/test/zdtm/static/sk-unix-unconn.c
++++ b/test/zdtm/static/sk-unix-unconn.c
+@@ -9,6 +9,12 @@
+ const char *test_doc = "Check unconnected unix sockets";
+ const char *test_author = "Vagin Andrew <avagin@parallels.com>";
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char **argv)
+ {
+ 	int sk, skc;
+@@ -19,13 +25,13 @@ int main(int argc, char **argv)
+ 
+ 	test_init(argc, argv);
+ 
+-	sk = socket(AF_UNIX, SOCK_STREAM, 0);
++	sk = socket(AF_UNIX, SOCK_TYPE, 0);
+ 	if (sk == -1) {
+ 		pr_perror("socket");
+ 		return 1;
+ 	}
+ 
+-	skc = socket(AF_UNIX, SOCK_STREAM, 0);
++	skc = socket(AF_UNIX, SOCK_TYPE, 0);
+ 	if (skc == -1) {
+ 		pr_perror("socket");
+ 		return 1;
+diff --git a/test/zdtm/static/sk-unix01-seqpacket.c b/test/zdtm/static/sk-unix01-seqpacket.c
+new file mode 120000
+index 000000000..bef734ed6
+--- /dev/null
++++ b/test/zdtm/static/sk-unix01-seqpacket.c
+@@ -0,0 +1 @@
++sk-unix01.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sk-unix01-seqpacket.desc b/test/zdtm/static/sk-unix01-seqpacket.desc
+new file mode 120000
+index 000000000..7a30da25c
+--- /dev/null
++++ b/test/zdtm/static/sk-unix01-seqpacket.desc
+@@ -0,0 +1 @@
++sk-unix01.desc
+\ No newline at end of file
+diff --git a/test/zdtm/static/sk-unix01.c b/test/zdtm/static/sk-unix01.c
+index c2bb8b9ed..5146c027f 100644
+--- a/test/zdtm/static/sk-unix01.c
++++ b/test/zdtm/static/sk-unix01.c
+@@ -24,6 +24,12 @@ const char *test_author = "Cyrill Gorcunov <gorcunov@openvz.org>";
+ char *dirname;
+ TEST_OPTION(dirname, string, "directory name", 1);
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ static int sk_alloc_bind(int type, struct sockaddr_un *addr)
+ {
+ 	int sk;
+@@ -256,7 +262,7 @@ int main(int argc, char **argv)
+ 
+ 	unlink(addr.sun_path);
+ 
+-	sk_st[0] = sk_alloc_bind(SOCK_STREAM, &addr);
++	sk_st[0] = sk_alloc_bind(SOCK_TYPE, &addr);
+ 	if (sk_st[0] < 0)
+ 		return 1;
+ 	test_msg("sk-st: alloc/bind/listen %d\n", sk_st[0]);
+@@ -266,7 +272,7 @@ int main(int argc, char **argv)
+ 		return 1;
+ 	}
+ 
+-	sk_st[1] = sk_alloc_connect(SOCK_STREAM, &addr);
++	sk_st[1] = sk_alloc_connect(SOCK_TYPE, &addr);
+ 	if (sk_st[1] < 0)
+ 		return 1;
+ 	test_msg("sk-st: alloc/connect %d\n", sk_st[1]);
+@@ -279,7 +285,7 @@ int main(int argc, char **argv)
+ 	}
+ 	test_msg("sk-st: accept %d\n", sk_st[2]);
+ 
+-	sk_st[3] = sk_alloc_connect(SOCK_STREAM, &addr);
++	sk_st[3] = sk_alloc_connect(SOCK_TYPE, &addr);
+ 	if (sk_st[3] < 0)
+ 		return 1;
+ 	test_msg("sk-st: alloc/connect %d\n", sk_st[3]);
+diff --git a/test/zdtm/static/socket_queues.c b/test/zdtm/static/socket_queues.c
+index e30bca0e1..44495f06b 100644
+--- a/test/zdtm/static/socket_queues.c
++++ b/test/zdtm/static/socket_queues.c
+@@ -24,6 +24,12 @@ const char *test_author = "Stanislav Kinsbursky <skinsbursky@parallels.com>\n";
+ #define SK_DATA_D1 "packet dgram left"
+ #define SK_DATA_D2 "packet dgram right"
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int ssk_pair_d[2];
+@@ -32,7 +38,7 @@ int main(int argc, char *argv[])
+ 
+ 	test_init(argc, argv);
+ 
+-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, ssk_pair_s) == -1) {
++	if (socketpair(AF_UNIX, SOCK_TYPE, 0, ssk_pair_s) == -1) {
+ 		fail("socketpair");
+ 		exit(1);
+ 	}
+diff --git a/test/zdtm/static/socket_queues_seqpacket.c b/test/zdtm/static/socket_queues_seqpacket.c
+new file mode 120000
+index 000000000..0f3f93ea6
+--- /dev/null
++++ b/test/zdtm/static/socket_queues_seqpacket.c
+@@ -0,0 +1 @@
++socket_queues.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets00-seqpacket.c b/test/zdtm/static/sockets00-seqpacket.c
+new file mode 120000
+index 000000000..4bce9fc31
+--- /dev/null
++++ b/test/zdtm/static/sockets00-seqpacket.c
+@@ -0,0 +1 @@
++sockets00.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets00-seqpacket.desc b/test/zdtm/static/sockets00-seqpacket.desc
+new file mode 120000
+index 000000000..4beea2642
+--- /dev/null
++++ b/test/zdtm/static/sockets00-seqpacket.desc
+@@ -0,0 +1 @@
++sockets00.desc
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets00.c b/test/zdtm/static/sockets00.c
+index 53890077b..ac5d7d6fe 100644
+--- a/test/zdtm/static/sockets00.c
++++ b/test/zdtm/static/sockets00.c
+@@ -25,6 +25,12 @@ TEST_OPTION(filename, string, "socket file name", 1);
+ 
+ #define TEST_MODE 0640
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int ssk_icon[4];
+@@ -58,9 +64,9 @@ int main(int argc, char *argv[])
+ 	memcpy(addr.sun_path, path, addrlen);
+ 	addrlen += sizeof(addr.sun_family);
+ 
+-	ssk_icon[0] = socket(AF_UNIX, SOCK_STREAM, 0);
+-	ssk_icon[1] = socket(AF_UNIX, SOCK_STREAM, 0);
+-	ssk_icon[2] = socket(AF_UNIX, SOCK_STREAM, 0);
++	ssk_icon[0] = socket(AF_UNIX, SOCK_TYPE, 0);
++	ssk_icon[1] = socket(AF_UNIX, SOCK_TYPE, 0);
++	ssk_icon[2] = socket(AF_UNIX, SOCK_TYPE, 0);
+ 	if (ssk_icon[0] < 0 || ssk_icon[1] < 0 || ssk_icon[2] < 0) {
+ 		fail("socket");
+ 		exit(1);
+diff --git a/test/zdtm/static/sockets01-seqpacket.c b/test/zdtm/static/sockets01-seqpacket.c
+new file mode 120000
+index 000000000..8d51121e1
+--- /dev/null
++++ b/test/zdtm/static/sockets01-seqpacket.c
+@@ -0,0 +1 @@
++sockets01.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets01.c b/test/zdtm/static/sockets01.c
+index e35a31fec..f56cd219e 100644
+--- a/test/zdtm/static/sockets01.c
++++ b/test/zdtm/static/sockets01.c
+@@ -30,6 +30,12 @@ const char *test_author = "Pavel Emelyanov <xemul@parallels.com>";
+ #define TEST_MSG "test-message"
+ static char buf[sizeof(TEST_MSG)];
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int spu[2], spb[2], dpu[2], dpb[2], dpd[2];
+@@ -40,14 +46,14 @@ int main(int argc, char *argv[])
+ 	signal(SIGPIPE, SIG_IGN);
+ 
+ 	/* spu -- stream pair, unidirectional shutdown */
+-	if (socketpair(PF_UNIX, SOCK_STREAM, 0, spu) < 0)
++	if (socketpair(PF_UNIX, SOCK_TYPE, 0, spu) < 0)
+ 		fin("no stream pair 1");
+ 
+ 	if (shutdown(spu[0], SHUT_RD) < 0)
+ 		fin("no stream shutdown 1");
+ 
+ 	/* spb -- stream pair, bidirectional shutdown */
+-	if (socketpair(PF_UNIX, SOCK_STREAM, 0, spb) < 0)
++	if (socketpair(PF_UNIX, SOCK_TYPE, 0, spb) < 0)
+ 		fin("no stream pair 2");
+ 
+ 	if (shutdown(spb[0], SHUT_RDWR) < 0)
+diff --git a/test/zdtm/static/sockets02-seqpacket.c b/test/zdtm/static/sockets02-seqpacket.c
+new file mode 120000
+index 000000000..b95831599
+--- /dev/null
++++ b/test/zdtm/static/sockets02-seqpacket.c
+@@ -0,0 +1 @@
++sockets02.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets02.c b/test/zdtm/static/sockets02.c
+index 2729ade2c..d7d84d815 100644
+--- a/test/zdtm/static/sockets02.c
++++ b/test/zdtm/static/sockets02.c
+@@ -16,6 +16,12 @@
+ const char *test_doc = "Test semi-closed unix stream connection\n";
+ const char *test_author = "Pavel Emelyanov <xemul@parallels.com>\n";
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int ssk_pair[2], ret;
+@@ -25,7 +31,7 @@ int main(int argc, char *argv[])
+ 
+ 	data = (char)lrand48();
+ 
+-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, ssk_pair) == -1) {
++	if (socketpair(AF_UNIX, SOCK_TYPE, 0, ssk_pair) == -1) {
+ 		fail("socketpair");
+ 		exit(1);
+ 	}
+diff --git a/test/zdtm/static/sockets03-seqpacket.c b/test/zdtm/static/sockets03-seqpacket.c
+new file mode 120000
+index 000000000..997cce673
+--- /dev/null
++++ b/test/zdtm/static/sockets03-seqpacket.c
+@@ -0,0 +1 @@
++sockets03.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets03-seqpacket.desc b/test/zdtm/static/sockets03-seqpacket.desc
+new file mode 120000
+index 000000000..3798a8242
+--- /dev/null
++++ b/test/zdtm/static/sockets03-seqpacket.desc
+@@ -0,0 +1 @@
++sockets03.desc
+\ No newline at end of file
+diff --git a/test/zdtm/static/sockets03.c b/test/zdtm/static/sockets03.c
+index cd6f60831..6b0915aaa 100644
+--- a/test/zdtm/static/sockets03.c
++++ b/test/zdtm/static/sockets03.c
+@@ -22,6 +22,12 @@ const char *test_author = "Andrey Ryabinin <aryabinin@virtuozzo.com>";
+ char *filename;
+ TEST_OPTION(filename, string, "socket file name", 1);
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int sk[3];
+@@ -52,8 +58,8 @@ int main(int argc, char *argv[])
+ 	memcpy(addr.sun_path, path, addrlen);
+ 	addrlen += sizeof(addr.sun_family);
+ 
+-	sk[0] = socket(AF_UNIX, SOCK_STREAM, 0);
+-	sk[1] = socket(AF_UNIX, SOCK_STREAM, 0);
++	sk[0] = socket(AF_UNIX, SOCK_TYPE, 0);
++	sk[1] = socket(AF_UNIX, SOCK_TYPE, 0);
+ 	if (sk[0] < 0 || sk[1] < 0) {
+ 		fail("socket");
+ 		exit(1);
+diff --git a/test/zdtm/static/sockets_spair.c b/test/zdtm/static/sockets_spair.c
+index 2dbb132aa..202c2e790 100644
+--- a/test/zdtm/static/sockets_spair.c
++++ b/test/zdtm/static/sockets_spair.c
+@@ -18,6 +18,12 @@ const char *test_author = "Cyrill Gorcunov <gorcunov@openvz.org";
+ 
+ #define SK_DATA "packet"
+ 
++#ifdef ZDTM_UNIX_SEQPACKET
++#define SOCK_TYPE SOCK_SEQPACKET
++#else
++#define SOCK_TYPE SOCK_STREAM
++#endif
++
+ int main(int argc, char *argv[])
+ {
+ 	int ssk_pair[2];
+@@ -25,7 +31,7 @@ int main(int argc, char *argv[])
+ 
+ 	test_init(argc, argv);
+ 
+-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, ssk_pair) == -1) {
++	if (socketpair(AF_UNIX, SOCK_TYPE, 0, ssk_pair) == -1) {
+ 		fail("socketpair");
+ 		exit(1);
+ 	}
+diff --git a/test/zdtm/static/sockets_spair_seqpacket.c b/test/zdtm/static/sockets_spair_seqpacket.c
+new file mode 120000
+index 000000000..a52ccb6c9
+--- /dev/null
++++ b/test/zdtm/static/sockets_spair_seqpacket.c
+@@ -0,0 +1 @@
++sockets_spair.c
+\ No newline at end of file
+-- 
+2.35.1
+

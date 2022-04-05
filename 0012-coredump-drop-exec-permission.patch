@@ -1,0 +1,20 @@
+From dc6d38708b54aafad660c01112a4ea0f301c5c07 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 21:42:46 +0100
+Subject: [PATCH 012/249] coredump: drop exec permission
+
+The shebang line in this file was removed in a previous commit and the
+file should be non-executable.
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/coredump.py | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 coredump/coredump.py
+
+diff --git a/coredump/coredump.py b/coredump/coredump.py
+old mode 100755
+new mode 100644
+-- 
+2.35.1
+

@@ -1,7 +1,7 @@
-From 8017afbbd530d11b54e8e54ac1bc6a47f9c20ba7 Mon Sep 17 00:00:00 2001
+From 0bb7f1fc1ced67396866a913d39bc61a3bedbed5 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Mon, 20 Sep 2021 13:50:08 +0100
-Subject: [PATCH 001/245] criu(8): add --external net option
+Subject: [PATCH 001/249] criu(8): add --external net option
 
 Support for external net namespaces has been introduced with
 commit c2b21fbf (criu: add support for external net namespaces).

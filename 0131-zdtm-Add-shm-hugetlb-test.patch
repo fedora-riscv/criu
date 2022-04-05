@@ -1,0 +1,121 @@
+From 78b113d4563c74a1fc320bfc84afc798c5c8ee91 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Tue, 26 Oct 2021 22:34:22 +0700
+Subject: [PATCH 131/249] zdtm: Add shm hugetlb test
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ test/zdtm/static/Makefile         |  5 +++++
+ test/zdtm/static/shm-hugetlb.c    |  1 +
+ test/zdtm/static/shm-hugetlb.desc |  1 +
+ test/zdtm/static/shm.c            | 22 +++++++++++++++++++---
+ 4 files changed, 26 insertions(+), 3 deletions(-)
+ create mode 120000 test/zdtm/static/shm-hugetlb.c
+ create mode 100644 test/zdtm/static/shm-hugetlb.desc
+
+diff --git a/test/zdtm/static/Makefile b/test/zdtm/static/Makefile
+index 3b244e52d..48aa8587d 100644
+--- a/test/zdtm/static/Makefile
++++ b/test/zdtm/static/Makefile
+@@ -436,6 +436,7 @@ TST		=				\
+ 		umask00				\
+ 		cmdlinenv00			\
+ 		shm-unaligned			\
++		shm-hugetlb			\
+ 
+ TST_STATE	=				\
+ 		conntracks			\
+@@ -475,6 +476,9 @@ cmdlinenv00.pid: cmdlinenv00
+ shm-unaligned.pid: shm-unaligned
+ 	$(<D)/$(<F) --pidfile=$@ --outfile=$<.out --shmem_size=5000
+ 
++shm-hugetlb.pid: shm-hugetlb
++	$(<D)/$(<F) --pidfile=$@ --outfile=$<.out --shmem_size=4194304
++
+ env00.pid:	env00
+ 	$(<D)/$(<F) --pidfile=$@ --outfile=$<.out --envname=ENV_00_TEST
+ umask00.pid:	umask00
+@@ -636,6 +640,7 @@ scm03-seqpacket:	CFLAGS += -D ZDTM_UNIX_SEQPACKET
+ pty-console:		CFLAGS += -D ZDTM_DEV_CONSOLE
+ 
+ shm-unaligned:		CFLAGS += -DZDTM_SHM_UNALIGNED
++shm-hugetlb:		CFLAGS += -DZDTM_HUGETLB
+ 
+ s390x_regs_check:	LDFLAGS += -pthread
+ s390x_gs_threads:	LDFLAGS += -pthread
+diff --git a/test/zdtm/static/shm-hugetlb.c b/test/zdtm/static/shm-hugetlb.c
+new file mode 120000
+index 000000000..7e1c916a3
+--- /dev/null
++++ b/test/zdtm/static/shm-hugetlb.c
+@@ -0,0 +1 @@
++shm.c
+\ No newline at end of file
+diff --git a/test/zdtm/static/shm-hugetlb.desc b/test/zdtm/static/shm-hugetlb.desc
+new file mode 100644
+index 000000000..dfe829b84
+--- /dev/null
++++ b/test/zdtm/static/shm-hugetlb.desc
+@@ -0,0 +1 @@
++{'flavor': 'ns', 'flags': 'suid'}
+diff --git a/test/zdtm/static/shm.c b/test/zdtm/static/shm.c
+index 3da29daeb..423658397 100644
+--- a/test/zdtm/static/shm.c
++++ b/test/zdtm/static/shm.c
+@@ -56,13 +56,17 @@ static int get_shm_seg(int key, size_t size, unsigned int flags)
+ 
+ static int prepare_shm(int key, size_t size)
+ {
+-	int id;
++	int id, flag = 0;
++
++#ifdef ZDTM_HUGETLB
++	flag = SHM_HUGETLB;
++#endif
+ 
+-	id = get_shm_seg(key, shmem_size, IPC_CREAT | IPC_EXCL);
++	id = get_shm_seg(key, size, IPC_CREAT | IPC_EXCL | flag);
+ 	if (id == -1) {
+ 		return -1;
+ 	}
+-	if (fill_shm_seg(id, shmem_size) < 0)
++	if (fill_shm_seg(id, size) < 0)
+ 		return -1;
+ 	return id;
+ }
+@@ -105,6 +109,7 @@ int main(int argc, char **argv)
+ 	int shm;
+ 	int fail_count = 0;
+ 	int ret = -1;
++	dev_t dev;
+ 
+ 	void *mem;
+ 	uint32_t crc = INIT_CRC;
+@@ -133,6 +138,12 @@ int main(int argc, char **argv)
+ 		goto out;
+ 	}
+ 
++	dev = get_mapping_dev(mem);
++	if (dev == (dev_t)-1) {
++		fail("Can't get mapping dev");
++		return -1;
++	}
++
+ 	test_daemon();
+ 	test_waitsig();
+ 
+@@ -155,6 +166,11 @@ int main(int argc, char **argv)
+ 		return -1;
+ 	}
+ 
++	if (dev != get_mapping_dev(mem)) {
++		fail("Mapping dev mismatch");
++		return -1;
++	}
++
+ 	if (shmdt(mem) < 0) {
+ 		pr_perror("Can't detach shm");
+ 		return -1;
+-- 
+2.35.1
+

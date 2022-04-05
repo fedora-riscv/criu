@@ -1,0 +1,48 @@
+From b6f9c443a78efb50225c2fabd224cea6c71d1c49 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Thu, 2 Dec 2021 23:01:33 +0700
+Subject: [PATCH 062/249] sk-unix: Fix TCP_ESTABLISHED checks in unix sockets
+
+Since commit 83301b5367a98 ("af_unix: Set TCP_ESTABLISHED for datagram sockets
+too") in Linux kernel, SOCK_DGRAM unix sockets can have TCP_ESTABLISHED state
+when connected. So we need to fix checks that assume SOCK_DRAM sockets cannot
+have TCP_ESTABLISHED state.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ criu/sk-unix.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/criu/sk-unix.c b/criu/sk-unix.c
+index a819473b4..d3402c3ac 100644
+--- a/criu/sk-unix.c
++++ b/criu/sk-unix.c
+@@ -460,7 +460,7 @@ static int dump_one_unix_fd(int lfd, uint32_t id, const struct fd_parms *p)
+ 			pr_warn("Shutdown mismatch %u:%d -> %u:%d\n", ue->ino, ue->shutdown, peer->sd.ino,
+ 				peer->shutdown);
+ 		}
+-	} else if (ue->state == TCP_ESTABLISHED) {
++	} else if (ue->state == TCP_ESTABLISHED && ue->type != SOCK_DGRAM) {
+ 		const struct unix_sk_listen_icon *e;
+ 
+ 		e = lookup_unix_listen_icons(ue->ino);
+@@ -1851,14 +1851,10 @@ static int open_unixsk_standalone(struct unix_sk_info *ui, int *new_fd)
+ 
+ 		close(sks[1]);
+ 		sk = sks[0];
+-	} else if (ui->ue->state == TCP_ESTABLISHED && queuer && queuer->ue->ino == FAKE_INO) {
++	} else if ((ui->ue->state == TCP_ESTABLISHED && ui->ue->type == SOCK_STREAM) && queuer &&
++		   queuer->ue->ino == FAKE_INO) {
+ 		int ret, sks[2];
+ 
+-		if (ui->ue->type != SOCK_STREAM) {
+-			pr_err("Non-stream socket %u in established state\n", ui->ue->ino);
+-			return -1;
+-		}
+-
+ 		if (ui->ue->shutdown != SK_SHUTDOWN__BOTH) {
+ 			pr_err("Wrong shutdown/peer state for %u\n", ui->ue->ino);
+ 			return -1;
+-- 
+2.35.1
+

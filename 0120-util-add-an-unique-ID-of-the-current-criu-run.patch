@@ -1,0 +1,72 @@
+From ac8b684c2cc8dafdcc7648ec4cea6f0b27dc2a71 Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@gmail.com>
+Date: Sat, 12 Feb 2022 17:17:27 -0800
+Subject: [PATCH 120/249] util: add an unique ID of the current criu run
+
+This ID will be used to generate resource ID-s that can conflicts with
+other CRIU processes.
+
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ criu/crtools.c      |  2 ++
+ criu/include/util.h |  6 ++++++
+ criu/util.c         | 11 +++++++++++
+ 3 files changed, 19 insertions(+)
+
+diff --git a/criu/crtools.c b/criu/crtools.c
+index 0752800f6..3c3491603 100644
+--- a/criu/crtools.c
++++ b/criu/crtools.c
+@@ -254,6 +254,8 @@ int main(int argc, char *argv[], char *envp[])
+ 		return 1;
+ 	}
+ 
++	util_init();
++
+ 	if (log_init(opts.output))
+ 		return 1;
+ 
+diff --git a/criu/include/util.h b/criu/include/util.h
+index 19d378fc5..ca934dea0 100644
+--- a/criu/include/util.h
++++ b/criu/include/util.h
+@@ -393,4 +393,10 @@ static inline void cleanup_freep(void *p)
+ 
+ extern int run_command(char *buf, size_t buf_size, int (*child_fn)(void *), void *args);
+ 
++/*
++ * criu_run_id is a unique value of the current run. It can be used to
++ * generate resource ID-s to avoid conflicts with other CRIU processes.
++ */
++extern uint64_t criu_run_id;
++extern void util_init(void);
+ #endif /* __CR_UTIL_H__ */
+diff --git a/criu/util.c b/criu/util.c
+index 822822186..d83be0c0d 100644
+--- a/criu/util.c
++++ b/criu/util.c
+@@ -27,6 +27,7 @@
+ #include <netinet/tcp.h>
+ #include <sched.h>
+ #include <ftw.h>
++#include <time.h>
+ 
+ #include "linux/mount.h"
+ 
+@@ -1804,3 +1805,13 @@ int run_command(char *buf, size_t buf_size, int (*child_fn)(void *), void *args)
+ 
+ 	return fret;
+ }
++
++uint64_t criu_run_id;
++
++void util_init()
++{
++	struct timespec tp;
++
++	clock_gettime(CLOCK_MONOTONIC, &tp);
++	criu_run_id = ((uint64_t)getpid() << 32) + tp.tv_sec + tp.tv_nsec;
++}
+-- 
+2.35.1
+

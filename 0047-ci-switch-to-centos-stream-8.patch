@@ -1,4 +1,4 @@
-From 17e98a26b7d6b71613b8231d53ef33b61292c143 Mon Sep 17 00:00:00 2001
+From ecfef3dc95bd1293084916ff2c40250a4442796c Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Wed, 24 Nov 2021 16:13:01 +0000
 Subject: [PATCH 047/249] ci: switch to centos-stream-8

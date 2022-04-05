@@ -1,4 +1,4 @@
-From 49e0e77e5ca95fbdc0cd419982c0ef07772db04e Mon Sep 17 00:00:00 2001
+From da247673bf35506d48433627421c2d0192159b9c Mon Sep 17 00:00:00 2001
 From: Liu Hua <weldonliu@tencent.com>
 Date: Thu, 4 Nov 2021 10:04:22 +0800
 Subject: [PATCH 046/249] crtools: ignore SIGPIPE in swrk mode

@@ -1,4 +1,4 @@
-From c573260ced3929d3c84d51e7073f3636d44ba69f Mon Sep 17 00:00:00 2001
+From 8b981b4b416781f6d1803a45eb2fc806cf0a9bab Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 16 Dec 2021 16:14:41 +0300
 Subject: [PATCH 097/249] proc_parse: add helper to resolve sdev from fd

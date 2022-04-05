@@ -1,4 +1,4 @@
-From 3facb361f138a484effb064215fe1b7d45796d6b Mon Sep 17 00:00:00 2001
+From 37f9d07f8d4dd955d0cc4bf8d08adcff01ba5001 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sun, 15 Aug 2021 10:58:32 +0100
 Subject: [PATCH 147/249] zdtm: add --criu-config option

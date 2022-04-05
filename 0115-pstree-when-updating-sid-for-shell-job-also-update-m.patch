@@ -1,4 +1,4 @@
-From d4bd2e60758dc9ba7fced79350080cf0ca6f5fc0 Mon Sep 17 00:00:00 2001
+From 0aace1a0b90f67356876c6d3fcdf023d6cefcaf3 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 27 Jan 2022 10:28:29 +0300
 Subject: [PATCH 115/249] pstree: when updating sid for shell job also update

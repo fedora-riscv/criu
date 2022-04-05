@@ -1,4 +1,4 @@
-From bde8ec21a973e0cb129fa9214a17b8ce91cf8a41 Mon Sep 17 00:00:00 2001
+From 7de207a821b7c3e5aec9defb4c912a09557fe499 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 12 Jan 2022 19:30:07 +0300
 Subject: [PATCH 173/249] zdtm: add mntns_pivot_root test

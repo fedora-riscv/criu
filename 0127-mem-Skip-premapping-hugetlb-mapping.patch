@@ -1,4 +1,4 @@
-From 8ec1e04580b30bd0365839a4fef301e95c6c6f2d Mon Sep 17 00:00:00 2001
+From 307299bea57d25a41f5fba7b057d3926f4f1231b Mon Sep 17 00:00:00 2001
 From: Bui Quang Minh <minhquangbui99@gmail.com>
 Date: Wed, 9 Feb 2022 22:11:51 +0700
 Subject: [PATCH 127/249] mem: Skip premapping hugetlb mapping

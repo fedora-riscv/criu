@@ -1,4 +1,4 @@
-From 5bffbff69465054b7e9c879e4a18707df1534fe9 Mon Sep 17 00:00:00 2001
+From ea5a4abe92218cdcd3de77f04f4571585d79167c Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 22 Dec 2021 11:07:24 +0300
 Subject: [PATCH 204/249] kerndat: check whether the openat2 syscall is

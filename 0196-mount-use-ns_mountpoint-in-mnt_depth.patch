@@ -1,4 +1,4 @@
-From b23ba1e4a50e7b9a1ca3f208983d73c683acbea1 Mon Sep 17 00:00:00 2001
+From 45dba8dd206c5bda0c682de1ee31a99ae5c50f49 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 29 May 2020 15:18:10 +0300
 Subject: [PATCH 196/249] mount: use ns_mountpoint in mnt_depth

@@ -1,4 +1,4 @@
-From 906549c2de213e25ef6795025604a59609033f9d Mon Sep 17 00:00:00 2001
+From b03d50673e9159a712e86f7a9c75c5cabc09278d Mon Sep 17 00:00:00 2001
 From: Liu Hua <weldonliu@tencent.com>
 Date: Mon, 1 Nov 2021 20:50:58 +0800
 Subject: [PATCH 038/249] cr-dump: fail dumping when zombie process with sid 0

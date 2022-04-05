@@ -1,4 +1,4 @@
-From 334ebaef9fb2cad0cb6de248ecc3fa75a9388fb3 Mon Sep 17 00:00:00 2001
+From a1a736f3e01f078565586535e5ef66777a4f2ffb Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Thu, 27 Jan 2022 14:49:41 +0000
 Subject: [PATCH 112/249] test/autofs: fix use-after-free

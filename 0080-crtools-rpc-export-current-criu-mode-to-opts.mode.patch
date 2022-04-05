@@ -1,4 +1,4 @@
-From 3adaf3c4434995ce81530a336469ec792c62cc1b Mon Sep 17 00:00:00 2001
+From 9192d6b38b6ed5ddd9c2a89bd384e25f93bb13d6 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 10 Dec 2021 12:13:06 +0300
 Subject: [PATCH 080/249] crtools/rpc: export current criu mode to opts.mode

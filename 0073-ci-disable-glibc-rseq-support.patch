@@ -1,4 +1,4 @@
-From 95e6bc3e53bec3c4f00b7e4ddfab5cf904780dbc Mon Sep 17 00:00:00 2001
+From 23ad9ca9074fdf8adc6d155c665853bee0e2190b Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Fri, 17 Dec 2021 03:01:49 +0000
 Subject: [PATCH 073/249] ci: disable glibc rseq support

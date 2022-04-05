@@ -1,4 +1,4 @@
-From 564eaa77e6c780f7dd8195f053a1928447e87b9c Mon Sep 17 00:00:00 2001
+From afa186872a305406482e8d1ff02aae092a9dfdc0 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Fri, 3 Dec 2021 16:59:56 +0000
 Subject: [PATCH 065/249] test: another try to correctly fix the kernel version

@@ -1,4 +1,4 @@
-From 631997ebe61f261a240e804cf30e95d03f78582d Mon Sep 17 00:00:00 2001
+From 1a33a445c9b2b705f850f7a7c90279c160a663e7 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Tue, 18 Jan 2022 17:20:35 +0000
 Subject: [PATCH 109/249] criu: fix configuration file scanner with GCC 12

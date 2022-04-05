@@ -1,4 +1,4 @@
-From 25c642cb7840033673f36a270074d7a47b0bbd76 Mon Sep 17 00:00:00 2001
+From 044dd55e9585b9b2d1ac15e21cd6e6c08b4d8ee3 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 23 Nov 2021 15:06:03 +0300
 Subject: [PATCH 043/249] clang-format/zdtm: fix clang complains about strange

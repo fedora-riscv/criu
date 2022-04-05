@@ -1,4 +1,4 @@
-From b4e121a54c83c172d3b78b1d9002f4367a2c1fb8 Mon Sep 17 00:00:00 2001
+From 49ecd6d864df8cf0951d3c5eeea94d30585c0897 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 22 Feb 2022 15:25:37 +0300
 Subject: [PATCH 246/249] Revert "test: disable rseq also on Archlinux"

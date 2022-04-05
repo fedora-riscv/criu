@@ -1,4 +1,4 @@
-From dc2aaeb239af4851d0d157e85d2d2f98bad289d5 Mon Sep 17 00:00:00 2001
+From dd6be1a5f66bd7c605ada4fbd997e36c3cba65e0 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 27 May 2020 11:50:34 +0300
 Subject: [PATCH 182/249] mount: add helper mnt_get_external_bind_nodev

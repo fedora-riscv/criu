@@ -1,4 +1,4 @@
-From ac8b684c2cc8dafdcc7648ec4cea6f0b27dc2a71 Mon Sep 17 00:00:00 2001
+From 967129b32f8169a899b57312594b4dd876af4cfd Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@gmail.com>
 Date: Sat, 12 Feb 2022 17:17:27 -0800
 Subject: [PATCH 120/249] util: add an unique ID of the current criu run

@@ -1,4 +1,4 @@
-From 58c3e33e8227bdf2105dcca18a57a7a8bf3ddd1a Mon Sep 17 00:00:00 2001
+From e42ff0557a30ab4ddf7dfb594de181b7ec7cdc15 Mon Sep 17 00:00:00 2001
 From: Bui Quang Minh <minhquangbui99@gmail.com>
 Date: Mon, 4 Oct 2021 20:38:34 +0700
 Subject: [PATCH 004/249] criu(8): Add more detailed description about

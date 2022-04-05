@@ -1,4 +1,4 @@
-From 392f1ecdcbd53f558f101b384831876f4b3969f9 Mon Sep 17 00:00:00 2001
+From e07f53a1d700aa2552ac6fb137f45b9a9bce72db Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 22 Feb 2022 18:22:45 +0300
 Subject: [PATCH 247/249] cr-dump: handle rseq flags field
@@ -7,15 +7,15 @@ Userspace may configure rseq critical section by def
 
 Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 ---
- criu/cr-dump.c          | 87 +++++++++++++++++++++++++----------------
- criu/cr-restore.c       | 57 +++++++++++++++++++++++++++
+ criu/cr-dump.c          | 86 +++++++++++++++++++++++++----------------
+ criu/cr-restore.c       | 58 +++++++++++++++++++++++++++
  criu/include/rst_info.h |  8 ++++
  criu/pstree.c           | 36 +++++++++++++++++
  images/rseq.proto       |  1 +
  5 files changed, 155 insertions(+), 34 deletions(-)
 
 diff --git a/criu/cr-dump.c b/criu/cr-dump.c
-index 1992991a2..5f40f2b5b 100644
+index 1992991a2..c708a6599 100644
 --- a/criu/cr-dump.c
 +++ b/criu/cr-dump.c
 @@ -1034,13 +1034,13 @@ static int dump_task_signals(pid_t pid, struct pstree_item *item)
@@ -24,7 +24,7 @@ index 1992991a2..5f40f2b5b 100644
  
 -static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseq, struct rseq_cs *rseq_cs)
 +static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseqc, struct rseq_cs *rseq_cs,
-+			struct rseq *rseq)
++			struct criu_rseq *rseq)
  {
  	int ret;
 -	uint64_t addr;
@@ -35,13 +35,13 @@ index 1992991a2..5f40f2b5b 100644
  		return 0;
  
  	/*
-@@ -1055,23 +1055,21 @@ static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseq, str
+@@ -1055,23 +1055,20 @@ static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseq, str
  	 * then rseq_ip_fixup() -> clear_rseq_cs() and user space memory with struct rseq
  	 * will be cleared. So, let's use ptrace(PTRACE_PEEKDATA).
  	 */
 -	ret = ptrace_peek_area(tid, &addr, decode_pointer(rseq->rseq_abi_pointer + offsetof(struct rseq, rseq_cs)),
 -			       sizeof(uint64_t));
-+	ret = ptrace_peek_area(tid, rseq, decode_pointer(rseqc->rseq_abi_pointer), sizeof(struct rseq));
++	ret = ptrace_peek_area(tid, rseq, decode_pointer(rseqc->rseq_abi_pointer), sizeof(struct criu_rseq));
  	if (ret) {
 -		pr_err("ptrace_peek_area(%d, %lx, %lx, %lx): fail to read rseq_cs addr\n", tid, (unsigned long)&addr,
 -		       (unsigned long)(rseq->rseq_abi_pointer + offsetof(struct rseq, rseq_cs)),
@@ -53,20 +53,19 @@ index 1992991a2..5f40f2b5b 100644
  
 -	/* (struct rseq)->rseq_cs is NULL */
 -	if (!addr)
-+	if (!rseq->rseq_cs.ptr64)
++	if (!rseq->rseq_cs)
  		return 0;
  
 -	ret = ptrace_peek_area(tid, rseq_cs, decode_pointer(addr), sizeof(struct rseq_cs));
-+	ret = ptrace_peek_area(tid, rseq_cs, decode_pointer(rseq->rseq_cs.ptr64), sizeof(struct rseq_cs));
++	ret = ptrace_peek_area(tid, rseq_cs, decode_pointer(rseq->rseq_cs), sizeof(struct rseq_cs));
  	if (ret) {
  		pr_err("ptrace_peek_area(%d, %lx, %lx, %lx): fail to read rseq_cs struct\n", tid,
 -		       (unsigned long)rseq_cs, (unsigned long)addr, (unsigned long)sizeof(struct rseq_cs));
-+		       (unsigned long)rseq_cs, (unsigned long)rseq->rseq_cs.ptr64,
-+		       (unsigned long)sizeof(struct rseq_cs));
++		       (unsigned long)rseq_cs, (unsigned long)rseq->rseq_cs, (unsigned long)sizeof(struct rseq_cs));
  		return -1;
  	}
  
-@@ -1080,11 +1078,12 @@ static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseq, str
+@@ -1080,11 +1077,12 @@ static int read_rseq_cs(pid_t tid, struct __ptrace_rseq_configuration *rseq, str
  
  static int dump_thread_rseq(struct pstree_item *item, int i)
  {
@@ -76,11 +75,11 @@ index 1992991a2..5f40f2b5b 100644
  	int ret;
  	CoreEntry *core = item->core[i];
  	RseqEntry **rseqep = &core->thread_core->rseq_entry;
-+	struct rseq rseq;
++	struct criu_rseq rseq = {};
  	struct rseq_cs *rseq_cs = &dmpi(item)->thread_rseq_cs[i];
  	pid_t tid = item->threads[i].real;
  
-@@ -1099,20 +1098,20 @@ static int dump_thread_rseq(struct pstree_item *item, int i)
+@@ -1099,20 +1097,20 @@ static int dump_thread_rseq(struct pstree_item *item, int i)
  	if (!kdat.has_ptrace_get_rseq_conf)
  		return 0;
  
@@ -107,7 +106,7 @@ index 1992991a2..5f40f2b5b 100644
  
  	rseqe = xmalloc(sizeof(*rseqe));
  	if (!rseqe)
-@@ -1120,13 +1119,22 @@ static int dump_thread_rseq(struct pstree_item *item, int i)
+@@ -1120,13 +1118,22 @@ static int dump_thread_rseq(struct pstree_item *item, int i)
  
  	rseq_entry__init(rseqe);
  
@@ -123,7 +122,7 @@ index 1992991a2..5f40f2b5b 100644
  		goto err;
  
 +	rseqe->has_rseq_cs_pointer = true;
-+	rseqe->rseq_cs_pointer = rseq.rseq_cs.ptr64;
++	rseqe->rseq_cs_pointer = rseq.rseq_cs;
 +
 +	/* we won't save rseq_cs to the image (only pointer),
 +	 * so let's combine flags from both struct rseq and struct rseq_cs
@@ -134,7 +133,7 @@ index 1992991a2..5f40f2b5b 100644
  	/* save rseq entry to the image */
  	*rseqep = rseqe;
  
-@@ -1176,11 +1184,12 @@ static int fixup_thread_rseq(struct pstree_item *item, int i)
+@@ -1176,11 +1183,12 @@ static int fixup_thread_rseq(struct pstree_item *item, int i)
  	struct rseq_cs *rseq_cs = &dmpi(item)->thread_rseq_cs[i];
  	pid_t tid = item->threads[i].real;
  
@@ -149,7 +148,7 @@ index 1992991a2..5f40f2b5b 100644
  		tid, rseq_cs->start_ip, rseq_cs->abort_ip, rseq_cs->post_commit_offset, rseq_cs->flags,
  		rseq_cs->version, (unsigned long)TI_IP(core));
  
-@@ -1192,25 +1201,35 @@ static int fixup_thread_rseq(struct pstree_item *item, int i)
+@@ -1192,25 +1200,35 @@ static int fixup_thread_rseq(struct pstree_item *item, int i)
  	if (task_in_rseq(rseq_cs, TI_IP(core))) {
  		struct pid *tid = &item->threads[i];
  
@@ -195,7 +194,7 @@ index 1992991a2..5f40f2b5b 100644
  	}
  
 diff --git a/criu/cr-restore.c b/criu/cr-restore.c
-index b2ddc8db0..77b0a8c0f 100644
+index b2ddc8db0..e3770f853 100644
 --- a/criu/cr-restore.c
 +++ b/criu/cr-restore.c
 @@ -23,6 +23,7 @@
@@ -225,7 +224,7 @@ index b2ddc8db0..77b0a8c0f 100644
  	return 0;
  err:
  	xfree(cores);
-@@ -1966,6 +1979,47 @@ static int attach_to_tasks(bool root_seized)
+@@ -1966,6 +1979,48 @@ static int attach_to_tasks(bool root_seized)
  	return 0;
  }
  
@@ -258,9 +257,10 @@ index b2ddc8db0..77b0a8c0f 100644
 +			if (!rseqe[i].rseq_cs_pointer || !rseqe[i].rseq_abi_pointer)
 +				continue;
 +
-+			if (ptrace_poke_area(pid, &rseqe[i].rseq_cs_pointer,
-+					     decode_pointer(rseqe[i].rseq_abi_pointer + offsetof(struct rseq, rseq_cs)),
-+					     sizeof(uint64_t))) {
++			if (ptrace_poke_area(
++				    pid, &rseqe[i].rseq_cs_pointer,
++				    decode_pointer(rseqe[i].rseq_abi_pointer + offsetof(struct criu_rseq, rseq_cs)),
++				    sizeof(uint64_t))) {
 +				pr_err("Can't restore rseq_cs pointer (pid: %d)\n", pid);
 +				return -1;
 +			}
@@ -273,7 +273,7 @@ index b2ddc8db0..77b0a8c0f 100644
  static int catch_tasks(bool root_seized, enum trace_flags *flag)
  {
  	struct pstree_item *item;
-@@ -2400,6 +2454,9 @@ skip_ns_bouncing:
+@@ -2400,6 +2455,9 @@ skip_ns_bouncing:
  	if (restore_freezer_state())
  		pr_err("Unable to restore freezer state\n");
  

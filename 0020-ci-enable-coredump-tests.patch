@@ -1,4 +1,4 @@
-From 50311543e8d3567ebd15085cdb4ea3b149d1e90c Mon Sep 17 00:00:00 2001
+From 2b3165ebfecb216a8f07c3d2b7a68723d96f13ff Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 23:06:56 +0100
 Subject: [PATCH 020/249] ci: enable coredump tests

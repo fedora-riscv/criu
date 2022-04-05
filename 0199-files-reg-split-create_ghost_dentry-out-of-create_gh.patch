@@ -1,4 +1,4 @@
-From e9ff05033bda690539b42e658d110ff3991414b4 Mon Sep 17 00:00:00 2001
+From e0118aee0fdecd9c267c1f23df73ce909827f9bc Mon Sep 17 00:00:00 2001
 From: Stanislav Kinsburskiy <skinsbursky@virtuozzo.com>
 Date: Mon, 11 Jul 2016 14:14:15 +0300
 Subject: [PATCH 199/249] files-reg: split create_ghost_dentry out of

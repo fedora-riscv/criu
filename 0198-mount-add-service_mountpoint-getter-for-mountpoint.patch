@@ -1,4 +1,4 @@
-From 569d5e17f39c8c206c4b20386b101b29a8fee188 Mon Sep 17 00:00:00 2001
+From 183c77f7c56eb6bb5f7ac8cedfbef912a2883d5a Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 28 May 2020 11:14:39 +0300
 Subject: [PATCH 198/249] mount: add service_mountpoint getter for ->mountpoint

@@ -1,4 +1,4 @@
-From 85648ff4af95a547c95a2afaf93a56bc059348af Mon Sep 17 00:00:00 2001
+From eb6062eef811fe062a7d2ce5745405b867559b05 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Fri, 3 Dec 2021 17:13:27 +0000
 Subject: [PATCH 102/249] ci: update to latest Vagrant and Fedora images

@@ -1,4 +1,4 @@
-From 3a7deb046e713421ee302aac9f726aefeecf60a4 Mon Sep 17 00:00:00 2001
+From d08f284b5d5120a8e550b44901ee96b840900b7d Mon Sep 17 00:00:00 2001
 From: AndreyVV-100 <viazovtsev.av@phystech.edu>
 Date: Fri, 23 Jul 2021 12:48:03 +0300
 Subject: [PATCH 006/249] Add new files for running criu-coredump via python 2

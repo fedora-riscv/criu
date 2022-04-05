@@ -1,4 +1,4 @@
-From 6fd677682716d80b3a082aba530e021e7c02b078 Mon Sep 17 00:00:00 2001
+From 2805df0ace12c0b92221a4644b48a95281300bae Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Mon, 6 Dec 2021 16:51:21 +0000
 Subject: [PATCH 105/249] lib: added tests for feature check in libcriu

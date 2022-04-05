@@ -1,4 +1,4 @@
-From 9cb726827941e24a5e9f0ed12680d4b69e10551c Mon Sep 17 00:00:00 2001
+From b3ddb46a0f5d91320f0901cd47e26e3c89a2bcc4 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 19 Jan 2022 12:34:51 +0300
 Subject: [PATCH 162/249] unittest: add some tests for get_relative_path helper

@@ -1,4 +1,4 @@
-From feb6788016c7de1998d00f54887f00b04fa47830 Mon Sep 17 00:00:00 2001
+From 685364f9766498c2f6640dd7882434dd10cd5119 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 19 Nov 2021 10:08:37 +0300
 Subject: [PATCH 040/249] ci: disable socket-raw test on centos8

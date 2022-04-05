@@ -1,4 +1,4 @@
-From 2eb37a63d8ba56dee5da7acc9f3ccf0cb1a97eb3 Mon Sep 17 00:00:00 2001
+From c2dbc30f7e141389494a6b3c2e4000add5019bf2 Mon Sep 17 00:00:00 2001
 From: Bui Quang Minh <minhquangbui99@gmail.com>
 Date: Wed, 15 Dec 2021 22:26:08 +0700
 Subject: [PATCH 123/249] kerndat: Collect hugetlb device numbers

@@ -1,4 +1,4 @@
-From 08984ba43fee2b7a872a067cfa7ed9e86059ca9d Mon Sep 17 00:00:00 2001
+From 2d4bb6601de571f5dca7cd43089979747f6acc2e Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 21:31:12 +0100
 Subject: [PATCH 007/249] coredump: remove unused import

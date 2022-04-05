@@ -1,4 +1,4 @@
-From 162e2c214bb7480f583c202cf2145c65027e4400 Mon Sep 17 00:00:00 2001
+From 6d8ba10f26a6f6d73fd0ff64a85f8803b3021a8a Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 21:36:10 +0100
 Subject: [PATCH 010/249] python: replace equality with identity test

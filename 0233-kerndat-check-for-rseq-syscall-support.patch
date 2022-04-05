@@ -1,4 +1,4 @@
-From 79fd6d1c54c7b8b925df11adbce9ef687b0f0f4f Mon Sep 17 00:00:00 2001
+From a01c8c82a0bdb066cdc59f96184740b6bbe366b6 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 21 Dec 2021 18:27:52 +0300
 Subject: [PATCH 233/249] kerndat: check for rseq syscall support

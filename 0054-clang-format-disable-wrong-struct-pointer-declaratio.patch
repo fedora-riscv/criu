@@ -1,4 +1,4 @@
-From 4e24f113c007f81904d6f46b336ed94634555657 Mon Sep 17 00:00:00 2001
+From 3174e7ee7e85be9db58373ddceea98e9984f3808 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 25 Nov 2021 16:51:55 +0300
 Subject: [PATCH 054/249] clang-format: disable wrong struct pointer

@@ -1,4 +1,4 @@
-From fa4b4f7103804f3995cace5e4405894737f4ff4a Mon Sep 17 00:00:00 2001
+From 3ca5c1a6d43be4e21c2db457ed6963049b56b594 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sun, 15 Aug 2021 10:53:29 +0100
 Subject: [PATCH 146/249] zdtm: use long form cli options

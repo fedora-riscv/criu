@@ -1,4 +1,4 @@
-From c72b743d0ccdfc2af699b87d75af8ddab675fa26 Mon Sep 17 00:00:00 2001
+From ba38f2e6086831518fc3595c4566c0ed9cc736e5 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 14 Jan 2022 19:29:08 +0300
 Subject: [PATCH 221/249] ci: make others/mnt_ext_dev also run for old mount

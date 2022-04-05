@@ -1,4 +1,4 @@
-From 89c24a1324e6d77f064465bbd2b45d717b07d252 Mon Sep 17 00:00:00 2001
+From 8333e9dd1562b46fd0cb43ab22c9ac28e46ac66f Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@gmail.com>
 Date: Wed, 22 Dec 2021 09:36:09 -0800
 Subject: [PATCH 089/249] tls: allow to terminate connections synchronously

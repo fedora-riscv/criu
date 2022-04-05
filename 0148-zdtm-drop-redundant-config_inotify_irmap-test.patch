@@ -1,4 +1,4 @@
-From b69701e308743135e86d461cb66cd807ed2c0fc2 Mon Sep 17 00:00:00 2001
+From 29a1d9868d8e0f1de630cb31e3687db24636118f Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sun, 15 Aug 2021 11:16:28 +0100
 Subject: [PATCH 148/249] zdtm: drop redundant config_inotify_irmap test

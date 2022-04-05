@@ -1,4 +1,4 @@
-From cf7485318cdcdb47e912ca7d53ab8965d5518b63 Mon Sep 17 00:00:00 2001
+From 8950d844260c91535ce1bbfc670ee547ca7c3b85 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 10 Dec 2021 15:34:19 +0300
 Subject: [PATCH 079/249] crtools: remove excess always true condition

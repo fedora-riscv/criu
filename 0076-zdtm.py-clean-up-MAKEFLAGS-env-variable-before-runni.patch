@@ -1,4 +1,4 @@
-From f495ba8e621ca3e4875c81f7b4dca0f3e9b79912 Mon Sep 17 00:00:00 2001
+From 05b155f1f46eb98e38ad1a0d8a332ab3326323ff Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Sat, 18 Dec 2021 10:40:11 +0300
 Subject: [PATCH 076/249] zdtm.py: clean up MAKEFLAGS env variable before

@@ -1,4 +1,4 @@
-From add9597c6c6ed74c643e0784c171eb0ca8deab53 Mon Sep 17 00:00:00 2001
+From 373b1b787c96c4ee795000cb0e190ac5d135e17c Mon Sep 17 00:00:00 2001
 From: "fu.lin" <fulin10@huawei.com>
 Date: Fri, 17 Sep 2021 17:16:48 +0800
 Subject: [PATCH 022/249] tty: fix the null pointer of get_tty_driver

@@ -1,4 +1,4 @@
-From da13809e3122ffde0c3657facb978ba7b54bf3a5 Mon Sep 17 00:00:00 2001
+From e2fe46e74dd8904f296baa1257cf7191bcd74c4c Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 22:42:19 +0100
 Subject: [PATCH 016/249] coredump: fix comparison to true

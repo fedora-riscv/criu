@@ -1,4 +1,4 @@
-From 7728a658b207bfa2b4910de7d9781bca993be8dd Mon Sep 17 00:00:00 2001
+From 3c27c8d7a494bcf59b08f9fe203d1e408d1b6a1f Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Fri, 3 Dec 2021 14:32:33 +0000
 Subject: [PATCH 074/249] libcriu: add single pre-dump support

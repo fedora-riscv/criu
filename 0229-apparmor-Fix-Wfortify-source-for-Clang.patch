@@ -1,4 +1,4 @@
-From c4d7e86771edcaed33bce40e93f06d1920a40c4d Mon Sep 17 00:00:00 2001
+From 32135702ea15c977485ca66cfedd1410896c895c Mon Sep 17 00:00:00 2001
 From: Fangrui Song <maskray@google.com>
 Date: Fri, 25 Mar 2022 17:18:30 -0700
 Subject: [PATCH 229/249] apparmor: Fix -Wfortify-source for Clang

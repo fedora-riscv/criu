@@ -1,4 +1,4 @@
-From 20c65ae87263315214c48a636dc20b4dbac03215 Mon Sep 17 00:00:00 2001
+From fa1ec35f42dd652ff57a9c816b11359eae38ddcf Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Thu, 4 Nov 2021 09:18:31 +0000
 Subject: [PATCH 028/249] ci: use Fedora 34 for lint CI runs

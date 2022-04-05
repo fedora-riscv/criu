@@ -1,4 +1,4 @@
-From 448c0bdf19285cb7a7fad2872e3f5462ffdeb996 Mon Sep 17 00:00:00 2001
+From 0c6248725ee00d152226d710f9f31362025acdc6 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Sun, 5 Dec 2021 16:45:20 +0000
 Subject: [PATCH 059/249] test: do not use --keep-going for single zdtm tests

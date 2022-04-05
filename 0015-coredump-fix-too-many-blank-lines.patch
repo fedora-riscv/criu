@@ -1,4 +1,4 @@
-From 3495005412dcfe1a897bc52d24a299b098a6eac1 Mon Sep 17 00:00:00 2001
+From a20c0fe6e518a76db428979d2a145e98fdd79988 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 22:39:50 +0100
 Subject: [PATCH 015/249] coredump: fix too many blank lines

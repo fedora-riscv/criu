@@ -1,4 +1,4 @@
-From f9f591b867abc61b414b4bee84ac683860c89ae6 Mon Sep 17 00:00:00 2001
+From 4f14d170a2cf59a7a1ddfad6f6570e9a750eb16c Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 21:38:06 +0100
 Subject: [PATCH 011/249] coredump: drop unused variable

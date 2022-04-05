@@ -1,4 +1,4 @@
-From 8ea9c9fc7360f9c5250632d0818f68af0de73992 Mon Sep 17 00:00:00 2001
+From ff3ff3b94a45d6907e0d3c6fb850cf3d729ce252 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 28 Oct 2021 17:15:52 +0300
 Subject: [PATCH 035/249] clang-format: enable AlignTrailingComments

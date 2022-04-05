@@ -1,4 +1,4 @@
-From 764cb9f4074b0a4378a80036e7fd8c6a3b0e668c Mon Sep 17 00:00:00 2001
+From c84fda15593f2f7ebb2a2796906e5b4081738b24 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 23 Jul 2019 18:33:59 +0300
 Subject: [PATCH 176/249] mount/restore: create auxiliary binfmt_misc mount in

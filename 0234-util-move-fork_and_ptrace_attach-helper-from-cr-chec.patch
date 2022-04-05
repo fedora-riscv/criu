@@ -1,4 +1,4 @@
-From 4dcca982579264fbc3fab176f63c7273799f7a9c Mon Sep 17 00:00:00 2001
+From 322699312bc16316473f3760eb1548982412979a Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 21 Dec 2021 21:17:16 +0300
 Subject: [PATCH 234/249] util: move fork_and_ptrace_attach helper from

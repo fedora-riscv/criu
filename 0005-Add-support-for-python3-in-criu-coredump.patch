@@ -1,4 +1,4 @@
-From e37aed0ca94e88f503499ddd828241d5b16122e7 Mon Sep 17 00:00:00 2001
+From 215fa63c41d9e5595946ac085babbdd01930ca6f Mon Sep 17 00:00:00 2001
 From: Andrey Vyazovtsev <viazovtsev.av@phystech.edu>
 Date: Thu, 26 Aug 2021 22:22:33 +0300
 Subject: [PATCH 005/249] Add support for python3 in criu-coredump

@@ -1,4 +1,4 @@
-From 46386c3566ad82f17c96048a275b5ba4c2475fa9 Mon Sep 17 00:00:00 2001
+From eb6198c4c7ed22665c0013874fe6b4615f88f3d0 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 30 Dec 2021 15:24:30 +0300
 Subject: [PATCH 179/249] mount: add can_receive_master_from_root helper

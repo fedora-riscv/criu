@@ -1,4 +1,4 @@
-From aae40f3a5307856e3409a4200c6cbafa624cbaec Mon Sep 17 00:00:00 2001
+From db82b08f0ab85161dbca45569f62a1a63218e48c Mon Sep 17 00:00:00 2001
 From: "fu.lin" <fulin10@huawei.com>
 Date: Sun, 16 Jan 2022 18:37:09 +0800
 Subject: [PATCH 107/249] zdtm: fix zdtm/static/maps00 case in arm64

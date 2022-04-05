@@ -1,4 +1,4 @@
-From 205ba95597c1f538776e4ed6838f7e082178f5fe Mon Sep 17 00:00:00 2001
+From 2ff0ffafa7e23b8a0e64ecd5da9d32e59782e2ee Mon Sep 17 00:00:00 2001
 From: Salvatore Bonaccorso <carnil@debian.org>
 Date: Sat, 4 Dec 2021 16:59:51 +0000
 Subject: [PATCH 057/249] make: Explicitly enable FPU on ARMv7 builds

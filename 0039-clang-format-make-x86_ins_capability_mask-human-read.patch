@@ -1,4 +1,4 @@
-From e15962cc0cf487a85c4c30a2df0c4fd6dabe66de Mon Sep 17 00:00:00 2001
+From cf56caeb12eb8900409846d2d3d9383cd210388d Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 29 Oct 2021 10:35:28 +0300
 Subject: [PATCH 039/249] clang-format: make x86_ins_capability_mask

@@ -1,4 +1,4 @@
-From ccb2c41bbabaeaa0cec6d31bb0a862a8724568f0 Mon Sep 17 00:00:00 2001
+From 9c26f836e94ba374ba0287e0d97d8a6f9e06635b Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 21:53:06 +0100
 Subject: [PATCH 013/249] coredump: lint fix for block comments

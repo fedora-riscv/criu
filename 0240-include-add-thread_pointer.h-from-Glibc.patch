@@ -1,4 +1,4 @@
-From d49426d3dce173c61ede04cbd7a3caee8cd24a78 Mon Sep 17 00:00:00 2001
+From deb22c02824133457ba84201a2340625352ddf0f Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 22 Feb 2022 14:58:10 +0300
 Subject: [PATCH 240/249] include: add thread_pointer.h from Glibc

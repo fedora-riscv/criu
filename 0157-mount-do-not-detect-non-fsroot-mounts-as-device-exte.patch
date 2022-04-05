@@ -1,4 +1,4 @@
-From ff991f4b5f369640408887dd7e2c9bc1c9ccc53b Mon Sep 17 00:00:00 2001
+From 6990d6a53df2464094ff35210936827d529bbf0c Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 16 Jan 2020 12:36:08 +0300
 Subject: [PATCH 157/249] mount: do not detect non-fsroot mounts as

@@ -1,4 +1,4 @@
-From 23644721afc34abb4a2d08c7dd7f83d5780a61ba Mon Sep 17 00:00:00 2001
+From 8fa9bbf2a2d5d5fcc80de865d380af7e7917a371 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Mon, 6 Sep 2021 00:20:58 +0100
 Subject: [PATCH 018/249] test/coredump: fix shellcheck errors

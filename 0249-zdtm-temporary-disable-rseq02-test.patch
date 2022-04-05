@@ -1,4 +1,4 @@
-From 149d70490d27bfa302ed977b40f55df4aecd36ea Mon Sep 17 00:00:00 2001
+From dd656e5565b9bb77b5a66d80302301f9dfebfa8a Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 5 Apr 2022 12:27:07 +0300
 Subject: [PATCH 249/249] zdtm: temporary disable rseq02 test

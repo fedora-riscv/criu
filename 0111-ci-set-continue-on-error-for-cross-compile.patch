@@ -1,4 +1,4 @@
-From 7093620c045e5ed3662031cc6a2f224efdc1ac98 Mon Sep 17 00:00:00 2001
+From c9836c658bb8ac32dec823b629396475e76e5582 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Thu, 27 Jan 2022 22:13:33 +0000
 Subject: [PATCH 111/249] ci: set continue-on-error for cross-compile

@@ -1,4 +1,4 @@
-From 0744a30a70c96f6d4de0577c354ec682220ec2e3 Mon Sep 17 00:00:00 2001
+From 23fecb92464ed85436b60fe2fc484bb02d0a7674 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 26 Nov 2021 12:53:41 +0300
 Subject: [PATCH 169/249] mount: restrict mp-external mount map to init

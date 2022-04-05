@@ -1,4 +1,4 @@
-From e7296cd2c631aec1b34b1411bd01b38b4a251b2b Mon Sep 17 00:00:00 2001
+From 6618fa96f8af67826b69bb49cb446579ce860693 Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@gmail.com>
 Date: Wed, 22 Dec 2021 17:08:16 -0800
 Subject: [PATCH 093/249] zdtm: print tails of all logs if a test has failed

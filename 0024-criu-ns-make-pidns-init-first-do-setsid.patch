@@ -1,4 +1,4 @@
-From 06a4400fc7b96e7abbeda7f79ee52daa61fe0223 Mon Sep 17 00:00:00 2001
+From 5002b2bedcdeac2e682f7995c9210fe351c6f818 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 18 Oct 2021 18:43:14 +0300
 Subject: [PATCH 024/249] criu-ns: make pidns init first do setsid

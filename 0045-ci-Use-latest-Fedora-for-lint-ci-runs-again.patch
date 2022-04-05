@@ -1,4 +1,4 @@
-From ba0ead357350d413d84fde5d2a35e445aa1aa964 Mon Sep 17 00:00:00 2001
+From 1b5cc130824dcbcef2467b7c513ace0dd6a41fe5 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 24 Nov 2021 11:37:58 +0300
 Subject: [PATCH 045/249] ci: Use latest Fedora for lint ci runs again

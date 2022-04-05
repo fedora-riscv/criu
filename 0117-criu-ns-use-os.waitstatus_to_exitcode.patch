@@ -1,4 +1,4 @@
-From cae5b84f70476b931620670c94bcd47d76a5e32d Mon Sep 17 00:00:00 2001
+From 0a6ba0915b606dbb70e6d16fcf8be56edb63dedf Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Fri, 4 Feb 2022 20:41:07 +0000
 Subject: [PATCH 117/249] criu-ns: use os.waitstatus_to_exitcode()

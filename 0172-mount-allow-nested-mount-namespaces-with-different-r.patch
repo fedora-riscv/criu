@@ -1,4 +1,4 @@
-From b775febb36915afcd6e6d320a6c30f08c433c4f0 Mon Sep 17 00:00:00 2001
+From 7dcab4878092b309bb3a4447e582be031bc0eedd Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 27 Apr 2020 18:24:54 +0300
 Subject: [PATCH 172/249] mount: allow nested mount namespaces with different

@@ -1,4 +1,4 @@
-From 05b68230b794d7f16453c6241c90b005d0b277aa Mon Sep 17 00:00:00 2001
+From 0279af775209d9c77cac457deaf927e2a14be126 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 18 Dec 2019 13:45:22 +0300
 Subject: [PATCH 164/249] mount: split mnt_is_external(_bind) and

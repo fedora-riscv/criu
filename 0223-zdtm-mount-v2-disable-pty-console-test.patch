@@ -1,4 +1,4 @@
-From 16285bfab2f24816554ee6cb70430fcbcae7ac3f Mon Sep 17 00:00:00 2001
+From 03f00584fc3428f2f1fa1485ecead7e74842fb4e Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 14 Mar 2022 12:01:10 +0300
 Subject: [PATCH 223/249] zdtm/mount-v2: disable pty-console test

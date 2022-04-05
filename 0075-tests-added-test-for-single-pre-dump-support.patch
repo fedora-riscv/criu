@@ -1,4 +1,4 @@
-From e9452713606cfdbc9e41c28cde674dcaeaded23a Mon Sep 17 00:00:00 2001
+From 871feecbc5f200ddf7c9c18e0dc8eaa0544d0688 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Tue, 14 Dec 2021 13:09:19 +0000
 Subject: [PATCH 075/249] tests: added test for single pre-dump support

@@ -1,4 +1,4 @@
-From 379cfdd821911d475e0c74e36c9d8913a5f9a989 Mon Sep 17 00:00:00 2001
+From bfe17cdd6fda1519870eb89c231d4965f276dc4e Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 14 May 2020 16:36:57 +0300
 Subject: [PATCH 201/249] files-reg: teach clean_one_remap to work with

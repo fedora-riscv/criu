@@ -1,4 +1,4 @@
-From da341d7cd3e0a9ab312ce9ea18755a938d61e1bb Mon Sep 17 00:00:00 2001
+From 294b4e67037e2e49cae1c4b795cfc68256902bbe Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 21 Dec 2021 12:46:57 +0300
 Subject: [PATCH 211/249] mount: export common defines for mount-v2

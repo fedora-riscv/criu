@@ -1,4 +1,4 @@
-From d83fe7440c3bce204018bf9167f67bac48118c2a Mon Sep 17 00:00:00 2001
+From a03504744be5e55913c690bf1ed26b0f0182af1d Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@google.com>
 Date: Tue, 14 Dec 2021 08:19:16 -0800
 Subject: [PATCH 070/249] usernsd: UNS_FDOUT should not require an input

@@ -1,4 +1,4 @@
-From b2e857c42a8086f735f0018fab556d259adcc71a Mon Sep 17 00:00:00 2001
+From 3ce0742b084ce45cc2170c0f92d24190231f54e1 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 21 Mar 2022 10:19:29 +0300
 Subject: [PATCH 225/249] mount: make error messages differ in different places

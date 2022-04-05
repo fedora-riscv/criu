@@ -1,4 +1,4 @@
-From 28936552df6c83266aa9e8900b5cd92f0aa3a1f7 Mon Sep 17 00:00:00 2001
+From 5aaf82b4d8bd6c89f7e6b0f639c79b3a2d21eeef Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sat, 4 Dec 2021 16:31:34 +0000
 Subject: [PATCH 056/249] ci: Run cross compile with debian testing

@@ -1,4 +1,4 @@
-From 43ff6e839fd1a7802075193b1534cc4ae1ea96fb Mon Sep 17 00:00:00 2001
+From d97b7cce246e7c5615ffac0f4df6b509f13bf66e Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 12 Sep 2019 10:10:37 +0300
 Subject: [PATCH 166/249] mount: show more info about why we can't mount

@@ -1,4 +1,4 @@
-From 421c8eab8f79ce4e70b34dcaa2e51524683e5cb3 Mon Sep 17 00:00:00 2001
+From c37c8a4ad0effe51f9b182f18bf2e761eaed1ebf Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Mon, 6 Dec 2021 16:51:21 +0000
 Subject: [PATCH 104/249] lib: introduce feature check in libcriu

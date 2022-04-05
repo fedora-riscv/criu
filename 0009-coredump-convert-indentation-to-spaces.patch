@@ -1,4 +1,4 @@
-From e945c416d6ddba23642defa66c047102c545526b Mon Sep 17 00:00:00 2001
+From 4f99f82cb3fae3ebaf35b853d7ecbbf1a9fecd27 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sun, 5 Sep 2021 21:34:00 +0100
 Subject: [PATCH 009/249] coredump: convert indentation to spaces

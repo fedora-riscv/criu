@@ -1,4 +1,4 @@
-From 29f504fd9a029142a985184bc7dc66894f9fa35a Mon Sep 17 00:00:00 2001
+From c1eca4505f709e32c0ead1ca42246fb1a844dc72 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Tue, 1 Feb 2022 15:59:14 +0000
 Subject: [PATCH 114/249] ci: install libbsd dependency

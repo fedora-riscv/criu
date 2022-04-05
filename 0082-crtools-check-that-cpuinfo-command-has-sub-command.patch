@@ -1,4 +1,4 @@
-From 37b42d0edbba16460c6190f7e7dd42f6fef7e299 Mon Sep 17 00:00:00 2001
+From f67fb6cf09c1a38f5f7c0bd86fee572bb6cf7bf9 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 16 Dec 2021 18:05:01 +0300
 Subject: [PATCH 082/249] crtools: check that cpuinfo command has sub-command

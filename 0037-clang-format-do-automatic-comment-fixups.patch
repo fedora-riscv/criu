@@ -1,4 +1,4 @@
-From 901042439368aef3513407abcf2f91780fb609a4 Mon Sep 17 00:00:00 2001
+From d42f4cf79a9d248b2129add96186fdb05c39ba5e Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 28 Oct 2021 18:10:14 +0300
 Subject: [PATCH 037/249] clang-format: do automatic comment fixups

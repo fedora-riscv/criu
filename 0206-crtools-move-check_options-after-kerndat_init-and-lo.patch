@@ -1,4 +1,4 @@
-From dd64b33d47631a47de17e807d7928a345272046c Mon Sep 17 00:00:00 2001
+From c0c592f09b30f2c3cc99aa13ada2cc45dcfb72a1 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Thu, 23 Dec 2021 17:19:49 +0300
 Subject: [PATCH 206/249] crtools: move check_options after kerndat_init and

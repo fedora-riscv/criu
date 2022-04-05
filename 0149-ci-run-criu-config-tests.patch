@@ -1,4 +1,4 @@
-From 3fd1487983c59bbf17e45484ceb42011e5d74eda Mon Sep 17 00:00:00 2001
+From 8ae1b00522e779c332145d3d6f33980c3b91aa4d Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sun, 15 Aug 2021 11:29:22 +0100
 Subject: [PATCH 149/249] ci: run criu-config tests

@@ -1,4 +1,4 @@
-From 3dd5cec57d2835e00e69a69f24fa60303216dbda Mon Sep 17 00:00:00 2001
+From b223773cd4ffd0fe8cf6e1384ad95b4c4d1b4109 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Sat, 4 Dec 2021 16:18:26 +0000
 Subject: [PATCH 055/249] ci: Run cross compile on debian stable

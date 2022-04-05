@@ -1,4 +1,4 @@
-From af12f2ef7c38bc06cd9ce43b7feb40bc968ec251 Mon Sep 17 00:00:00 2001
+From 9c142576cc1d3a399696e65ffeac4d89768aea3f Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 27 May 2020 13:43:49 +0300
 Subject: [PATCH 174/249] mount: apply superblock flags to nested ns roots

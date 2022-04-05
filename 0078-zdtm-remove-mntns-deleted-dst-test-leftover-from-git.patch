@@ -1,4 +1,4 @@
-From cbc53fdb2d10f56c74abeff6b1ecb8374b38b84b Mon Sep 17 00:00:00 2001
+From 6bb67ad114a16bcabe3fe349309093f00c6f39da Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 17 Dec 2021 15:33:55 +0300
 Subject: [PATCH 078/249] zdtm: remove mntns-deleted-dst test leftover from git

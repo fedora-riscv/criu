@@ -1,4 +1,4 @@
-From 273d3f4ccc95eb7bd0553de1caa217835525311c Mon Sep 17 00:00:00 2001
+From 34cba22d4eabb34a8f1588d4ce5571492c3f2ef3 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 25 May 2020 17:43:48 +0300
 Subject: [PATCH 207/249] config/rpc: add new option --mntns-compat-mode for

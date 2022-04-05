@@ -1,4 +1,4 @@
-From e4c1e520e90b40ed639b544322d8700451d3659f Mon Sep 17 00:00:00 2001
+From 3a33f672a6de175d5ff8d5440f44898da6fa08ef Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@google.com>
 Date: Sun, 20 Mar 2022 00:43:45 -0700
 Subject: [PATCH 228/249] criu-ns: add a helper to hold a pid namespace

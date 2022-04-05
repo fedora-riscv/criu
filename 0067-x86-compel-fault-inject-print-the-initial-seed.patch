@@ -1,4 +1,4 @@
-From eb100eb39cb32d7a559168267a11f5ac9db9c154 Mon Sep 17 00:00:00 2001
+From efd0cc2c4fba3bc72133f022e3fe393a0346cb51 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Mon, 13 Dec 2021 15:32:00 +0300
 Subject: [PATCH 067/249] x86/compel/fault-inject: print the initial seed

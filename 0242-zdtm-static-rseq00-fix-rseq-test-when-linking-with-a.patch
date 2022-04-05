@@ -1,4 +1,4 @@
-From 5f311e25837fdf75643cba8b3f47920308a1625a Mon Sep 17 00:00:00 2001
+From 1af69a81c53cd23dda7d82ab434c22fbf4ed8959 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Fri, 24 Dec 2021 22:56:56 +0300
 Subject: [PATCH 242/249] zdtm/static/rseq00: fix rseq test when linking with a
@@ -13,7 +13,7 @@ Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
  1 file changed, 49 insertions(+), 17 deletions(-)
 
 diff --git a/test/zdtm/static/rseq00.c b/test/zdtm/static/rseq00.c
-index 95e9f40b4..acf790753 100644
+index b1cffb16e..a50c8a48e 100644
 --- a/test/zdtm/static/rseq00.c
 +++ b/test/zdtm/static/rseq00.c
 @@ -19,13 +19,48 @@
@@ -117,7 +117,7 @@ index 95e9f40b4..acf790753 100644
  	if (!(rc && errno == EBUSY)) {
  		fail("Failed to check rseq %d", rc);
  		exit(1);
-@@ -111,8 +140,8 @@ static int rseq_addv(intptr_t *v, intptr_t count, int cpu)
+@@ -113,8 +142,8 @@ static int rseq_addv(intptr_t *v, intptr_t count, int cpu)
  		".popsection\n\t"
  		: /* gcc asm goto does not allow outputs */
  		: [cpu_id]            "r" (cpu),
@@ -128,7 +128,7 @@ index 95e9f40b4..acf790753 100644
  		/* final store input */
  		[v]                   "m" (*v),
  		[count]               "er" (count)
-@@ -132,6 +161,9 @@ int main(int argc, char *argv[])
+@@ -135,6 +164,9 @@ int main(int argc, char *argv[])
  	intptr_t *cpu_data;
  	long nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
  
@@ -138,7 +138,7 @@ index 95e9f40b4..acf790753 100644
  	test_init(argc, argv);
  
  	cpu_data = calloc(nr_cpus, sizeof(*cpu_data));
-@@ -147,7 +179,7 @@ int main(int argc, char *argv[])
+@@ -150,7 +182,7 @@ int main(int argc, char *argv[])
  
  	check_thread();
  

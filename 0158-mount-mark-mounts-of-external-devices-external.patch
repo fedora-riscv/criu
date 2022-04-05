@@ -1,4 +1,4 @@
-From 8e1769318b436a69a67e399e432cc0436abf4298 Mon Sep 17 00:00:00 2001
+From fc17357c0215e15ce5e00e6fd7cf70f0245ce805 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Mon, 16 Sep 2019 18:07:32 +0300
 Subject: [PATCH 158/249] mount: mark mounts of external devices external

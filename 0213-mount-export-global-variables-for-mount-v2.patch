@@ -1,4 +1,4 @@
-From 0dfc8717477416fa14d87335f1be5f2e2f89a71e Mon Sep 17 00:00:00 2001
+From 036a0d6bb99929b836323ec59d851cda5a87cd2c Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 21 Dec 2021 14:04:19 +0300
 Subject: [PATCH 213/249] mount: export global variables for mount-v2

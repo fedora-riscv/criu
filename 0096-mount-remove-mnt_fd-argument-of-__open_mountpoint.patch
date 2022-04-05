@@ -1,4 +1,4 @@
-From 518f18aa83523d218073d100c4aa0f482ec60b53 Mon Sep 17 00:00:00 2001
+From 5258c8a15e46c2bf6614c6bd3cfb79463e640abe Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Fri, 17 Dec 2021 15:13:35 +0300
 Subject: [PATCH 096/249] mount: remove mnt_fd argument of __open_mountpoint

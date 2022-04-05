@@ -1,4 +1,4 @@
-From cc3b58c7c362cbaf43df574167f08897e8a80bd7 Mon Sep 17 00:00:00 2001
+From 2944fe4e6e8ec6472cf13caf680c44a763639c62 Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Tue, 1 Feb 2022 13:44:42 +0000
 Subject: [PATCH 116/249] criu-ns: fix exit code o for criu dump

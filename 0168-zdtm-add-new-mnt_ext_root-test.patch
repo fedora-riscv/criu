@@ -1,4 +1,4 @@
-From f59efe89bcc72c7104e08cad64b47d03e098bcca Mon Sep 17 00:00:00 2001
+From 3568904e11811e3ff8831810e5013fe3e925322e Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 18 Feb 2020 13:41:18 +0300
 Subject: [PATCH 168/249] zdtm: add new mnt_ext_root test

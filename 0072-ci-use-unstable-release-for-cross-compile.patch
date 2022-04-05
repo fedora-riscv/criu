@@ -1,4 +1,4 @@
-From 564f6313cb85a64460a30123b07197dd98224c32 Mon Sep 17 00:00:00 2001
+From eb0323c25ea6d3ddab0e85c9f24d29154155ae4f Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sat, 18 Dec 2021 17:25:17 +0000
 Subject: [PATCH 072/249] ci: use unstable release for cross-compile

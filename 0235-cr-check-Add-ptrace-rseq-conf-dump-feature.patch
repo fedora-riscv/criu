@@ -1,4 +1,4 @@
-From c4399163eb28d0dd1d2f6d7041f361b9516c2911 Mon Sep 17 00:00:00 2001
+From 0c0bc3dedcf68e59baa6544d2e0a9b3275559376 Mon Sep 17 00:00:00 2001
 From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 Date: Tue, 21 Dec 2021 18:29:14 +0300
 Subject: [PATCH 235/249] cr-check: Add ptrace rseq conf dump feature

@@ -1,4 +1,4 @@
-From 0fc0b2d996e0cba450155727239df8aaf31c26f1 Mon Sep 17 00:00:00 2001
+From dff6911878ee62f7cd757a0a8e3ecc3fe4ee6ac7 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Tue, 30 Nov 2021 19:03:29 +0300
 Subject: [PATCH 053/249] zdtm: add ro-mount check after c/r to mntns_ghost01

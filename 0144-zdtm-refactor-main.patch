@@ -1,4 +1,4 @@
-From 4bf7f3e1dfb0d01e59dd6f9af1b945018b1df034 Mon Sep 17 00:00:00 2001
+From e2ddf69cb3dd07c084a6f62f26638cbe4b29d6ae Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
 Date: Sat, 24 Jul 2021 12:19:22 +0100
 Subject: [PATCH 144/249] zdtm: refactor main

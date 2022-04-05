@@ -1,4 +1,4 @@
-From b7070dd5675a53b22db912c36242c0dde94d5a3e Mon Sep 17 00:00:00 2001
+From 2a5d445efc68e76fef4f7141c2b07c2f16c7fef3 Mon Sep 17 00:00:00 2001
 From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 Date: Wed, 14 Oct 2020 15:56:52 +0300
 Subject: [PATCH 219/249] zdtm: add propagation group with mount flags to

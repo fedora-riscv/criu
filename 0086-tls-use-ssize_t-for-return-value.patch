@@ -1,4 +1,4 @@
-From 311328d1c2a5715bd091ec6cad7cb0d32af99b26 Mon Sep 17 00:00:00 2001
+From 3b96f978beb40ebbd1b9b1610d1a2df5181d4bce Mon Sep 17 00:00:00 2001
 From: Radostin Stoyanov <radostin@redhat.com>
 Date: Tue, 7 Dec 2021 22:32:54 +0000
 Subject: [PATCH 086/249] tls: use ssize_t for return value

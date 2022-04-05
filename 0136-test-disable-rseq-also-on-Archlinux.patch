@@ -1,4 +1,4 @@
-From e25f35ccb538c4b1542c608147c541efd2bf95c2 Mon Sep 17 00:00:00 2001
+From 171e7e8badc051a6375dfb091da1f4f5777457d2 Mon Sep 17 00:00:00 2001
 From: Adrian Reber <areber@redhat.com>
 Date: Tue, 15 Feb 2022 18:09:27 +0000
 Subject: [PATCH 136/249] test: disable rseq also on Archlinux

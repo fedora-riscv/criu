@@ -1,4 +1,4 @@
-From 5132edbd018755985e664b8a4ee230265ac8c1eb Mon Sep 17 00:00:00 2001
+From 9f50a9fb2a88db3d2853f514cddda84c3ff0d683 Mon Sep 17 00:00:00 2001
 From: Andrei Vagin <avagin@gmail.com>
 Date: Wed, 22 Dec 2021 17:03:04 -0800
 Subject: [PATCH 091/249] ci: reenable the lazy-thp test in the lazy-remote

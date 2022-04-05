@@ -1,0 +1,62 @@
+From 734553d5d0c784e8610d7c7ebbcda8607b28188b Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@google.com>
+Date: Sun, 20 Mar 2022 00:43:45 -0700
+Subject: [PATCH 229/245] criu-ns: add a helper to hold a pid namespace
+
+The init process can exit if it doesn't have any child processes and its
+pidns is destroyed in this case. CRIU dump is running in the target pid
+namespace and it kills dumped processes at the end. We need to create a
+holder process to be sure that the pid namespace will not be destroy
+before criu exits.
+
+Fixes: #1775
+
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ scripts/criu-ns | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/scripts/criu-ns b/scripts/criu-ns
+index 930d20c80..9fc58b640 100755
+--- a/scripts/criu-ns
++++ b/scripts/criu-ns
+@@ -82,6 +82,27 @@ def run_criu(args):
+     raise OSError(errno.ENOENT, "No such command")
+ 
+ 
++# pidns_holder creates a process that is reparented to the init.
++#
++# The init process can exit if it doesn't have any child processes and its
++# pidns is destroyed in this case. CRIU dump is running in the target pid
++# namespace and it kills dumped processes at the end. We need to create a
++# holder process to be sure that the pid namespace will not be destroy before
++# criu exits.
++def pidns_holder():
++    r, w = os.pipe()
++    pid = os.fork()
++    if pid == 0:
++        pid = os.fork()
++        if pid == 0:
++            os.close(w)
++            # The write end is owned by the parent process and it is closed by
++            # kernel when the parent process exits.
++            os.read(r, 1)
++        sys.exit(0)
++    os.waitpid(pid, 0)
++
++
+ def wrap_restore():
+     restore_args = sys.argv[1:]
+     if '--restore-sibling' in restore_args:
+@@ -200,6 +221,8 @@ def wrap_dump():
+     set_pidns(pid, pid_idx)
+     set_mntns(pid)
+ 
++    pidns_holder()
++
+     criu_pid = os.fork()
+     if criu_pid == 0:
+         run_criu(sys.argv[1:])
+-- 
+2.35.1
+

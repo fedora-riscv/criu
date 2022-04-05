@@ -1,0 +1,59 @@
+From 648babc34a25899a0d29f989d1cdcfb2191a872a Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Mon, 13 Dec 2021 15:19:50 +0300
+Subject: [PATCH 067/245] x86/compel/fault-inject: bound xsave features set
+
+Since
+e2e8be37 ("x86/compel/fault-inject: Add a fault-injection for corrupting extended regset")
+we doing fault-injection test for C/R of threads register set by filling tasks
+xsave structures with the garbage. But there are some features for which that's not
+safe. It leads to failures like described in #1635
+
+In this particular case we meet the problem with PKRU feature, the problem
+that after corrupting pkru registers we may restrict access to some vma areas,
+so, after that process with the parasite injected get's segfault and crashes.
+
+Let's manually specify which features is save to fill with the garbage by
+keeping proper XFEATURE_MASK_FAULTINJ mask value.
+
+Fixes: e2e8be37 ("x86/compel/fault-inject: Add a fault-injection for corrupting extended regset")
+
+https://github.com/checkpoint-restore/criu/issues/1635
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ compel/arch/x86/src/lib/include/uapi/asm/fpu.h | 5 +++++
+ compel/arch/x86/src/lib/infect.c               | 1 +
+ 2 files changed, 6 insertions(+)
+
+diff --git a/compel/arch/x86/src/lib/include/uapi/asm/fpu.h b/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
+index a16b658af..c8ebda097 100644
+--- a/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
++++ b/compel/arch/x86/src/lib/include/uapi/asm/fpu.h
+@@ -80,6 +80,11 @@ enum xfeature {
+ 	(XFEATURE_MASK_FP | XFEATURE_MASK_SSE | XFEATURE_MASK_YMM | XFEATURE_MASK_OPMASK | XFEATURE_MASK_ZMM_Hi256 | \
+ 	 XFEATURE_MASK_Hi16_ZMM | XFEATURE_MASK_PKRU | XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR)
+ 
++/* xsave structure features which is safe to fill with garbage (see validate_random_xstate()) */
++#define XFEATURE_MASK_FAULTINJ                                                                                       \
++	(XFEATURE_MASK_FP | XFEATURE_MASK_SSE | XFEATURE_MASK_YMM | XFEATURE_MASK_OPMASK | XFEATURE_MASK_ZMM_Hi256 | \
++	 XFEATURE_MASK_Hi16_ZMM)
++
+ struct fpx_sw_bytes {
+ 	uint32_t magic1;
+ 	uint32_t extended_size;
+diff --git a/compel/arch/x86/src/lib/infect.c b/compel/arch/x86/src/lib/infect.c
+index 2f6c557d0..37b0ee327 100644
+--- a/compel/arch/x86/src/lib/infect.c
++++ b/compel/arch/x86/src/lib/infect.c
+@@ -254,6 +254,7 @@ static void validate_random_xstate(struct xsave_struct *xsave)
+ 	/* No unknown or supervisor features may be set */
+ 	hdr->xstate_bv &= XFEATURE_MASK_USER;
+ 	hdr->xstate_bv &= ~XFEATURE_MASK_SUPERVISOR;
++	hdr->xstate_bv &= XFEATURE_MASK_FAULTINJ;
+ 
+ 	for (i = 0; i < XFEATURE_MAX; i++) {
+ 		if (!compel_fpu_has_feature(i))
+-- 
+2.35.1
+

@@ -1,0 +1,50 @@
+From 009877169d13f9d6437fc2d11113bccdbad6b15f Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Mon, 27 Apr 2020 18:24:54 +0300
+Subject: [PATCH 173/245] mount: allow nested mount namespaces with different
+ roots
+
+Only root in root-mntns is special (see rst_mnt_is_root) all other
+mounts are mounted regulary there is no difference between ns root and
+any other mount or bind-mount.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/f41e41dd5
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 5591bb67c..97a903934 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -3362,7 +3362,6 @@ void fini_restore_mntns(void)
+ 
+ static int merge_mount_trees(struct mount_info *root_yard)
+ {
+-	struct mount_info *first = NULL;
+ 	struct ns_id *nsid;
+ 
+ 	/* Merge mount trees together under root_yard */
+@@ -3374,16 +3373,6 @@ static int merge_mount_trees(struct mount_info *root_yard)
+ 
+ 		root = nsid->mnt.mntinfo_tree;
+ 
+-		if (!first)
+-			first = root;
+-		else if (!mounts_sb_equal(root, first) || strcmp(root->root, first->root)) {
+-			pr_err("Nested mount namespaces with different "
+-			       "roots %d (@%s %s) %d (@%s %s) are not supported yet\n",
+-			       root->mnt_id, root->mountpoint, root->root, first->mnt_id, first->mountpoint,
+-			       first->root);
+-			return -1;
+-		}
+-
+ 		pr_debug("Mountpoint %d (@%s) moved to the root yard\n", root->mnt_id, root->mountpoint);
+ 		root->parent = root_yard;
+ 		list_add(&root->siblings, &root_yard->children);
+-- 
+2.35.1
+

@@ -1,0 +1,36 @@
+From 116692772b5f4ff1818262096ec7934086749be5 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Tue, 1 Dec 2020 16:07:16 +0300
+Subject: [PATCH 221/245] zdtm/mount-v2: disable mnt_tracefs test
+
+We can have tracefs separate mount from debugfs and that's why the
+/sys/kernel/debug external mount now has children and this thing is not
+supported to be bind in container with children, because we don't wan't
+external mounts to introduce some unexpected extra external mounts so we
+bind them without MS_REC in mount-v2 unlike in old mount engine.
+
+We can either bind without MS_REC when constructing test or provide all
+children mount as separate external mounts to criu, let's just disable
+for now.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/87875c023
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ test/zdtm/static/mnt_tracefs.desc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/test/zdtm/static/mnt_tracefs.desc b/test/zdtm/static/mnt_tracefs.desc
+index e90ea9415..7cf98034a 100644
+--- a/test/zdtm/static/mnt_tracefs.desc
++++ b/test/zdtm/static/mnt_tracefs.desc
+@@ -1,3 +1,4 @@
+ {   'feature': 'mnt_id',
+     'flavor': 'uns',
+-    'opts': '--ext-mount-map auto --enable-external-masters'}
++    'opts': '--ext-mount-map auto --enable-external-masters',
++    'ropts': '--mntns-compat-mode'}
+-- 
+2.35.1
+

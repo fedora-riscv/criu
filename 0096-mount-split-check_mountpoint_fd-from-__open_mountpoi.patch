@@ -1,0 +1,120 @@
+From 3e716ab20a6de56bce5ac7d66d67e7c3507facae Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 17 Dec 2021 14:58:47 +0300
+Subject: [PATCH 096/245] mount: split check_mountpoint_fd from
+ __open_mountpoint
+
+Now we can reuse "check" part separately in other places.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h |  1 +
+ criu/mount.c         | 60 ++++++++++++++++++++++++--------------------
+ 2 files changed, 34 insertions(+), 27 deletions(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 7705279e4..23448d5fc 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -109,6 +109,7 @@ extern int mntns_get_root_by_mnt_id(int mnt_id);
+ extern struct ns_id *lookup_nsid_by_mnt_id(int mnt_id);
+ 
+ extern int open_mount(unsigned int s_dev);
++extern int check_mountpoint_fd(struct mount_info *pm, int mnt_fd);
+ extern int __open_mountpoint(struct mount_info *pm, int mnt_fd);
+ extern int mnt_is_dir(struct mount_info *pm);
+ extern int open_mountpoint(struct mount_info *pm);
+diff --git a/criu/mount.c b/criu/mount.c
+index d75ca5598..f6347fd9d 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -1018,39 +1018,20 @@ int mnt_is_dir(struct mount_info *pm)
+ 	return 0;
+ }
+ 
+-/*
+- * mnt_fd is a file descriptor on the mountpoint, which is closed in an error case.
+- * If mnt_fd is -1, the mountpoint will be opened by this function.
+- */
+-int __open_mountpoint(struct mount_info *pm, int mnt_fd)
++int check_mountpoint_fd(struct mount_info *pm, int mnt_fd)
+ {
+ 	struct stat st;
+-	int dev;
+-	int ret;
+-
+-	if (mnt_fd == -1) {
+-		int mntns_root;
+-
+-		mntns_root = mntns_get_root_fd(pm->nsid);
+-		if (mntns_root < 0)
+-			return -1;
+-
+-		mnt_fd = openat(mntns_root, pm->ns_mountpoint, O_RDONLY);
+-		if (mnt_fd < 0) {
+-			pr_perror("Can't open %s", pm->ns_mountpoint);
+-			return -1;
+-		}
+-	}
++	int ret, dev;
+ 
+ 	ret = fstat(mnt_fd, &st);
+ 	if (ret < 0) {
+ 		pr_perror("fstat(%s) failed", pm->ns_mountpoint);
+-		goto err;
++		return -1;
+ 	}
+ 
+ 	if (pm->s_dev_rt == MOUNT_INVALID_DEV) {
+ 		pr_err("Resolving over invalid device for %#x %s %s\n", pm->s_dev, pm->fstype->name, pm->ns_mountpoint);
+-		goto err;
++		return -1;
+ 	}
+ 
+ 	dev = MKKDEV(major(st.st_dev), minor(st.st_dev));
+@@ -1063,13 +1044,38 @@ int __open_mountpoint(struct mount_info *pm, int mnt_fd)
+ 	if (dev != pm->s_dev_rt) {
+ 		pr_err("The file system %#x %#x (%#x) %s %s is inaccessible\n", pm->s_dev, pm->s_dev_rt, dev,
+ 		       pm->fstype->name, pm->ns_mountpoint);
+-		goto err;
++		return -1;
++	}
++
++	return 0;
++}
++
++/*
++ * mnt_fd is a file descriptor on the mountpoint, which is closed in an error case.
++ * If mnt_fd is -1, the mountpoint will be opened by this function.
++ */
++int __open_mountpoint(struct mount_info *pm, int mnt_fd)
++{
++	if (mnt_fd == -1) {
++		int mntns_root;
++
++		mntns_root = mntns_get_root_fd(pm->nsid);
++		if (mntns_root < 0)
++			return -1;
++
++		mnt_fd = openat(mntns_root, pm->ns_mountpoint, O_RDONLY);
++		if (mnt_fd < 0) {
++			pr_perror("Can't open %s", pm->ns_mountpoint);
++			return -1;
++		}
++	}
++
++	if (check_mountpoint_fd(pm, mnt_fd)) {
++		close(mnt_fd);
++		return -1;
+ 	}
+ 
+ 	return mnt_fd;
+-err:
+-	close(mnt_fd);
+-	return -1;
+ }
+ 
+ int open_mount(unsigned int s_dev)
+-- 
+2.35.1
+

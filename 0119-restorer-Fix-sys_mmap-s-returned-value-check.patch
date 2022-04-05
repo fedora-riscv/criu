@@ -1,0 +1,30 @@
+From 85e612fe770ae23f097e43faeec42cabf4b83d21 Mon Sep 17 00:00:00 2001
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+Date: Sat, 5 Feb 2022 14:23:38 +0700
+Subject: [PATCH 119/245] restorer: Fix sys_mmap's returned value check
+
+As we call mmap syscall directly, the returned value in error case is the error
+number not -1 like in libc wrapper. Use IS_ERR for correct checking in error
+case.
+
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ criu/pie/restorer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/pie/restorer.c b/criu/pie/restorer.c
+index 0051452e4..7aa788181 100644
+--- a/criu/pie/restorer.c
++++ b/criu/pie/restorer.c
+@@ -952,7 +952,7 @@ static int vma_remap(VmaEntry *vma_entry, int uffd)
+ 
+ 		/* Move src to non-overlapping place (step 3) */
+ 		addr = sys_mmap(NULL, len, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+-		if (addr == (unsigned long)MAP_FAILED) {
++		if (IS_ERR((void *)addr)) {
+ 			pr_err("Unable to reserve memory (%lx)\n", addr);
+ 			return -1;
+ 		}
+-- 
+2.35.1
+

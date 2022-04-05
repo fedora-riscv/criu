@@ -1,0 +1,39 @@
+From 37301a8a6ef9ecb1efe3f8086cd1ca6bd7fe4b70 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 23:06:56 +0100
+Subject: [PATCH 021/245] ci: enable coredump tests
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ scripts/ci/run-ci-tests.sh | 3 +++
+ test/others/env.sh         | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/ci/run-ci-tests.sh b/scripts/ci/run-ci-tests.sh
+index 7c66e6802..51aa7db9e 100755
+--- a/scripts/ci/run-ci-tests.sh
++++ b/scripts/ci/run-ci-tests.sh
+@@ -259,6 +259,9 @@ ip net add test
+ # more crit testing
+ make -C test/others/crit run
+ 
++# coredump testing
++make -C test/others/criu-coredump run
++
+ # libcriu testing
+ make -C test/others/libcriu run
+ 
+diff --git a/test/others/env.sh b/test/others/env.sh
+index e2f63eee3..45066f760 100755
+--- a/test/others/env.sh
++++ b/test/others/env.sh
+@@ -13,5 +13,5 @@ fi
+ #export PYTHON
+ CRIT=$(readlink -f `dirname ${BASH_SOURCE[0]}`/../../crit/crit-"${PYTHON}")
+ crit=$CRIT
+-CRIU_COREDUMP=$(readlink -f `dirname ${BASH_SOURCE[0]}`/../../criu-coredump/coredump-"${PYTHON}")
++CRIU_COREDUMP=$(readlink -f `dirname ${BASH_SOURCE[0]}`/../../coredump/coredump-"${PYTHON}")
+ criu_coredump=$CRIU_COREDUMP
+-- 
+2.35.1
+

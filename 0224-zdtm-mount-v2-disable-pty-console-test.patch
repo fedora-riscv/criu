@@ -1,0 +1,63 @@
+From b86b40a1f4d9cba0c1494d94c1aaf496006bffaa Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Mon, 14 Mar 2022 12:01:10 +0300
+Subject: [PATCH 224/245] zdtm/mount-v2: disable pty-console test
+
+  [root@fedora criu]# ./test/zdtm.py run -t zdtm/static/pty-console --iters 2 --keep-going --ignore-taint
+  [WARNING] Option --keep-going is more useful when running multiple tests
+  userns is supported
+  === Run 1/1 ================ zdtm/static/pty-console
+  ====================== Run zdtm/static/pty-console in uns ======================
+  Start test
+  Test is SUID
+  ./pty-console --pidfile=pty-console.pid --outfile=pty-console.out
+  Run criu dump
+  Run criu restore
+  Run criu dump
+  =[log]=> dump/zdtm/static/pty-console/62/2/dump.log
+  ------------------------ grep Error ------------------------
+  b'(00.009325) 101 fdinfo 3: pos:                0 flags:           100000/0'
+  b'(00.009332) Dumping path for 3 fd via self 19 [/zdtm/static]'
+  b'(00.009345) 101 fdinfo 4: pos:                0 flags:           100002/0'
+  b'(00.009352) tty: Dumping tty 20 with id 0xc'
+  b"(00.009358) Error (criu/files-reg.c:1710): Can't lookup mount=1647 for fd=4 path=/ptmx"
+  b'(00.009361) ----------------------------------------'
+  b'(00.009369) Error (criu/cr-dump.c:1368): Dump files (pid: 101) failed with -1'
+  b'(00.009696) Running network-unlock scripts'
+  b'(00.012401) Unfreezing tasks into 1'
+  b'(00.012410) \tUnseizing 86 into 1'
+  b'(00.012415) \tUnseizing 101 into 1'
+  b'(00.012428) Error (criu/cr-dump.c:1788): Dumping FAILED.'
+  ------------------------ ERROR OVER ------------------------
+  ################ Test zdtm/static/pty-console FAIL at CRIU dump ################
+  Test output: ================================
+
+   <<< ================================
+  Send the 9 signal to  86
+  Wait for zdtm/static/pty-console(86) to die for 0.100000
+  ##################################### FAIL #####################################
+
+Restore on second iteration with mount-v2 fails, that is because
+devpts_restore which is called from do_new_mount_v2 via fstype->restore
+opens ptmx file in service mntns and saves it to fdstore for later use.
+So after first c/r open ptmx fd changes mnt_id in fdinfo to a detached
+mount. Let's just disable mount-v2 for this test for now.
+
+FIXME: We should create separate fstype hook to do_mount_in_right_mntns,
+so that we can open files from this hook in actual restored mntns.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ test/zdtm/static/pty-console.desc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/zdtm/static/pty-console.desc b/test/zdtm/static/pty-console.desc
+index fba5e8749..3b3e3f73d 100644
+--- a/test/zdtm/static/pty-console.desc
++++ b/test/zdtm/static/pty-console.desc
+@@ -1 +1 @@
+-{'flags': 'suid', 'flavor' : 'ns uns'}
++{'flags': 'suid', 'flavor' : 'ns uns', 'ropts': '--mntns-compat-mode'}
+-- 
+2.35.1
+

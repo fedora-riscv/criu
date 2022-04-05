@@ -1,0 +1,142 @@
+From 127d2aa360d2f3fa61f6c3930bede8b388379020 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 14 May 2020 13:50:20 +0300
+Subject: [PATCH 162/245] util: add get_relative_path helper
+
+This is a smart way of getting relative paths:
+
+1) Always returns relative path, no unexpected starting '/';
+2) Detects subpath even if path formats are different, only real directory
+and file names matter;
+3) No path modiffication/allocation, returns shifted pointer to the
+orignal path.
+
+We have many places where we need to cut subpath from path. Different code
+blocks doing this job spread widely across the codebase for instance see:
+cut_root_for_bind and root_path_from_parent. But those implementations rely on
+the fact that subpath's and path's formats are the same.
+
+When we modify or concatenate paths we can accidentally get strange
+path formats, paths given by user can have strange format, and the job
+to manually maintain all paths in "simple" format everywhere is too
+hard. So let's just add a tool to compare "strange" paths.
+
+E.g.:
+
+get_relative_path("./a////.///./b//././c", "///./a/b") == "c"
+
+Note: ".." in path is not supported, and we just can't support it right
+without full filesystem tree information to resolve paths like
+"../../a", so we just treat ".." as a directory name which should work
+in simple cases.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/73a771348
+
+Changes: add other useful robust path comparison helpers is_sub_path and
+is_same_path based on get_relative_path, fix clang-format.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/util.h |  4 +++
+ criu/util.c         | 72 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
+
+diff --git a/criu/include/util.h b/criu/include/util.h
+index ca934dea0..0df1fe266 100644
+--- a/criu/include/util.h
++++ b/criu/include/util.h
+@@ -241,6 +241,10 @@ static inline bool issubpath(const char *path, const char *sub_path)
+ 	return strstartswith2(path, sub_path, &end) && (end == '/' || end == '\0');
+ }
+ 
++extern char *get_relative_path(char *path, char *sub_path);
++extern bool is_sub_path(char *path, char *sub_path);
++extern bool is_same_path(char *path1, char *path2);
++
+ int strip_deleted(char *path, int len);
+ int cut_path_ending(char *path, char *sub_path);
+ 
+diff --git a/criu/util.c b/criu/util.c
+index d83be0c0d..f14e6467f 100644
+--- a/criu/util.c
++++ b/criu/util.c
+@@ -1815,3 +1815,75 @@ void util_init()
+ 	clock_gettime(CLOCK_MONOTONIC, &tp);
+ 	criu_run_id = ((uint64_t)getpid() << 32) + tp.tv_sec + tp.tv_nsec;
+ }
++
++/*
++ * This function cuts sub_path from the path.
++ * 1) It asumes all relative paths given are relative to "/":
++ * 	/a/b/c is the same as a/b/c
++ * 2) It can handle paths with multiple consequent slashes:
++ * 	///a///b///c is the same as /a/b/c
++ * 3) It always returns relative path, with no leading slash:
++ * 	get_relative_path("/a/b/c", "/") would be "a/b/c"
++ * 	get_relative_path("/a/b/c", "/a/b") would be "c"
++ * 	get_relative_path("/", "/") would be ""
++ * 4) It can handle paths with single dots:
++ * 	get_relative_path("./a/b", "a/") would be "b"
++ * 5) Note ".." in paths are not supported and handled as normal directory name
++ */
++char *get_relative_path(char *path, char *sub_path)
++{
++	bool skip_slashes = true;
++
++	while (1) {
++		if ((*path == '/' || *path == '\0') && (*sub_path == '/' || *sub_path == '\0'))
++			skip_slashes = true;
++
++		if (skip_slashes) {
++			while (*path == '/' || (path[0] == '.' && (path[1] == '/' || path[1] == '\0')))
++				path++;
++			while (*sub_path == '/' || (sub_path[0] == '.' && (sub_path[1] == '/' || sub_path[1] == '\0')))
++				sub_path++;
++		}
++
++		if (*sub_path == '\0') {
++			if (skip_slashes)
++				return path;
++			return NULL;
++		}
++		skip_slashes = false;
++
++		if (*path == '\0')
++			return NULL;
++
++		if (*path != *sub_path)
++			return NULL;
++
++		path++;
++		sub_path++;
++	}
++
++	/* will never get here */
++	return NULL;
++}
++
++bool is_sub_path(char *path, char *sub_path)
++{
++	char *rel_path;
++
++	rel_path = get_relative_path(path, sub_path);
++	if (!rel_path)
++		return false;
++
++	return true;
++}
++
++bool is_same_path(char *path1, char *path2)
++{
++	char *rel_path;
++
++	rel_path = get_relative_path(path1, path2);
++	if (!rel_path || *rel_path != '\0')
++		return false;
++
++	return true;
++}
+-- 
+2.35.1
+

@@ -1,0 +1,107 @@
+From 5ddabab892cf628be052d29d395adc9b597345df Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <radostin@redhat.com>
+Date: Sun, 5 Sep 2021 21:34:00 +0100
+Subject: [PATCH 010/245] coredump: convert indentation to spaces
+
+Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+---
+ coredump/coredump-python2 |  2 +-
+ coredump/coredump-python3 |  2 +-
+ coredump/coredump.py      | 58 ++++++++++++++++++++-------------------
+ 3 files changed, 32 insertions(+), 30 deletions(-)
+
+diff --git a/coredump/coredump-python2 b/coredump/coredump-python2
+index 3a15c90a3..564c05ce9 100755
+--- a/coredump/coredump-python2
++++ b/coredump/coredump-python2
+@@ -3,4 +3,4 @@
+ import coredump
+ 
+ if __name__ == '__main__':
+-	coredump.main()
++    coredump.main()
+diff --git a/coredump/coredump-python3 b/coredump/coredump-python3
+index 82ec6b855..3032dbadf 100755
+--- a/coredump/coredump-python3
++++ b/coredump/coredump-python3
+@@ -3,4 +3,4 @@
+ import coredump
+ 
+ if __name__ == '__main__':
+-	coredump.main()
++    coredump.main()
+diff --git a/coredump/coredump.py b/coredump/coredump.py
+index 56ba54083..e63abf951 100755
+--- a/coredump/coredump.py
++++ b/coredump/coredump.py
+@@ -3,37 +3,39 @@ import os
+ 
+ import criu_coredump
+ 
++
+ def coredump(opts):
+-	generator = criu_coredump.coredump_generator()
+-	cores = generator(os.path.realpath(opts['in']))
+-	for pid in cores:
+-		if opts['pid'] and pid != opts['pid']:
+-			continue
+-		with open(os.path.realpath(opts['out'])+"/core."+str(pid), 'wb+') as f:
+-			cores[pid].write(f)
++    generator = criu_coredump.coredump_generator()
++    cores = generator(os.path.realpath(opts['in']))
++    for pid in cores:
++        if opts['pid'] and pid != opts['pid']:
++            continue
++        with open(os.path.realpath(opts['out'])+"/core."+str(pid), 'wb+') as f:
++            cores[pid].write(f)
+ 
+ 
+ def main():
+-	desc = 'CRIU core dump'
+-	parser = argparse.ArgumentParser(description=desc,
+-			formatter_class=argparse.RawTextHelpFormatter)
+-
+-	parser.add_argument('-i',
+-			    '--in',
+-			    default = '.',
+-			    help = 'directory where to get images from')
+-	parser.add_argument('-p',
+-			    '--pid',
+-			    type = int,
+-			    help = 'generate coredump for specific pid(all pids py default)')
+-	parser.add_argument('-o',
+-			    '--out',
+-			    default = '.',
+-			    help = 'directory to write coredumps to')
+-
+-	opts = vars(parser.parse_args())
+-
+-	coredump(opts)
++    desc = 'CRIU core dump'
++    parser = argparse.ArgumentParser(description=desc,
++                                     formatter_class=argparse.RawTextHelpFormatter)
++
++    parser.add_argument('-i',
++                        '--in',
++                        default='.',
++                        help='directory where to get images from')
++    parser.add_argument('-p',
++                        '--pid',
++                        type=int,
++                        help='generate coredump for specific pid(all pids py default)')
++    parser.add_argument('-o',
++                        '--out',
++                        default='.',
++                        help='directory to write coredumps to')
++
++    opts = vars(parser.parse_args())
++
++    coredump(opts)
++
+ 
+ if __name__ == '__main__':
+-	main()
++    main()
+-- 
+2.35.1
+

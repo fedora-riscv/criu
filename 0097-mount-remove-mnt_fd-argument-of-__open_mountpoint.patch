@@ -1,0 +1,116 @@
+From e1d20922e907d173d7f3308c00440d93e21bb568 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 17 Dec 2021 15:13:35 +0300
+Subject: [PATCH 097/245] mount: remove mnt_fd argument of __open_mountpoint
+
+Only place where we used __open_mountpoint with non -1 mnt_fd is
+open_mountpoint. Let's use check_mountpoint_fd for this case, so that we
+now can remove mnt_id argument. Also now __open_mountpoint actually
+always does open.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/fsnotify.c      |  4 ++--
+ criu/include/mount.h |  2 +-
+ criu/mount.c         | 26 ++++++++++++--------------
+ 3 files changed, 15 insertions(+), 17 deletions(-)
+
+diff --git a/criu/fsnotify.c b/criu/fsnotify.c
+index b5dd15dd8..22fb74973 100644
+--- a/criu/fsnotify.c
++++ b/criu/fsnotify.c
+@@ -132,7 +132,7 @@ static char *alloc_openable(unsigned int s_dev, unsigned long i_ino, FhEntry *f_
+ 		if (!mnt_is_dir(m))
+ 			continue;
+ 
+-		mntfd = __open_mountpoint(m, -1);
++		mntfd = __open_mountpoint(m);
+ 		pr_debug("\t\tTrying via mntid %d root %s ns_mountpoint @%s (%d)\n", m->mnt_id, m->root,
+ 			 m->ns_mountpoint, mntfd);
+ 		if (mntfd < 0)
+@@ -206,7 +206,7 @@ static int open_handle(unsigned int s_dev, unsigned long i_ino, FhEntry *f_handl
+ 		if (m->s_dev != s_dev || !mnt_is_dir(m))
+ 			continue;
+ 
+-		mntfd = __open_mountpoint(m, -1);
++		mntfd = __open_mountpoint(m);
+ 		if (mntfd < 0) {
+ 			pr_warn("Can't open mount for s_dev %x, continue\n", s_dev);
+ 			continue;
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 23448d5fc..3f3a67afa 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -110,7 +110,7 @@ extern struct ns_id *lookup_nsid_by_mnt_id(int mnt_id);
+ 
+ extern int open_mount(unsigned int s_dev);
+ extern int check_mountpoint_fd(struct mount_info *pm, int mnt_fd);
+-extern int __open_mountpoint(struct mount_info *pm, int mnt_fd);
++extern int __open_mountpoint(struct mount_info *pm);
+ extern int mnt_is_dir(struct mount_info *pm);
+ extern int open_mountpoint(struct mount_info *pm);
+ 
+diff --git a/criu/mount.c b/criu/mount.c
+index f6347fd9d..ab6d3ed10 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -1054,20 +1054,18 @@ int check_mountpoint_fd(struct mount_info *pm, int mnt_fd)
+  * mnt_fd is a file descriptor on the mountpoint, which is closed in an error case.
+  * If mnt_fd is -1, the mountpoint will be opened by this function.
+  */
+-int __open_mountpoint(struct mount_info *pm, int mnt_fd)
++int __open_mountpoint(struct mount_info *pm)
+ {
+-	if (mnt_fd == -1) {
+-		int mntns_root;
++	int mntns_root, mnt_fd;
+ 
+-		mntns_root = mntns_get_root_fd(pm->nsid);
+-		if (mntns_root < 0)
+-			return -1;
++	mntns_root = mntns_get_root_fd(pm->nsid);
++	if (mntns_root < 0)
++		return -1;
+ 
+-		mnt_fd = openat(mntns_root, pm->ns_mountpoint, O_RDONLY);
+-		if (mnt_fd < 0) {
+-			pr_perror("Can't open %s", pm->ns_mountpoint);
+-			return -1;
+-		}
++	mnt_fd = openat(mntns_root, pm->ns_mountpoint, O_RDONLY);
++	if (mnt_fd < 0) {
++		pr_perror("Can't open %s", pm->ns_mountpoint);
++		return -1;
+ 	}
+ 
+ 	if (check_mountpoint_fd(pm, mnt_fd)) {
+@@ -1086,7 +1084,7 @@ int open_mount(unsigned int s_dev)
+ 	if (!m)
+ 		return -ENOENT;
+ 
+-	return __open_mountpoint(m, -1);
++	return __open_mountpoint(m);
+ }
+ 
+ /* Bind-mount a mount point in a temporary place without children */
+@@ -1350,7 +1348,7 @@ int open_mountpoint(struct mount_info *pm)
+ 
+ 	/* No overmounts and children - the entire mount is visible */
+ 	if (list_empty(&pm->children) && !mnt_is_overmounted(pm))
+-		return __open_mountpoint(pm, -1);
++		return __open_mountpoint(pm);
+ 
+ 	pr_info("Mount is not fully visible %s\n", pm->mountpoint);
+ 
+@@ -1413,7 +1411,7 @@ int open_mountpoint(struct mount_info *pm)
+ 		goto err;
+ 	}
+ 
+-	return __open_mountpoint(pm, fd);
++	return fd < 0 ? __open_mountpoint(pm) : check_mountpoint_fd(pm, fd);
+ err:
+ 	if (ns_old >= 0)
+ 		/* coverity[check_return] */
+-- 
+2.35.1
+

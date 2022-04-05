@@ -1,0 +1,45 @@
+From fa1c38177f1d49a7cfe506a5cfb4c8cd8231a21e Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 14 Jan 2022 19:29:08 +0300
+Subject: [PATCH 222/245] ci: make others/mnt_ext_dev also run for old mount
+ engine
+
+Now when we switched to mount-v2 by default to check old mount engine we
+need to explicitly run with --mntns-compat-mode option.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ scripts/ci/run-ci-tests.sh     | 3 +++
+ test/others/mnt-ext-dev/run.sh | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/ci/run-ci-tests.sh b/scripts/ci/run-ci-tests.sh
+index dd7c49d63..22420b922 100755
+--- a/scripts/ci/run-ci-tests.sh
++++ b/scripts/ci/run-ci-tests.sh
+@@ -237,6 +237,9 @@ bash -x ./test/jenkins/criu-inhfd.sh
+ 
+ if [ -z "$SKIP_EXT_DEV_TEST" ]; then
+ 	make -C test/others/mnt-ext-dev/ run
++	if criu/criu check --feature move_mount_set_group; then
++		EXTRA_OPTS=--mntns-compat-mode make -C test/others/mnt-ext-dev/ run
++	fi
+ fi
+ 
+ make -C test/others/make/ run CC="$CC"
+diff --git a/test/others/mnt-ext-dev/run.sh b/test/others/mnt-ext-dev/run.sh
+index 9803a8f77..5a1f44450 100755
+--- a/test/others/mnt-ext-dev/run.sh
++++ b/test/others/mnt-ext-dev/run.sh
+@@ -11,7 +11,7 @@ dev=`losetup --find --show zdtm.loop`
+ mkdir -p ../../dev
+ cp -ap $dev ../../dev
+ export ZDTM_MNT_EXT_DEV=$dev
+-python ../../zdtm.py run -t zdtm/static/mnt_ext_dev || ret=$?
++python ../../zdtm.py run $EXTRA_OPTS -t zdtm/static/mnt_ext_dev || ret=$?
+ losetup -d $dev
+ unlink zdtm.loop
+ exit $ret
+-- 
+2.35.1
+

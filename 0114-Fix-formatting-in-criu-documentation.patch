@@ -1,0 +1,44 @@
+From 103e7ed6f355acd93dc090f4e63e98c7c941f12b Mon Sep 17 00:00:00 2001
+From: Ashutosh Mehra <asmehra@redhat.com>
+Date: Wed, 26 Jan 2022 14:14:38 -0500
+Subject: [PATCH 114/245] Fix formatting in criu documentation
+
+Signed-off-by: Ashutosh Mehra <asmehra@redhat.com>
+---
+ Documentation/criu.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/criu.txt b/Documentation/criu.txt
+index f41b1898c..57b791138 100644
+--- a/Documentation/criu.txt
++++ b/Documentation/criu.txt
+@@ -419,7 +419,7 @@ By default the option is set to *fpu* and *ins*.
+     Set the method to be used to validate open files. Validation is done
+     to ensure that the version of the file being restored is the same
+     version when it was dumped.
+-
+++
+ The 'mode' may be one of the following:
+ 
+     *filesize*:::
+@@ -532,7 +532,7 @@ usually need to be escaped from shell.
+     Restore cgroups configuration associated with a task from the image.
+     Controllers are always restored in an optimistic way -- if already present
+     in system, *criu* reuses it, otherwise it will be created.
+-
+++
+ The 'mode' may be one of the following:
+ 
+     *none*:::   Do not restore cgroup properties but require cgroup to
+@@ -656,7 +656,7 @@ are not adequate, but this can be suppressed by using *--cpu-cap=none*.
+     Set the method to be used to validate open files. Validation is done
+     to ensure that the version of the file being restored is the same
+     version when it was dumped.
+-
+++
+ The 'mode' may be one of the following:
+ 
+     *filesize*:::
+-- 
+2.35.1
+

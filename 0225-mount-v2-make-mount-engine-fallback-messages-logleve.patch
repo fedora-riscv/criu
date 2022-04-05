@@ -1,0 +1,51 @@
+From 10b38162535149095ee7290d98632043c63a21e9 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Sun, 20 Mar 2022 19:38:34 +0300
+Subject: [PATCH 225/245] mount-v2: make mount engine fallback messages
+ loglevel debug
+
+On pre v5.15 kernel we don't have MOVE_MOUNT_SET_GROUP support and thus
+all our ci logs are filled with "fallback" messages. Let's decrease log
+level to debug, so that we don't see it in ci logs.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/config.c   | 2 +-
+ criu/mount-v2.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/criu/config.c b/criu/config.c
+index 8b6d105ae..28641cf0c 100644
+--- a/criu/config.c
++++ b/criu/config.c
+@@ -1110,7 +1110,7 @@ int check_options(void)
+ 		return 1;
+ 	} else if (!opts.mntns_compat_mode && opts.mode == CR_RESTORE) {
+ 		if (check_mount_v2()) {
+-			pr_warn("Mount engine fallback to --mntns-compat-mode mode\n");
++			pr_debug("Mount engine fallback to --mntns-compat-mode mode\n");
+ 			opts.mntns_compat_mode = true;
+ 		}
+ 	}
+diff --git a/criu/mount-v2.c b/criu/mount-v2.c
+index ec3965140..6772072de 100644
+--- a/criu/mount-v2.c
++++ b/criu/mount-v2.c
+@@ -33,12 +33,12 @@ LIST_HEAD(sharing_groups);
+ int check_mount_v2(void)
+ {
+ 	if (!kdat.has_move_mount_set_group) {
+-		pr_warn("Mounts-v2 requires MOVE_MOUNT_SET_GROUP support\n");
++		pr_debug("Mounts-v2 requires MOVE_MOUNT_SET_GROUP support\n");
+ 		return -1;
+ 	}
+ 
+ 	if (!kdat.has_openat2) {
+-		pr_warn("Mounts-v2 requires openat2 support\n");
++		pr_debug("Mounts-v2 requires openat2 support\n");
+ 		return -1;
+ 	}
+ 
+-- 
+2.35.1
+

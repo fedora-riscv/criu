@@ -1,0 +1,126 @@
+From 10fa87c08c22d7d7ddca1fbd1c2704f96c079639 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 22 Oct 2021 17:56:37 +0300
+Subject: [PATCH 024/245] util: use nftw in rmrf helper
+
+This simplifies the code by removing excess recursion and reusing
+standard function to walk over file-tree instead of opencoding it.
+
+This addresses problem mentioned in my review comment:
+https://github.com/checkpoint-restore/criu/pull/1495#discussion_r677554523
+
+Fixes: 0db135ac4 ("util: add rm -rf function")
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/apparmor.c     |  2 +-
+ criu/include/util.h |  4 ++--
+ criu/util.c         | 46 ++++++++++++++-------------------------------
+ 3 files changed, 17 insertions(+), 35 deletions(-)
+
+diff --git a/criu/apparmor.c b/criu/apparmor.c
+index 328fc606b..f9ad79619 100644
+--- a/criu/apparmor.c
++++ b/criu/apparmor.c
+@@ -630,7 +630,7 @@ int suspend_aa(void)
+ 	}
+ 
+ 	ret = do_suspend(true);
+-	if (rm_rf(policydir) < 0)
++	if (rmrf(policydir) < 0)
+ 		pr_err("failed removing policy dir %s\n", policydir);
+ 
+ 	return ret;
+diff --git a/criu/include/util.h b/criu/include/util.h
+index a2dac2233..19d378fc5 100644
+--- a/criu/include/util.h
++++ b/criu/include/util.h
+@@ -284,8 +284,8 @@ int setup_tcp_server(char *type, char *addr, unsigned short *port);
+ int run_tcp_server(bool daemon_mode, int *ask, int cfd, int sk);
+ int setup_tcp_client(char *hostname);
+ 
+-/* *dir should be writable and at least PATH_MAX long */
+-int rm_rf(char *dir);
++/* path should be writable and no more than PATH_MAX long */
++int rmrf(char *path);
+ 
+ #define LAST_PID_PATH "sys/kernel/ns_last_pid"
+ #define PID_MAX_PATH  "sys/kernel/pid_max"
+diff --git a/criu/util.c b/criu/util.c
+index 06124c220..414879971 100644
+--- a/criu/util.c
++++ b/criu/util.c
+@@ -1,4 +1,4 @@
+-#define _XOPEN_SOURCE
++#define _XOPEN_SOURCE 500
+ 
+ #include <stdio.h>
+ #include <stdarg.h>
+@@ -26,6 +26,7 @@
+ #include <netinet/in.h>
+ #include <netinet/tcp.h>
+ #include <sched.h>
++#include <ftw.h>
+ 
+ #include "linux/mount.h"
+ 
+@@ -1613,44 +1614,25 @@ ssize_t write_all(int fd, const void *buf, size_t size)
+ 	return n;
+ }
+ 
+-int rm_rf(char *target)
++static int remove_one(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf)
+ {
+-	int offset = strlen(target);
+-	DIR *dir = NULL;
+-	struct dirent *de;
+-	int ret = -1;
++	int ret;
+ 
+-	dir = opendir(target);
+-	if (!dir) {
+-		pr_perror("unable to open %s", target);
++	ret = remove(fpath);
++	if (ret) {
++		pr_perror("rmrf: unable to remove %s", fpath);
+ 		return -1;
+ 	}
+ 
+-	while ((de = readdir(dir))) {
+-		int n;
+-
+-		if (dir_dots(de))
+-			continue;
+-
+-		n = snprintf(target + offset, PATH_MAX - offset, "/%s", de->d_name);
+-		if (n < 0 || n >= PATH_MAX) {
+-			pr_err("snprintf failed\n");
+-			goto out;
+-		}
+-
+-		if (de->d_type == DT_DIR && rm_rf(target))
+-			goto out;
++	return 0;
++}
+ 
+-		if (remove(target) < 0) {
+-			pr_perror("unable to remove %s", target);
+-			goto out;
+-		}
+-	}
++#define NFTW_FD_MAX 64
+ 
+-	ret = 0;
+-out:
+-	target[offset] = 0;
+-	return ret;
++int rmrf(char *path)
++{
++	pr_debug("rmrf: removing %s\n", path);
++	return nftw(path, remove_one, NFTW_FD_MAX, FTW_DEPTH | FTW_PHYS);
+ }
+ 
+ __attribute__((returns_twice)) static pid_t raw_legacy_clone(unsigned long flags, int *pidfd)
+-- 
+2.35.1
+

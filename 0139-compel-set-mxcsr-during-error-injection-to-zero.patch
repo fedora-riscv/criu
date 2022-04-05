@@ -1,0 +1,45 @@
+From 509bbef51ab2f3ed3d4156c07ca03dbb0ad63c29 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Wed, 9 Mar 2022 08:40:35 +0000
+Subject: [PATCH 139/245] compel: set mxcsr during error injection to zero
+
+During error injection tests there are random values loaded in some of
+the registers. The kernel, however, has the following check:
+
+    if (mxcsr[0] & ~mxcsr_feature_mask)
+        return -EINVAL;
+
+So depending on the random values loaded mxcsr might have values that
+the kernel rejects with EINVAL. Setting mxcsr to zero during the tests
+lets the error injection test pass.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ compel/arch/x86/src/lib/infect.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/compel/arch/x86/src/lib/infect.c b/compel/arch/x86/src/lib/infect.c
+index de9013c27..0d3e9e9a0 100644
+--- a/compel/arch/x86/src/lib/infect.c
++++ b/compel/arch/x86/src/lib/infect.c
+@@ -272,6 +272,17 @@ static void validate_random_xstate(struct xsave_struct *xsave)
+ 
+ 	/* No reserved bits may be set */
+ 	memset(&hdr->reserved, 0, sizeof(hdr->reserved));
++
++	/*
++	 * While using PTRACE_SETREGSET the kernel checks that
++	 * "Reserved bits in MXCSR must be zero."
++	 * if (mxcsr[0] & ~mxcsr_feature_mask)
++	 *	return -EINVAL;
++	 *
++	 * As the mxcsr_feature_mask depends on the CPU the easiest solution for
++	 * this error injection test is to set mxcsr just to zero.
++	 */
++	xsave->i387.mxcsr = 0;
+ }
+ 
+ /*
+-- 
+2.35.1
+

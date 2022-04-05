@@ -1,0 +1,37 @@
+From 41df675d49afa4bb2e68fd0184ea1656b7d9900f Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Mon, 21 Mar 2022 10:19:29 +0300
+Subject: [PATCH 226/245] mount: make error messages differ in different places
+
+We have three of "Can't mount at %s", let's distinguish simple mount
+from bind-mount and re-mount to make log reading easier.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 85fcb8843..8b6cdaf45 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -2485,14 +2485,14 @@ do_bind:
+ 	}
+ 
+ 	if (mount(root, service_mountpoint(mi), NULL, MS_BIND | (mi->flags & MS_REC), NULL) < 0) {
+-		pr_perror("Can't mount at %s", service_mountpoint(mi));
++		pr_perror("Can't bind-mount at %s", service_mountpoint(mi));
+ 		goto err;
+ 	}
+ 
+ 	mflags = mi->flags & (~MS_PROPAGATE);
+ 	if (!mi->bind || mflags != (mi->bind->flags & (~MS_PROPAGATE)))
+ 		if (mount(NULL, service_mountpoint(mi), NULL, MS_BIND | MS_REMOUNT | mflags, NULL)) {
+-			pr_perror("Can't mount at %s", service_mountpoint(mi));
++			pr_perror("Can't re-mount at %s", service_mountpoint(mi));
+ 			goto err;
+ 		}
+ 
+-- 
+2.35.1
+

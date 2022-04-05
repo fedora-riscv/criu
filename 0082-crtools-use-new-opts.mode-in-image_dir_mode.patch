@@ -1,0 +1,48 @@
+From bec81335ad40077e8194c3bf7b9c9fa31098046f Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 15 Dec 2021 10:49:42 +0300
+Subject: [PATCH 082/245] crtools: use new opts.mode in image_dir_mode
+
+Also while on it there is no "cpuinfo restore", let's remove it.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/crtools.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/criu/crtools.c b/criu/crtools.c
+index d10d7f7d0..7bf92ffd0 100644
+--- a/criu/crtools.c
++++ b/criu/crtools.c
+@@ -56,14 +56,23 @@ void flush_early_log_to_stderr(void)
+ 
+ static int image_dir_mode(char *argv[], int optind)
+ {
+-	if (!strcmp(argv[optind], "dump") || !strcmp(argv[optind], "pre-dump") ||
+-	    (!strcmp(argv[optind], "cpuinfo") && !strcmp(argv[optind + 1], "dump")))
++	switch (opts.mode) {
++	case CR_DUMP:
++		/* fallthrough */
++	case CR_PRE_DUMP:
+ 		return O_DUMP;
+-
+-	if (!strcmp(argv[optind], "restore") ||
+-	    (!strcmp(argv[optind], "cpuinfo") && !strcmp(argv[optind + 1], "restore")))
++	case CR_RESTORE:
+ 		return O_RSTR;
++	case CR_CPUINFO:
++		if (!strcmp(argv[optind + 1], "dump"))
++			return O_DUMP;
++		/* fallthrough */
++	default:
++		return -1;
++	}
+ 
++	/* never reached */
++	BUG();
+ 	return -1;
+ }
+ 
+-- 
+2.35.1
+

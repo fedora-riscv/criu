@@ -1,0 +1,33 @@
+From 9dc8da68e08544940403a0159f10c3df9bf664b7 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 29 May 2020 15:18:10 +0300
+Subject: [PATCH 197/245] mount: use ns_mountpoint in mnt_depth
+
+Function mnt_depth is only used on real mounts when building mount tree for
+single namespace, thats why we can compare those mounts with ns_mountpoint
+safely.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/2be0ff276
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index 1ffd3da8d..0c1a67aab 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -392,7 +392,7 @@ static unsigned int mnt_depth(struct mount_info *m)
+ 	unsigned int depth = 0;
+ 	char *c;
+ 
+-	for (c = m->mountpoint; *c != '\0'; c++)
++	for (c = m->ns_mountpoint; *c != '\0'; c++)
+ 		if (*c == '/')
+ 			depth++;
+ 
+-- 
+2.35.1
+

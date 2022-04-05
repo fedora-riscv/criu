@@ -1,0 +1,120 @@
+From 942d9f5e0d484eefbdef9ee69c326aa176da4d10 Mon Sep 17 00:00:00 2001
+From: Stanislav Kinsburskiy <skinsbursky@virtuozzo.com>
+Date: Mon, 11 Jul 2016 14:14:15 +0300
+Subject: [PATCH 200/245] files-reg: split create_ghost_dentry out of
+ create_ghost
+
+Will use it to make create_ghost work with mount-v2.
+
+Signed-off-by: Stanislav Kinsburskiy <skinsbursky@virtuozzo.com>
+Signed-off-by: Cyrill Gorcunov <gorcunov@virtuozzo.com>
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/156fa4877
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/069bba0ad
+
+Changes: merge fixup.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/files-reg.c | 68 +++++++++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 29 deletions(-)
+
+diff --git a/criu/files-reg.c b/criu/files-reg.c
+index 141843a7a..309ecf77c 100644
+--- a/criu/files-reg.c
++++ b/criu/files-reg.c
+@@ -355,32 +355,11 @@ err:
+ 	return ret;
+ }
+ 
+-static int create_ghost(struct ghost_file *gf, GhostFileEntry *gfe, struct cr_img *img)
++static int create_ghost_dentry(char *path, GhostFileEntry *gfe, struct cr_img *img)
+ {
+-	struct mount_info *mi;
+-	char path[PATH_MAX];
+-	int ret, root_len;
++	int ret = -1;
+ 	char *msg;
+ 
+-	root_len = ret = rst_get_mnt_root(gf->remap.rmnt_id, path, sizeof(path));
+-	if (ret < 0) {
+-		pr_err("The %d mount is not found for ghost\n", gf->remap.rmnt_id);
+-		goto err;
+-	}
+-
+-	/* Add a '/' only if we have no at the end */
+-	if (path[root_len - 1] != '/') {
+-		path[root_len++] = '/';
+-		path[root_len] = '\0';
+-	}
+-
+-	snprintf(path + root_len, sizeof(path) - root_len, "%s", gf->remap.rpath);
+-	ret = -1;
+-
+-	mi = lookup_mnt_id(gf->remap.rmnt_id);
+-	/* We get here while in service mntns */
+-	if (mi && try_remount_writable(mi, false))
+-		goto err;
+ again:
+ 	if (S_ISFIFO(gfe->mode)) {
+ 		if ((ret = mknod(path, gfe->mode, 0)) < 0)
+@@ -417,16 +396,47 @@ again:
+ 		goto err;
+ 	}
+ 
+-	strcpy(gf->remap.rpath, path + root_len);
+-	pr_debug("Remap rpath is %s\n", gf->remap.rpath);
++	ret = 0;
++err:
++	return ret;
++}
++
++static int create_ghost(struct ghost_file *gf, GhostFileEntry *gfe, struct cr_img *img)
++{
++	struct mount_info *mi;
++	char path[PATH_MAX];
++	int ret, root_len;
++
++	root_len = ret = rst_get_mnt_root(gf->remap.rmnt_id, path, sizeof(path));
++	if (ret < 0) {
++		pr_err("The %d mount is not found for ghost\n", gf->remap.rmnt_id);
++		return -1;
++	}
+ 
++	/* Add a '/' only if we have no at the end */
++	if (path[root_len - 1] != '/') {
++		path[root_len++] = '/';
++		path[root_len] = '\0';
++	}
++
++	snprintf(path + root_len, sizeof(path) - root_len, "%s", gf->remap.rpath);
+ 	ret = -1;
++
++	mi = lookup_mnt_id(gf->remap.rmnt_id);
++	/* We get here while in service mntns */
++	if (mi && try_remount_writable(mi, false))
++		return -1;
++
++	ret = create_ghost_dentry(path, gfe, img);
++	if (ret)
++		return -1;
++
+ 	if (ghost_apply_metadata(path, gfe))
+-		goto err;
++		return -1;
+ 
+-	ret = 0;
+-err:
+-	return ret;
++	strcpy(gf->remap.rpath, path + root_len);
++	pr_debug("Remap rpath is %s\n", gf->remap.rpath);
++	return 0;
+ }
+ 
+ static inline void ghost_path(char *path, int plen, struct reg_file_info *rfi, RemapFilePathEntry *rpe)
+-- 
+2.35.1
+

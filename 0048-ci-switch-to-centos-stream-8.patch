@@ -1,0 +1,29 @@
+From c80d6aab7f205be069e2b46dbd8abc3ca910d336 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Wed, 24 Nov 2021 16:13:01 +0000
+Subject: [PATCH 048/245] ci: switch to centos-stream-8
+
+CentOS 8 goes EOL at the end of 2021. This switches our CentOS 8 based
+tests to CentOS Stream 8 which should be supported until 2024.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ .cirrus.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.cirrus.yml b/.cirrus.yml
+index 235b9821e..ef0de54e9 100644
+--- a/.cirrus.yml
++++ b/.cirrus.yml
+@@ -27,7 +27,7 @@ task:
+ 
+   compute_engine_instance:
+     image_project: centos-cloud
+-    image: family/centos-8
++    image: family/centos-stream-8
+     platform: linux
+     cpu: 4
+     memory: 8G
+-- 
+2.35.1
+

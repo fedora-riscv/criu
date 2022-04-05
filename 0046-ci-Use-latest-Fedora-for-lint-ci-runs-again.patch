@@ -1,0 +1,30 @@
+From 985c6c5f10872bade13f7085bd0eaeaef1ea648a Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 24 Nov 2021 11:37:58 +0300
+Subject: [PATCH 046/245] ci: Use latest Fedora for lint ci runs again
+
+Now when we fixed clang-format complains in zdtm, let's switch to lates
+clang-format available. This is effectively a revert of commit 07a2f0265
+("ci: use Fedora 34 for lint CI runs").
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ .github/workflows/lint.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.github/workflows/lint.yml b/.github/workflows/lint.yml
+index 49eb6aaac..50b241e9f 100644
+--- a/.github/workflows/lint.yml
++++ b/.github/workflows/lint.yml
+@@ -6,7 +6,7 @@ jobs:
+   build:
+     runs-on: ubuntu-latest
+     container:
+-      image: registry.fedoraproject.org/fedora:34
++      image: registry.fedoraproject.org/fedora:latest
+     steps:
+     - name: Install tools
+       run: sudo dnf -y install git make python3-flake8 ShellCheck clang-tools-extra which findutils
+-- 
+2.35.1
+

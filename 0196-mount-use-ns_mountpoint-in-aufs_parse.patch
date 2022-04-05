@@ -1,0 +1,31 @@
+From 1f9b525b6f7c9a4a31f0f05b695dbb1c2e0d2592 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Fri, 29 May 2020 14:40:01 +0300
+Subject: [PATCH 196/245] mount: use ns_mountpoint in aufs_parse
+
+At this point ns_mountpoint is equal to mountpoint.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/c70bd7de0
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/proc_parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/proc_parse.c b/criu/proc_parse.c
+index fd859a5c0..413596fbb 100644
+--- a/criu/proc_parse.c
++++ b/criu/proc_parse.c
+@@ -2707,7 +2707,7 @@ int aufs_parse(struct mount_info *new)
+ {
+ 	int ret = 0;
+ 
+-	if (!strcmp(new->mountpoint, "./")) {
++	if (!strcmp(new->ns_mountpoint, "./")) {
+ 		opts.aufs = true;
+ 		ret = parse_aufs_branches(new);
+ 	}
+-- 
+2.35.1
+

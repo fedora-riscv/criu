@@ -1,0 +1,58 @@
+From 62d2a03d575b7876fb28e54c44407d9e398ed2f8 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 27 May 2020 11:50:34 +0300
+Subject: [PATCH 183/245] mount: add helper mnt_get_external_bind_nodev
+
+Will use it to find shared mount we can bind from and also can inherit
+external slavery. Device-external can't give us external slavery.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/dcd952c4c
+
+Changes: switch to mnt_bind_pick helper.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h |  1 +
+ criu/mount.c         | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 071c0246e..050141058 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -180,6 +180,7 @@ extern bool has_mounted_external_bind(struct mount_info *mi);
+ extern bool rst_mnt_is_root(struct mount_info *mi);
+ extern struct mount_info *mnt_get_root_bind(struct mount_info *mi);
+ extern bool mnt_is_root_bind(struct mount_info *mi);
++extern struct mount_info *mnt_get_external_bind_nodev(struct mount_info *mi);
+ 
+ extern struct mount_info *mnt_bind_pick(struct mount_info *mi,
+ 					bool (*pick)(struct mount_info *mi, struct mount_info *bind));
+diff --git a/criu/mount.c b/criu/mount.c
+index 8d0a17d96..632da6f5c 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -646,6 +646,19 @@ static struct mount_info *can_receive_master_from_root(struct mount_info *mi)
+ 	return mnt_bind_pick(mi, __can_receive_master_from_root);
+ }
+ 
++static bool __mnt_is_external_bind_nodev(struct mount_info *mi, struct mount_info *bind)
++{
++	if (bind->external && !mnt_is_dev_external(bind) && is_sub_path(mi->root, bind->root))
++		return true;
++
++	return false;
++}
++
++struct mount_info *mnt_get_external_bind_nodev(struct mount_info *mi)
++{
++	return mnt_bind_pick(mi, __mnt_is_external_bind_nodev);
++}
++
+ /*
+  * Having two children with same mountpoint is unsupported. That can happen in
+  * case of mount propagation inside of shared mounts, in that case it is hard
+-- 
+2.35.1
+

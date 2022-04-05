@@ -1,0 +1,39 @@
+From 817bbf40251e54cc1441250a16e192f7f18a80b6 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 21 Oct 2021 11:47:01 +0300
+Subject: [PATCH 022/245] pie/restorer: remove excess hash printf specifier
+
+We use here "%#x" printf specifier in pie code, but sbuf_printf core pie
+printing function knows nothing about '#' specifier. More over simple
+"%x" in pie does same as "%#x" in stdio printf, see print_hex* functions
+add "0x" before hex numbers.
+
+We've got this error on vzt-cpt runs in Virtuozzo:
+
+(04.750271) pie: 158: Adjust id
+Error: Unknown printf format %#
+
+So to fix it we can just remove '#'.
+
+Fixes: ecd432fe2 ("timerfd: Implement c/r procedure")
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/pie/restorer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/criu/pie/restorer.c b/criu/pie/restorer.c
+index 4304691bb..0051452e4 100644
+--- a/criu/pie/restorer.c
++++ b/criu/pie/restorer.c
+@@ -1013,7 +1013,7 @@ static int timerfd_arm(struct task_restore_args *args)
+ 
+ 			t->val.it_value.tv_sec += (time_t)ts.tv_sec;
+ 
+-			pr_debug("Adjust id %#x it_value(%llu, %llu) -> it_value(%llu, %llu)\n", t->id,
++			pr_debug("Adjust id %x it_value(%llu, %llu) -> it_value(%llu, %llu)\n", t->id,
+ 				 (unsigned long long)ts.tv_sec, (unsigned long long)ts.tv_nsec,
+ 				 (unsigned long long)t->val.it_value.tv_sec,
+ 				 (unsigned long long)t->val.it_value.tv_nsec);
+-- 
+2.35.1
+

@@ -1,0 +1,96 @@
+From 11e288fdab74a81a6ad678c0d6e24e1f6e689185 Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@google.com>
+Date: Sun, 20 Mar 2022 22:11:19 -0700
+Subject: [PATCH 227/245] zdtm: use unique holder for cgroups
+
+The idea that each zdtm.py should have own helder, so that two zdtm.py that are
+running on the same host don't effect each other.
+
+Fixes: #1774
+Signed-off-by: Andrei Vagin <avagin@google.com>
+---
+ test/zdtm.py             | 6 ++++--
+ test/zdtm_mount_cgroups  | 4 +++-
+ test/zdtm_umount_cgroups | 6 ++++--
+ 3 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/test/zdtm.py b/test/zdtm.py
+index f15420a65..a8704b3d7 100755
+--- a/test/zdtm.py
++++ b/test/zdtm.py
+@@ -27,6 +27,7 @@ import subprocess
+ import sys
+ import tempfile
+ import time
++import uuid
+ from builtins import input, int, open, range, str, zip
+ 
+ import yaml
+@@ -38,6 +39,7 @@ from zdtm.criu_config import criu_config
+ STREAMED_IMG_FILE_NAME = "img.criu"
+ 
+ prev_line = None
++uuid = uuid.uuid4()
+ 
+ 
+ def alarm(*args):
+@@ -617,12 +619,12 @@ class zdtm_test:
+         if not os.access("zdtm/lib/libzdtmtst.a", os.F_OK):
+             subprocess.check_call(["make", "-C", "zdtm/"])
+         subprocess.check_call(
+-            ["flock", "zdtm_mount_cgroups.lock", "./zdtm_mount_cgroups"])
++            ["flock", "zdtm_mount_cgroups.lock", "./zdtm_mount_cgroups", str(uuid)])
+ 
+     @staticmethod
+     def cleanup():
+         subprocess.check_call(
+-            ["flock", "zdtm_mount_cgroups.lock", "./zdtm_umount_cgroups"])
++            ["flock", "zdtm_mount_cgroups.lock", "./zdtm_umount_cgroups", str(uuid)])
+ 
+ 
+ def load_module_from_file(name, path):
+diff --git a/test/zdtm_mount_cgroups b/test/zdtm_mount_cgroups
+index 34e0e85ca..a99e16361 100755
+--- a/test/zdtm_mount_cgroups
++++ b/test/zdtm_mount_cgroups
+@@ -4,13 +4,15 @@
+ # Error (cgroup.c:768): cg: Set 3 is not subset of 2
+ # so lets create all test controllers before executing tests.
+ 
++uuid=$1
++
+ cat /proc/self/cgroup | grep -q zdtmtst.defaultroot && exit
+ 
+ tdir=`mktemp -d zdtm.XXXXXX`
+ for i in "zdtmtst" "zdtmtst.defaultroot"; do
+ 	mount -t cgroup -o none,name=$i zdtm $tdir &&
+ 	# a fake group prevents destroying of a controller
+-	mkdir -p $tdir/holder &&
++	mkdir -p $tdir/holder.$uuid &&
+ 	umount -l $tdir || exit 1
+ done
+ rmdir $tdir
+diff --git a/test/zdtm_umount_cgroups b/test/zdtm_umount_cgroups
+index 75a8ea28f..decd70ff0 100755
+--- a/test/zdtm_umount_cgroups
++++ b/test/zdtm_umount_cgroups
+@@ -4,12 +4,14 @@
+ 
+ cat /proc/self/cgroup | grep -q zdtmtst.defaultroot || exit 0
+ 
++uuid=$1
++
+ tdir=`mktemp -d zdtm.XXXXXX`
+ for i in "zdtmtst" "zdtmtst.defaultroot"; do
+ 	mount -t cgroup -o none,name=$i zdtm $tdir || { rmdir $tdir; exit 1; }
+ 	# remove a fake group if exists
+-	if [ -d "$tdir/holder" ]; then
+-		rmdir $tdir/holder || { umount -l $tdir && rmdir $tdir; exit 1; }
++	if [ -d "$tdir/holder.$uuid" ]; then
++		rmdir $tdir/holder.$uuid || { umount -l $tdir && rmdir $tdir; exit 1; }
+ 	fi
+ 	umount -l $tdir || exit 1;
+ done
+-- 
+2.35.1
+

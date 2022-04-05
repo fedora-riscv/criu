@@ -1,0 +1,56 @@
+From bfd24ce3b3f0c1e86001b55492a487db2f75b72d Mon Sep 17 00:00:00 2001
+From: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Date: Sat, 18 Dec 2021 10:40:11 +0300
+Subject: [PATCH 077/245] zdtm.py: clean up MAKEFLAGS env variable before
+ running make instance
+
+In most cases we run tests as:
+./test/zdtm.py run -a
+
+But it's also possible to run tests from root makefile:
+make test
+
+In this case, if criu tree have no ./test/umount2 binary
+built we get the error like:
+make[3]: *** No rule to make target 'umount2'. Stop.
+
+It's worth to mention this "3". That's because we have
+build process tree like this:
+make -> make -> make -> zdtm.py -> make umount2
+and also we have MAKEFLAGS variable set to:
+build=-r -R -f ...
+
+And that's bad because "-r" option means no builtin
+rules and -R means no builtin variables. That makes
+`make umount2` not working. Let's just cleanup this
+variable to make things work properly.
+
+Fixes: #1699
+https://github.com/checkpoint-restore/criu/issues/1699
+
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ test/zdtm.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/test/zdtm.py b/test/zdtm.py
+index b98770079..086ae0285 100755
+--- a/test/zdtm.py
++++ b/test/zdtm.py
+@@ -607,9 +607,11 @@ class zdtm_test:
+     @staticmethod
+     def available():
+         if not os.access("umount2", os.X_OK):
+-            subprocess.check_call(["make", "umount2"])
++            subprocess.check_call(
++                ["make", "umount2"], env=dict(os.environ, MAKEFLAGS=""))
+         if not os.access("zdtm_ct", os.X_OK):
+-            subprocess.check_call(["make", "zdtm_ct"])
++            subprocess.check_call(
++                ["make", "zdtm_ct"], env=dict(os.environ, MAKEFLAGS=""))
+         if not os.access("zdtm/lib/libzdtmtst.a", os.F_OK):
+             subprocess.check_call(["make", "-C", "zdtm/"])
+         subprocess.check_call(
+-- 
+2.35.1
+

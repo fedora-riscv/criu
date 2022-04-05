@@ -1,0 +1,77 @@
+From d64abf2fd7f87b87a002060cfb48366d8a5acf42 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Thu, 20 Feb 2020 10:50:42 +0300
+Subject: [PATCH 181/245] mount: put external slavery mounts to separate
+ mnt_ext_slave list
+
+We need to put mounts which need to inherit master_id from external
+mounts or from root mount into separate list, so that we can set ->bind
+on them right in propagate_siblings.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/ea592cf6e
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h |  1 +
+ criu/mount.c         | 17 ++++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index 1ceb394b6..071c0246e 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -77,6 +77,7 @@ struct mount_info {
+ 	struct list_head mnt_share;	 /* circular list of shared mounts */
+ 	struct list_head mnt_slave_list; /* list of slave mounts */
+ 	struct list_head mnt_slave;	 /* slave list entry */
++	struct list_head mnt_ext_slave;	 /* external slave list entry */
+ 	struct mount_info *mnt_master;	 /* slave is on master->mnt_slave_list */
+ 	struct list_head mnt_propagate;	 /* circular list of mounts which propagate from each other */
+ 	struct list_head mnt_notprop;	 /* temporary list used in can_mount_now */
+diff --git a/criu/mount.c b/criu/mount.c
+index 03d0e6da1..22c062e36 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -1059,10 +1059,12 @@ static int resolve_shared_mounts(struct mount_info *info, int root_master_id)
+ 		 * External master detected
+ 		 */
+ 		if (need_master) {
+-			if (can_receive_master_from_external(m))
+-				continue;
+-			if (can_receive_master_from_root(m))
++			if ((t = can_receive_master_from_external(m)) || (t = can_receive_master_from_root(m))) {
++				pr_debug("Detected external slavery for %d via %d\n", m->mnt_id, t->mnt_id);
++				if (m != t)
++					list_add(&m->mnt_ext_slave, &t->mnt_ext_slave);
+ 				continue;
++			}
+ 
+ 			pr_err("Mount %d %s (master_id: %d shared_id: %d) "
+ 			       "has unreachable sharing. Try --enable-external-masters.\n",
+@@ -2056,6 +2058,14 @@ static int propagate_siblings(struct mount_info *mi)
+ 		t->s_dev_rt = mi->s_dev_rt;
+ 	}
+ 
++	list_for_each_entry(t, &mi->mnt_ext_slave, mnt_ext_slave) {
++		if (t->mounted || t->bind)
++			continue;
++		pr_debug("\t\tBind ext-slave %s(%d)\n", t->ns_mountpoint, t->mnt_id);
++		t->bind = mi;
++		t->s_dev_rt = mi->s_dev_rt;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -2924,6 +2934,7 @@ struct mount_info *mnt_entry_alloc(bool rst)
+ 		INIT_LIST_HEAD(&new->children);
+ 		INIT_LIST_HEAD(&new->siblings);
+ 		INIT_LIST_HEAD(&new->mnt_slave_list);
++		INIT_LIST_HEAD(&new->mnt_ext_slave);
+ 		INIT_LIST_HEAD(&new->mnt_share);
+ 		INIT_LIST_HEAD(&new->mnt_bind);
+ 		INIT_LIST_HEAD(&new->mnt_propagate);
+-- 
+2.35.1
+

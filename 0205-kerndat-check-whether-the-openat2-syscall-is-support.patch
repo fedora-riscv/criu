@@ -1,0 +1,270 @@
+From 4fd088daf734226b17c7590420fd5bea6a5d3f7c Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 22 Dec 2021 11:07:24 +0300
+Subject: [PATCH 205/245] kerndat: check whether the openat2 syscall is
+ supported
+
+Will use openat2 + RESOLVE_NO_XDEV to detect mountpoints.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ Makefile.config                               |  2 +-
+ .../arch/arm/plugins/std/syscalls/syscall.def |  1 +
+ .../mips/plugins/std/syscalls/syscall_64.tbl  |  1 +
+ .../plugins/std/syscalls/syscall-ppc64.tbl    |  1 +
+ .../plugins/std/syscalls/syscall-s390.tbl     |  1 +
+ .../x86/plugins/std/syscalls/syscall_32.tbl   |  1 +
+ .../x86/plugins/std/syscalls/syscall_64.tbl   |  1 +
+ .../plugins/include/uapi/std/syscall-types.h  |  1 +
+ criu/cr-check.c                               | 10 ++++++++++
+ criu/include/kerndat.h                        |  1 +
+ criu/include/linux/openat2.h                  | 18 +++++++++++++++++
+ criu/include/mount-v2.h                       | 10 ++++++++++
+ criu/kerndat.c                                | 20 +++++++++++++++++++
+ scripts/feature-tests.mak                     | 12 +++++++++++
+ 14 files changed, 79 insertions(+), 1 deletion(-)
+ create mode 100644 criu/include/linux/openat2.h
+
+diff --git a/Makefile.config b/Makefile.config
+index 6e3e1b062..14599ae8e 100644
+--- a/Makefile.config
++++ b/Makefile.config
+@@ -70,7 +70,7 @@ export DEFINES += $(FEATURE_DEFINES)
+ export CFLAGS += $(FEATURE_DEFINES)
+ 
+ FEATURES_LIST	:= TCP_REPAIR STRLCPY STRLCAT PTRACE_PEEKSIGINFO \
+-	SETPROCTITLE_INIT MEMFD TCP_REPAIR_WINDOW FSCONFIG MEMFD_CREATE
++	SETPROCTITLE_INIT MEMFD TCP_REPAIR_WINDOW FSCONFIG MEMFD_CREATE OPENAT2
+ 
+ # $1 - config name
+ define gen-feature-test
+diff --git a/compel/arch/arm/plugins/std/syscalls/syscall.def b/compel/arch/arm/plugins/std/syscalls/syscall.def
+index a422b4905..c9bccc386 100644
+--- a/compel/arch/arm/plugins/std/syscalls/syscall.def
++++ b/compel/arch/arm/plugins/std/syscalls/syscall.def
+@@ -119,4 +119,5 @@ fsconfig			431	431	(int fd, unsigned int cmd, const char *key, const char *value
+ fsmount				432	432	(int fd, unsigned int flags, unsigned int attr_flags)
+ clone3				435	435	(struct clone_args *uargs, size_t size)
+ pidfd_open			434	434	(pid_t pid, unsigned int flags)
++openat2				437	437	(int dirfd, char *pathname, struct open_how *how, size_t size)
+ pidfd_getfd			438	438	(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/arch/mips/plugins/std/syscalls/syscall_64.tbl b/compel/arch/mips/plugins/std/syscalls/syscall_64.tbl
+index 745782285..a74e694e2 100644
+--- a/compel/arch/mips/plugins/std/syscalls/syscall_64.tbl
++++ b/compel/arch/mips/plugins/std/syscalls/syscall_64.tbl
+@@ -116,4 +116,5 @@ __NR_fsconfig			5431		sys_fsconfig		(int fd, unsigned int cmd, const char *key,
+ __NR_fsmount			5432		sys_fsmount		(int fd, unsigned int flags, unsigned int attr_flags)
+ __NR_clone3			5435		sys_clone3		(struct clone_args *uargs, size_t size)
+ __NR_pidfd_open			5434		sys_pidfd_open		(pid_t pid, unsigned int flags)
++__NR_openat2			5437		sys_openat2		(int dirfd, char *pathname, struct open_how *how, size_t size)
+ __NR_pidfd_getfd		5438		sys_pidfd_getfd		(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/arch/ppc64/plugins/std/syscalls/syscall-ppc64.tbl b/compel/arch/ppc64/plugins/std/syscalls/syscall-ppc64.tbl
+index 0eceebe22..648239182 100644
+--- a/compel/arch/ppc64/plugins/std/syscalls/syscall-ppc64.tbl
++++ b/compel/arch/ppc64/plugins/std/syscalls/syscall-ppc64.tbl
+@@ -115,4 +115,5 @@ __NR_fsconfig		431		sys_fsconfig		(int fd, unsigned int cmd, const char *key, co
+ __NR_fsmount		432		sys_fsmount		(int fd, unsigned int flags, unsigned int attr_flags)
+ __NR_clone3		435		sys_clone3		(struct clone_args *uargs, size_t size)
+ __NR_pidfd_open		434		sys_pidfd_open		(pid_t pid, unsigned int flags)
++__NR_openat2		437		sys_openat2		(int dirfd, char *pathname, struct open_how *how, size_t size)
+ __NR_pidfd_getfd	438		sys_pidfd_getfd		(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/arch/s390/plugins/std/syscalls/syscall-s390.tbl b/compel/arch/s390/plugins/std/syscalls/syscall-s390.tbl
+index 93a8f34d3..169458296 100644
+--- a/compel/arch/s390/plugins/std/syscalls/syscall-s390.tbl
++++ b/compel/arch/s390/plugins/std/syscalls/syscall-s390.tbl
+@@ -115,4 +115,5 @@ __NR_fsconfig		431		sys_fsconfig		(int fd, unsigned int cmd, const char *key, co
+ __NR_fsmount		432		sys_fsmount		(int fd, unsigned int flags, unsigned int attr_flags)
+ __NR_clone3		435		sys_clone3		(struct clone_args *uargs, size_t size)
+ __NR_pidfd_open		434		sys_pidfd_open		(pid_t pid, unsigned int flags)
++__NR_openat2		437		sys_openat2		(int dirfd, char *pathname, struct open_how *how, size_t size)
+ __NR_pidfd_getfd	438		sys_pidfd_getfd		(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/arch/x86/plugins/std/syscalls/syscall_32.tbl b/compel/arch/x86/plugins/std/syscalls/syscall_32.tbl
+index 14d2e0581..4179a7f5b 100644
+--- a/compel/arch/x86/plugins/std/syscalls/syscall_32.tbl
++++ b/compel/arch/x86/plugins/std/syscalls/syscall_32.tbl
+@@ -103,4 +103,5 @@ __NR_fsconfig		431		sys_fsconfig		(int fd, unsigned int cmd, const char *key, co
+ __NR_fsmount		432		sys_fsmount		(int fd, unsigned int flags, unsigned int attr_flags)
+ __NR_clone3		435		sys_clone3		(struct clone_args *uargs, size_t size)
+ __NR_pidfd_open		434		sys_pidfd_open		(pid_t pid, unsigned int flags)
++__NR_openat2		437		sys_openat2		(int dirfd, char *pathname, struct open_how *how, size_t size)
+ __NR_pidfd_getfd	438		sys_pidfd_getfd		(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/arch/x86/plugins/std/syscalls/syscall_64.tbl b/compel/arch/x86/plugins/std/syscalls/syscall_64.tbl
+index 2f690f48f..9c27ab8b5 100644
+--- a/compel/arch/x86/plugins/std/syscalls/syscall_64.tbl
++++ b/compel/arch/x86/plugins/std/syscalls/syscall_64.tbl
+@@ -114,4 +114,5 @@ __NR_fsconfig			431		sys_fsconfig		(int fd, unsigned int cmd, const char *key, c
+ __NR_fsmount			432		sys_fsmount		(int fd, unsigned int flags, unsigned int attr_flags)
+ __NR_clone3			435		sys_clone3		(struct clone_args *uargs, size_t size)
+ __NR_pidfd_open			434		sys_pidfd_open		(pid_t pid, unsigned int flags)
++__NR_openat2		437		sys_openat2		(int dirfd, char *pathname, struct open_how *how, size_t size)
+ __NR_pidfd_getfd		438		sys_pidfd_getfd		(int pidfd, int targetfd, unsigned int flags)
+diff --git a/compel/plugins/include/uapi/std/syscall-types.h b/compel/plugins/include/uapi/std/syscall-types.h
+index cc1969c01..1eea99daa 100644
+--- a/compel/plugins/include/uapi/std/syscall-types.h
++++ b/compel/plugins/include/uapi/std/syscall-types.h
+@@ -40,6 +40,7 @@ struct rusage;
+ struct iocb;
+ struct pollfd;
+ struct clone_args;
++struct open_how;
+ 
+ typedef unsigned long aio_context_t;
+ 
+diff --git a/criu/cr-check.c b/criu/cr-check.c
+index 10d433650..52393cc8b 100644
+--- a/criu/cr-check.c
++++ b/criu/cr-check.c
+@@ -1402,6 +1402,14 @@ static int check_move_mount_set_group(void)
+ 	return 0;
+ }
+ 
++static int check_openat2(void)
++{
++	if (!kdat.has_openat2)
++		return -1;
++
++	return 0;
++}
++
+ static int (*chk_feature)(void);
+ 
+ /*
+@@ -1523,6 +1531,7 @@ int cr_check(void)
+ 		ret |= check_sockopt_buf_lock();
+ 		ret |= check_memfd_hugetlb();
+ 		ret |= check_move_mount_set_group();
++		ret |= check_openat2();
+ 	}
+ 
+ 	/*
+@@ -1638,6 +1647,7 @@ static struct feature_list feature_list[] = {
+ 	{ "sockopt_buf_lock", check_sockopt_buf_lock },
+ 	{ "memfd_hugetlb", check_memfd_hugetlb },
+ 	{ "move_mount_set_group", check_move_mount_set_group },
++	{ "openat2", check_openat2 },
+ 	{ NULL, NULL },
+ };
+ 
+diff --git a/criu/include/kerndat.h b/criu/include/kerndat.h
+index f6e3b6133..de14028f5 100644
+--- a/criu/include/kerndat.h
++++ b/criu/include/kerndat.h
+@@ -79,6 +79,7 @@ struct kerndat_s {
+ 	bool has_sockopt_buf_lock;
+ 	dev_t hugetlb_dev[HUGETLB_MAX];
+ 	bool has_move_mount_set_group;
++	bool has_openat2;
+ };
+ 
+ extern struct kerndat_s kdat;
+diff --git a/criu/include/linux/openat2.h b/criu/include/linux/openat2.h
+new file mode 100644
+index 000000000..1e9ccff05
+--- /dev/null
++++ b/criu/include/linux/openat2.h
+@@ -0,0 +1,18 @@
++#ifndef _CRIU_LINUX_OPENAT2_H
++#define _CRIU_LINUX_OPENAT2_H
++
++#include <linux/types.h>
++
++#include "common/config.h"
++
++#ifdef CONFIG_HAS_OPENAT2
++#include <linux/openat2.h>
++#else
++struct open_how {
++	__u64 flags;
++	__u64 mode;
++	__u64 resolve;
++};
++#endif
++
++#endif
+diff --git a/criu/include/mount-v2.h b/criu/include/mount-v2.h
+index 396ed9594..a2e2fa1c8 100644
+--- a/criu/include/mount-v2.h
++++ b/criu/include/mount-v2.h
+@@ -2,6 +2,7 @@
+ #define __CR_MOUNT_V2_H__
+ 
+ #include "linux/mount.h"
++#include "linux/openat2.h"
+ 
+ #include <compel/plugins/std/syscall-codes.h>
+ 
+@@ -45,4 +46,13 @@ static inline int sys_open_tree(int dfd, const char *filename, unsigned int flag
+ 	return syscall(__NR_open_tree, dfd, filename, flags);
+ }
+ 
++#ifndef RESOLVE_NO_XDEV
++#define RESOLVE_NO_XDEV 0x01 /* Block mount-point crossings (includes bind-mounts). */
++#endif
++
++static inline long sys_openat2(int dirfd, const char *pathname, struct open_how *how, size_t size)
++{
++	return syscall(__NR_openat2, dirfd, pathname, how, size);
++}
++
+ #endif /* __CR_MOUNT_V2_H__ */
+diff --git a/criu/kerndat.c b/criu/kerndat.c
+index 5e49fc116..93617012a 100644
+--- a/criu/kerndat.c
++++ b/criu/kerndat.c
+@@ -997,6 +997,22 @@ out:
+ 	return exit_code;
+ }
+ 
++static int kerndat_has_openat2(void)
++{
++	if (sys_openat2(AT_FDCWD, ".", NULL, 0) != -1) {
++		pr_err("openat2 should fail\n");
++		return -1;
++	}
++	if (errno == ENOSYS) {
++		pr_debug("No openat2 syscall support\n");
++		kdat.has_openat2 = false;
++	} else {
++		kdat.has_openat2 = true;
++	}
++
++	return 0;
++}
++
+ #define KERNDAT_CACHE_FILE     KDAT_RUNDIR "/criu.kdat"
+ #define KERNDAT_CACHE_FILE_TMP KDAT_RUNDIR "/.criu.kdat"
+ 
+@@ -1586,6 +1602,10 @@ int kerndat_init(void)
+ 		pr_err("kerndat_has_move_mount_set_group failed when initializing kerndat.\n");
+ 		ret = -1;
+ 	}
++	if (!ret && kerndat_has_openat2()) {
++		pr_err("kerndat_has_openat2 failed when initializing kerndat.\n");
++		ret = -1;
++	}
+ 
+ 	kerndat_lsm();
+ 	kerndat_mmap_min_addr();
+diff --git a/scripts/feature-tests.mak b/scripts/feature-tests.mak
+index 8df20afb7..592552cb8 100644
+--- a/scripts/feature-tests.mak
++++ b/scripts/feature-tests.mak
+@@ -184,3 +184,15 @@ int main(void)
+ 	return memfd_create(NULL, 0);
+ }
+ endef
++
++define FEATURE_TEST_OPENAT2
++
++#include <linux/openat2.h>
++
++int main(void)
++{
++	if (RESOLVE_NO_XDEV > 0)
++		return 0;
++	return 0;
++}
++endef
+-- 
+2.35.1
+

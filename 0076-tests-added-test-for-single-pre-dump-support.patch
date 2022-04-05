@@ -1,0 +1,262 @@
+From 0f5b3f1a3e005e50a294bd0601a6e3c99539a1cf Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Tue, 14 Dec 2021 13:09:19 +0000
+Subject: [PATCH 076/245] tests: added test for single pre-dump support
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ test/others/libcriu/.gitignore      |   1 +
+ test/others/libcriu/Makefile        |   1 +
+ test/others/libcriu/lib.h           |   2 +
+ test/others/libcriu/run.sh          |   1 +
+ test/others/libcriu/test_iters.c    |   2 -
+ test/others/libcriu/test_notify.c   |   2 -
+ test/others/libcriu/test_pre_dump.c | 151 ++++++++++++++++++++++++++++
+ test/others/libcriu/test_sub.c      |   2 -
+ 8 files changed, 156 insertions(+), 6 deletions(-)
+ create mode 100644 test/others/libcriu/test_pre_dump.c
+
+diff --git a/test/others/libcriu/.gitignore b/test/others/libcriu/.gitignore
+index cf1342de2..15abf07ac 100644
+--- a/test/others/libcriu/.gitignore
++++ b/test/others/libcriu/.gitignore
+@@ -4,5 +4,6 @@ test_notify
+ test_self
+ test_sub
+ test_join_ns
++test_pre_dump
+ output/
+ libcriu.so.*
+diff --git a/test/others/libcriu/Makefile b/test/others/libcriu/Makefile
+index 734e66c1a..581574da0 100644
+--- a/test/others/libcriu/Makefile
++++ b/test/others/libcriu/Makefile
+@@ -6,6 +6,7 @@ TESTS += test_notify
+ TESTS += test_iters
+ TESTS += test_errno
+ TESTS += test_join_ns
++TESTS += test_pre_dump
+ 
+ all: $(TESTS)
+ .PHONY: all
+diff --git a/test/others/libcriu/lib.h b/test/others/libcriu/lib.h
+index 6fdf8aef2..59372fca5 100644
+--- a/test/others/libcriu/lib.h
++++ b/test/others/libcriu/lib.h
+@@ -1,3 +1,5 @@
+ void what_err_ret_mean(int ret);
+ int chk_exit(int status, int want);
+ int get_version(void);
++
++#define SUCC_ECODE 42
+diff --git a/test/others/libcriu/run.sh b/test/others/libcriu/run.sh
+index 48f25a5f6..1b6c73448 100755
+--- a/test/others/libcriu/run.sh
++++ b/test/others/libcriu/run.sh
+@@ -58,6 +58,7 @@ run_test test_notify
+ if [ "$(uname -m)" = "x86_64" ]; then
+ 	# Skip this on aarch64 as aarch64 has no dirty page tracking
+ 	run_test test_iters
++	run_test test_pre_dump
+ fi
+ run_test test_errno
+ run_test test_join_ns
+diff --git a/test/others/libcriu/test_iters.c b/test/others/libcriu/test_iters.c
+index b7e325abb..edbaf87f6 100644
+--- a/test/others/libcriu/test_iters.c
++++ b/test/others/libcriu/test_iters.c
+@@ -46,8 +46,6 @@ static int next_iter(criu_predump_info pi)
+ 	return cur_iter < MAX_ITERS;
+ }
+ 
+-#define SUCC_ECODE 42
+-
+ int main(int argc, char **argv)
+ {
+ 	int pid, ret, p[2];
+diff --git a/test/others/libcriu/test_notify.c b/test/others/libcriu/test_notify.c
+index 9a54b812a..80ad3ffdc 100644
+--- a/test/others/libcriu/test_notify.c
++++ b/test/others/libcriu/test_notify.c
+@@ -10,8 +10,6 @@
+ 
+ #include "lib.h"
+ 
+-#define SUCC_ECODE 42
+-
+ static int actions_called = 0;
+ static int notify(char *action, criu_notify_arg_t na)
+ {
+diff --git a/test/others/libcriu/test_pre_dump.c b/test/others/libcriu/test_pre_dump.c
+new file mode 100644
+index 000000000..ed9cd2125
+--- /dev/null
++++ b/test/others/libcriu/test_pre_dump.c
+@@ -0,0 +1,151 @@
++#include "criu.h"
++#include <fcntl.h>
++#include <stdio.h>
++#include <errno.h>
++#include <stdlib.h>
++#include <signal.h>
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include "lib.h"
++
++static int wdir_fd, cur_imgdir = -1;
++
++static int stop = 0;
++static void sh(int sig)
++{
++	stop = 1;
++}
++
++static void open_imgdir(void)
++{
++	char p[10];
++	static int id = 0;
++
++	if (id > 0) {
++		sprintf(p, "../dir-%d", id);
++		criu_set_parent_images(p);
++	}
++	if (cur_imgdir != -1)
++		close(cur_imgdir);
++	sprintf(p, "dir-%d", ++id);
++	mkdirat(wdir_fd, p, 0700);
++	cur_imgdir = openat(wdir_fd, p, O_DIRECTORY);
++	criu_set_images_dir_fd(cur_imgdir);
++}
++
++int main(int argc, char **argv)
++{
++	int pid, ret, p[2];
++
++	wdir_fd = open(argv[2], O_DIRECTORY);
++	if (wdir_fd < 0) {
++		perror("Can't open wdir");
++		return 1;
++	}
++
++	printf("--- Start loop ---\n");
++	pipe(p);
++	pid = fork();
++	if (pid < 0) {
++		perror("Can't");
++		return -1;
++	}
++
++	if (!pid) {
++		printf("   `- loop: initializing\n");
++		if (setsid() < 0)
++			exit(1);
++		if (signal(SIGUSR1, sh) == SIG_ERR)
++			exit(1);
++
++		close(0);
++		close(1);
++		close(2);
++		close(p[0]);
++
++		ret = SUCC_ECODE;
++		write(p[1], &ret, sizeof(ret));
++		close(p[1]);
++
++		while (!stop)
++			sleep(1);
++		exit(SUCC_ECODE);
++	}
++
++	close(p[1]);
++
++	/* Wait for kid to start */
++	ret = -1;
++	read(p[0], &ret, sizeof(ret));
++	if (ret != SUCC_ECODE) {
++		printf("Error starting loop\n");
++		goto err;
++	}
++
++	/* Wait for pipe to get closed, then dump */
++	read(p[0], &ret, 1);
++	close(p[0]);
++
++	printf("--- Dump loop ---\n");
++	criu_init_opts();
++	criu_set_service_binary(argv[1]);
++	criu_set_pid(pid);
++	criu_set_log_file("dump.log");
++	criu_set_log_level(CRIU_LOG_DEBUG);
++	criu_set_track_mem(true);
++
++	open_imgdir();
++	ret = criu_pre_dump();
++	if (ret < 0) {
++		what_err_ret_mean(ret);
++		kill(pid, SIGKILL);
++		goto err;
++	}
++
++	printf("   `- Pre Dump 1 succeeded\n");
++
++	open_imgdir();
++	ret = criu_pre_dump();
++	if (ret < 0) {
++		what_err_ret_mean(ret);
++		kill(pid, SIGKILL);
++		goto err;
++	}
++
++	printf("   `- Pre Dump 2 succeeded\n");
++
++	open_imgdir();
++	ret = criu_dump();
++	if (ret < 0) {
++		what_err_ret_mean(ret);
++		kill(pid, SIGKILL);
++		goto err;
++	}
++
++	printf("   `- Final Dump succeeded\n");
++	waitpid(pid, NULL, 0);
++
++	printf("--- Restore ---\n");
++	criu_init_opts();
++	criu_set_log_level(CRIU_LOG_DEBUG);
++	criu_set_log_file("restore.log");
++	criu_set_images_dir_fd(cur_imgdir);
++
++	pid = criu_restore_child();
++	if (pid <= 0) {
++		what_err_ret_mean(pid);
++		return -1;
++	}
++
++	printf("   `- Restore returned pid %d\n", pid);
++	kill(pid, SIGUSR1);
++err:
++	if (waitpid(pid, &ret, 0) < 0) {
++		perror("   Can't wait kid");
++		return -1;
++	}
++
++	return chk_exit(ret, SUCC_ECODE);
++}
+diff --git a/test/others/libcriu/test_sub.c b/test/others/libcriu/test_sub.c
+index 697abf5d5..af1e09408 100644
+--- a/test/others/libcriu/test_sub.c
++++ b/test/others/libcriu/test_sub.c
+@@ -15,8 +15,6 @@ static void sh(int sig)
+ 	stop = 1;
+ }
+ 
+-#define SUCC_ECODE 42
+-
+ int main(int argc, char **argv)
+ {
+ 	int pid, ret, fd, p[2];
+-- 
+2.35.1
+

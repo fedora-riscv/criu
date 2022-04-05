@@ -1,0 +1,174 @@
+From 7df50d6bdc535dc62e299ef0e94e5dac29d4a7ac Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+Date: Sun, 15 Aug 2021 11:16:28 +0100
+Subject: [PATCH 149/245] zdtm: drop redundant config_inotify_irmap test
+
+The config_inotify_irmap test duplicates inotify_irmap with slight
+change to add the --force-irmap and --irmap-scan-path options in
+a configuration file.
+
+The --criu-config option of ZDTM provides more general solution
+for testing CRIU options provided in configuration files.
+
+Signed-off-by: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+---
+ scripts/ci/Makefile                        |  2 +-
+ test/Makefile                              |  2 +-
+ test/zdtm/static/Makefile                  |  1 -
+ test/zdtm/static/config_inotify_irmap.c    | 95 ----------------------
+ test/zdtm/static/config_inotify_irmap.desc |  3 -
+ 5 files changed, 2 insertions(+), 101 deletions(-)
+ delete mode 100644 test/zdtm/static/config_inotify_irmap.c
+ delete mode 100644 test/zdtm/static/config_inotify_irmap.desc
+
+diff --git a/scripts/ci/Makefile b/scripts/ci/Makefile
+index 02b4d871c..3e4d59430 100644
+--- a/scripts/ci/Makefile
++++ b/scripts/ci/Makefile
+@@ -18,7 +18,7 @@ export UNAME
+ CONTAINER_RUNTIME := docker
+ export CONTAINER_RUNTIME
+ 
+-alpine: ZDTM_OPTIONS=-x zdtm/static/binfmt_misc -x zdtm/static/netns-nf -x zdtm/static/sched_policy00 -x zdtm/static/seccomp_strict -x zdtm/static/sigaltstack -x zdtm/static/signalfd00 -x zdtm/static/config_inotify_irmap
++alpine: ZDTM_OPTIONS=-x zdtm/static/binfmt_misc -x zdtm/static/netns-nf -x zdtm/static/sched_policy00 -x zdtm/static/seccomp_strict -x zdtm/static/sigaltstack -x zdtm/static/signalfd00
+ 
+ define DOCKER_JSON
+ {
+diff --git a/test/Makefile b/test/Makefile
+index cf7dacac4..9938015e0 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -51,7 +51,7 @@ clean_root:
+ .PHONY: clean_root
+ 
+ clean: clean_root
+-	$(RM) zdtm_ct zdtm-tst-list umount2 zdtm_test_config.conf
++	$(RM) zdtm_ct zdtm-tst-list umount2
+ 	$(Q) $(RM) *.log
+ 	$(Q) $(RM) -r ./dump/
+ 	$(Q) $(MAKE) -C zdtm cleandep clean cleanout
+diff --git a/test/zdtm/static/Makefile b/test/zdtm/static/Makefile
+index 1b057c70c..33e15f85a 100644
+--- a/test/zdtm/static/Makefile
++++ b/test/zdtm/static/Makefile
+@@ -237,7 +237,6 @@ TST_NOFILE	:=				\
+ 		netns_sub_veth			\
+ 		netns_sub_sysctl	\
+ 		unlink_multiple_largefiles	\
+-		config_inotify_irmap		\
+ 		thp_disable			\
+ 		pid_file			\
+ 		selinux00			\
+diff --git a/test/zdtm/static/config_inotify_irmap.c b/test/zdtm/static/config_inotify_irmap.c
+deleted file mode 100644
+index 94585491a..000000000
+--- a/test/zdtm/static/config_inotify_irmap.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-#include <unistd.h>
+-#include <limits.h>
+-
+-#include <sys/types.h>
+-#include <sys/ioctl.h>
+-#include <sys/stat.h>
+-#include <fcntl.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <errno.h>
+-#include <sys/inotify.h>
+-#include <unistd.h>
+-#include <stdlib.h>
+-
+-#include "zdtmtst.h"
+-
+-/*
+- * This test reuses inotify_irmap test for testing configuration files
+- * functionality. For parts not related to configuration files, please
+- * refer to the original test case and it's author.
+- */
+-
+-const char *test_doc = "Default configuration files usage";
+-const char *test_author = "Veronika Kabatova <vkabatov@redhat.com>";
+-
+-#define TDIR "/etc"
+-char test_files[2][128] = {
+-	TDIR "/zdtm-test",
+-	TDIR "/zdtm-test1",
+-};
+-#define CONFIG_PATH "../../zdtm_test_config.conf"
+-
+-#define BUFF_SIZE ((sizeof(struct inotify_event) + PATH_MAX))
+-
+-int main(int argc, char *argv[])
+-{
+-	FILE *configfile;
+-	char buf[BUFF_SIZE];
+-	int fd, wd, i;
+-
+-	test_init(argc, argv);
+-
+-	for (i = 0; i < 2; i++) {
+-		unlink(test_files[i]);
+-		if (creat(test_files[i], 0600) < 0) {
+-			pr_perror("Can't make test file");
+-			exit(1);
+-		}
+-	}
+-	fd = inotify_init1(IN_NONBLOCK);
+-	if (fd < 0) {
+-		pr_perror("inotify_init failed");
+-		goto err;
+-	}
+-	for (i = 0; i < 2; i++) {
+-		wd = inotify_add_watch(fd, test_files[i], IN_OPEN);
+-		if (wd < 0) {
+-			pr_perror("inotify_add_watch failed");
+-			goto err;
+-		}
+-	}
+-
+-	configfile = fopen(CONFIG_PATH, "w");
+-	if (configfile == NULL) {
+-		pr_perror("Unable to create configuration file %s", CONFIG_PATH);
+-		goto err;
+-	}
+-	fprintf(configfile, "force-irmap\t\nirmap-scan-path /zdtm/static\n");
+-	fclose(configfile);
+-
+-	test_daemon();
+-	test_waitsig();
+-
+-	for (i = 0; i < 2; i++) {
+-		memset(buf, 0, sizeof(buf));
+-		wd = open(test_files[i], O_RDONLY);
+-		if (read(fd, buf, sizeof(buf)) <= 0) {
+-			fail("No events in queue");
+-			unlink(CONFIG_PATH);
+-			goto err;
+-		}
+-	}
+-
+-	close(wd);
+-	close(fd);
+-	for (i = 0; i < 2; i++)
+-		unlink(test_files[i]);
+-	unlink(CONFIG_PATH);
+-	pass();
+-	return 0;
+-err:
+-	for (i = 0; i < 2; i++)
+-		unlink(test_files[i]);
+-	return 1;
+-}
+diff --git a/test/zdtm/static/config_inotify_irmap.desc b/test/zdtm/static/config_inotify_irmap.desc
+deleted file mode 100644
+index 591ae7191..000000000
+--- a/test/zdtm/static/config_inotify_irmap.desc
++++ /dev/null
+@@ -1,3 +0,0 @@
+-(lambda confpath:
+-{'flags': 'suid', 'opts': '--config %s' % (confpath)
+-}) (os.path.abspath('./zdtm_test_config.conf'))
+-- 
+2.35.1
+

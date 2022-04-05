@@ -1,0 +1,100 @@
+From 6e2b052636e3f57b22302db21bd5c6d8eba9ba8b Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@gmail.com>
+Date: Wed, 22 Dec 2021 09:36:09 -0800
+Subject: [PATCH 090/245] tls: allow to terminate connections synchronously
+
+GNUTLS_SHUT_RDWR sends an alert containing a close request and waits for
+the peer to reply with the same message.
+
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ criu/include/tls.h | 4 ++--
+ criu/page-xfer.c   | 5 +++--
+ criu/tls.c         | 6 +++---
+ 3 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/criu/include/tls.h b/criu/include/tls.h
+index 26f9976fd..f563c092c 100644
+--- a/criu/include/tls.h
++++ b/criu/include/tls.h
+@@ -4,7 +4,7 @@
+ #ifdef CONFIG_GNUTLS
+ 
+ int tls_x509_init(int sockfd, bool is_server);
+-void tls_terminate_session(void);
++void tls_terminate_session(bool async);
+ 
+ ssize_t tls_send(const void *buf, size_t len, int flags);
+ ssize_t tls_recv(void *buf, size_t len, int flags);
+@@ -19,7 +19,7 @@ int tls_recv_data_to_fd(int fd, unsigned long len);
+ #define tls_recv(buf, len, flags)	 (-1)
+ #define tls_send_data_from_fd(fd, len)	 (-1)
+ #define tls_recv_data_to_fd(fd, len)	 (-1)
+-#define tls_terminate_session()
++#define tls_terminate_session(async)
+ 
+ #endif /* CONFIG_HAS_GNUTLS */
+ 
+diff --git a/criu/page-xfer.c b/criu/page-xfer.c
+index 9adf2c8b2..7ff07680f 100644
+--- a/criu/page-xfer.c
++++ b/criu/page-xfer.c
+@@ -1259,6 +1259,8 @@ static int page_server_serve(int sk)
+ 		ret = -1;
+ 	}
+ 
++	tls_terminate_session(ret != 0);
++
+ 	if (ret == 0 && opts.ps_socket == -1) {
+ 		char c;
+ 
+@@ -1272,7 +1274,6 @@ static int page_server_serve(int sk)
+ 		}
+ 	}
+ 
+-	tls_terminate_session();
+ 	page_server_close();
+ 
+ 	pr_info("Session over\n");
+@@ -1504,7 +1505,7 @@ int disconnect_from_page_server(void)
+ 
+ 	ret = 0;
+ out:
+-	tls_terminate_session();
++	tls_terminate_session(ret != 0);
+ 	close_safe(&page_server_sk);
+ 
+ 	return ret ?: status;
+diff --git a/criu/tls.c b/criu/tls.c
+index 9985b037d..4feaf613b 100644
+--- a/criu/tls.c
++++ b/criu/tls.c
+@@ -31,7 +31,7 @@ static gnutls_certificate_credentials_t x509_cred;
+ static int tls_sk = -1;
+ static int tls_sk_flags = 0;
+ 
+-void tls_terminate_session(void)
++void tls_terminate_session(bool async)
+ {
+ 	int ret;
+ 
+@@ -44,7 +44,7 @@ void tls_terminate_session(void)
+ 			 * Initiate a connection shutdown but don't
+ 			 * wait for peer to close connection.
+ 			 */
+-			ret = gnutls_bye(session, GNUTLS_SHUT_WR);
++			ret = gnutls_bye(session, async ? GNUTLS_SHUT_WR : GNUTLS_SHUT_RDWR);
+ 		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+ 		/* Free the session object */
+ 		gnutls_deinit(session);
+@@ -399,6 +399,6 @@ int tls_x509_init(int sockfd, bool is_server)
+ 
+ 	return 0;
+ err:
+-	tls_terminate_session();
++	tls_terminate_session(true);
+ 	return -1;
+ }
+-- 
+2.35.1
+

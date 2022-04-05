@@ -1,0 +1,127 @@
+From 9caafe1d72257646d55976b9c74a2480149b9279 Mon Sep 17 00:00:00 2001
+From: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+Date: Sun, 15 Aug 2021 10:58:32 +0100
+Subject: [PATCH 148/245] zdtm: add --criu-config option
+
+The --criu-config option allows to run test with CRIU options provided
+via configuration files instead of command-line arguments.
+
+Suggested-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Radostin Stoyanov <rstoyanov@fedoraproject.org>
+---
+ test/zdtm.py             | 16 ++++++++++++---
+ test/zdtm/__init__.py    |  0
+ test/zdtm/criu_config.py | 42 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+), 3 deletions(-)
+ create mode 100644 test/zdtm/__init__.py
+ create mode 100644 test/zdtm/criu_config.py
+
+diff --git a/test/zdtm.py b/test/zdtm.py
+index d02b42814..3fbdb8a18 100755
+--- a/test/zdtm.py
++++ b/test/zdtm.py
+@@ -32,6 +32,7 @@ from builtins import input, int, open, range, str, zip
+ import yaml
+ 
+ import pycriu as crpc
++from zdtm.criu_config import criu_config
+ 
+ # File to store content of streamed images
+ STREAMED_IMG_FILE_NAME = "img.criu"
+@@ -1036,7 +1037,6 @@ class criu:
+         self.__user = bool(opts['user'])
+         self.__leave_stopped = bool(opts['stop'])
+         self.__stream = bool(opts['stream'])
+-        self.__criu = (opts['rpc'] and criu_rpc or criu_cli)
+         self.__show_stats = bool(opts['show_stats'])
+         self.__lazy_pages_p = None
+         self.__page_server_p = None
+@@ -1047,6 +1047,13 @@ class criu:
+         self.__crit_bin = opts['crit_bin']
+         self.__pre_dump_mode = opts['pre_dump_mode']
+ 
++        if opts['rpc']:
++            self.__criu = criu_rpc
++        elif opts['criu_config']:
++            self.__criu = criu_config
++        else:
++            self.__criu = criu_cli
++
+     def fini(self):
+         if self.__lazy_migrate:
+             ret = self.__dump_process.wait()
+@@ -2024,8 +2031,8 @@ class Launcher:
+ 
+         nd = ('nocr', 'norst', 'pre', 'iters', 'page_server', 'sibling',
+               'stop', 'empty_ns', 'fault', 'keep_img', 'report', 'snaps',
+-              'sat', 'script', 'rpc', 'lazy_pages', 'join_ns', 'dedup', 'sbs',
+-              'freezecg', 'user', 'dry_run', 'noauto_dedup',
++              'sat', 'script', 'rpc', 'criu_config', 'lazy_pages', 'join_ns',
++              'dedup', 'sbs', 'freezecg', 'user', 'dry_run', 'noauto_dedup',
+               'remote_lazy_pages', 'show_stats', 'lazy_migrate', 'stream',
+               'tls', 'criu_bin', 'crit_bin', 'pre_dump_mode')
+         arg = repr((name, desc, flavor, {d: self.__opts[d] for d in nd}))
+@@ -2647,6 +2654,9 @@ def get_cli_args():
+                     help="Run CRIU via RPC rather than CLI",
+                     action='store_true')
+ 
++    rp.add_argument("--criu-config",
++                    help="Use config file to set CRIU options",
++                    action='store_true')
+     rp.add_argument("--page-server",
+                     help="Use page server dump",
+                     action='store_true')
+diff --git a/test/zdtm/__init__.py b/test/zdtm/__init__.py
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/test/zdtm/criu_config.py b/test/zdtm/criu_config.py
+new file mode 100644
+index 000000000..487becfb4
+--- /dev/null
++++ b/test/zdtm/criu_config.py
+@@ -0,0 +1,42 @@
++import os
++import tempfile
++import subprocess
++
++
++class criu_config:
++    @staticmethod
++    def run(action,
++            args,
++            criu_bin,
++            fault=None,
++            strace=[],
++            preexec=None,
++            nowait=False):
++
++        config_path = tempfile.mktemp(".conf", "criu-%s-" % action)
++        with open(config_path, "w") as config_fd:
++            for arg in args:
++                if arg.startswith("--"):
++                    config_fd.write("\n")
++                    arg = arg.strip("-")
++                config_fd.write("%s " % arg)
++
++        env = dict(
++            os.environ,
++            ASAN_OPTIONS="log_path=asan.log:disable_coredump=0:detect_leaks=0"
++        )
++
++        if fault:
++            print("Forcing %s fault" % fault)
++            env['CRIU_FAULT'] = fault
++
++        cr = subprocess.Popen(
++            strace +
++            [criu_bin, action, "--no-default-config", "--config", config_path],
++            env=env,
++            close_fds=False,
++            preexec_fn=preexec
++        )
++        if nowait:
++            return cr
++        return cr.wait()
+-- 
+2.35.1
+

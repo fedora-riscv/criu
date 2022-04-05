@@ -1,0 +1,48 @@
+From 4edd5dd5b2ef0ad051cec79adbdd10067fd821df Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Tue, 5 Apr 2022 07:05:53 +0000
+Subject: [PATCH 234/245] ci: Ubuntu broke overlayfs again
+
+Switch to non overlaysfs tests for Podman and Docker.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ scripts/ci/docker-test.sh | 5 ++++-
+ scripts/ci/podman-test.sh | 5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/ci/docker-test.sh b/scripts/ci/docker-test.sh
+index d4b11bd55..397fd7b0e 100755
+--- a/scripts/ci/docker-test.sh
++++ b/scripts/ci/docker-test.sh
+@@ -21,7 +21,10 @@ add-apt-repository \
+ 
+ . /etc/lsb-release
+ 
+-echo '{ "experimental": true }' > /etc/docker/daemon.json
++# overlayfs behaves differently on Ubuntu (18.04) and breaks CRIU
++# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1857257
++# Switch to devicemapper
++echo '{ "experimental": true, "storage-driver": "devicemapper" }' > /etc/docker/daemon.json
+ 
+ CRIU_LOG='/criu.log'
+ mkdir -p /etc/criu
+diff --git a/scripts/ci/podman-test.sh b/scripts/ci/podman-test.sh
+index 5e5eb764d..d66b281b3 100755
+--- a/scripts/ci/podman-test.sh
++++ b/scripts/ci/podman-test.sh
+@@ -25,7 +25,10 @@ make install
+ popd
+ rm -rf "${tmp_dir}"
+ 
+-podman info
++# overlaysfs behaves differently on Ubuntu and breaks CRIU
++# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1857257
++export STORAGE_DRIVER=vfs
++podman --storage-driver vfs info
+ 
+ # shellcheck disable=SC2016
+ podman run --name cr -d docker.io/library/alpine /bin/sh -c 'i=0; while true; do echo $i; i=$(expr $i + 1); sleep 1; done'
+-- 
+2.35.1
+

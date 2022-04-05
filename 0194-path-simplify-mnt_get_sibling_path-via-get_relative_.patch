@@ -1,0 +1,155 @@
+From 421fb3b73b950669600160ea74913e5c3d953d5c Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Wed, 1 Dec 2021 12:52:27 +0300
+Subject: [PATCH 194/245] path: simplify mnt_get_sibling_path via
+ get_relative_path
+
+Previous code did:
+
+1) get rpath: mount's mountpoint relative to it's parent mountpoint
+2) get cut_root: parent's root relative to parent's slave root or vice
+versa (will be "-" if parents root is wider of "+" if thicker)
+3) return parent's slave mountpoint +/- cut_root + rpath
+
+It can be done more robust with get_relative_path:
+
+1) get rpath: mount's mountpoint relative to it's parent mountpoint
+2) get fsrpath: add rpath to parent's root (path relative to fs root)
+3) get rpath: fsrpath relative to parent's slave root
+4) return parent's slave mountpoint + rpath
+
+In the latter approach we do not need to open code workarounds for
+consequent slashes in paths (get_relative_path would do this for us),
+and we also do not need to have complex logic with +/-.
+
+While on it let's also switch ->mountpoint to ->ns_mountpoint where
+possible, as mountpoint can have unexpected prefixes.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/0fd09f8571
+
+Changes: rework mnt_get_sibling_path more.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/mount.c |  4 +++-
+ criu/path.c  | 65 +++++++++++++---------------------------------------
+ 2 files changed, 19 insertions(+), 50 deletions(-)
+
+diff --git a/criu/mount.c b/criu/mount.c
+index b0c43e3ca..1ffd3da8d 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -2040,6 +2040,8 @@ static int umount_from_slaves(struct mount_info *mi)
+ 	struct mount_info *t;
+ 	char *mpath, buf[PATH_MAX];
+ 
++	BUG_ON(mi->parent == root_yard_mp);
++
+ 	list_for_each_entry(t, &mi->parent->mnt_slave_list, mnt_slave) {
+ 		if (!t->mounted)
+ 			continue;
+@@ -2107,7 +2109,7 @@ static int propagate_mount(struct mount_info *mi)
+ 
+ 	propagate_siblings(mi);
+ 
+-	if (!mi->parent)
++	if (!mi->parent || mi->parent == root_yard_mp)
+ 		goto skip_parent;
+ 
+ 	umount_from_slaves(mi);
+diff --git a/criu/path.c b/criu/path.c
+index 1b71c4cb1..54f5483b9 100644
+--- a/criu/path.c
++++ b/criu/path.c
+@@ -6,6 +6,7 @@
+ #include "mount.h"
+ #include "path.h"
+ #include "log.h"
++#include "util.h"
+ #include "common/bug.h"
+ 
+ char *cut_root_for_bind(char *target_root, char *source_root)
+@@ -41,64 +42,30 @@ out:
+ char *mnt_get_sibling_path(struct mount_info *m, struct mount_info *p, char *buf, int len)
+ {
+ 	struct mount_info *pa = m->parent;
+-	char *rpath, *cut_root, *path = buf;
+-	int off = 0;
++	char *rpath, fsrpath[PATH_MAX];
+ 
+ 	if (pa == NULL)
+ 		return NULL;
+ 
+-	rpath = m->mountpoint + strlen(pa->mountpoint);
+-	if (rpath[0] == '/')
+-		rpath++;
+-
+-	/*
+-	 * Get a path to a sibling of "m" with parent "p",
+-	 * return NULL is p can't have a sibling of m.
+-	 *
+-	 * Here are two cases:
+-	 * When a parent of "m" has longer root than "p":
+-	 * /    pm->root            / rpath
+-	 *               | cut_root |
+-	 * /    p->root  /
+-	 * In this case, a sibling path is a sum of p->mountpoint,
+-	 * cut_root and rpath.
+-	 *
+-	 * When a parent of m has shorter root than "p":
+-	 * /    pm->root /            rpath
+-	 *               | cut_root |
+-	 * /    p->root             / rpath +strlen(cut_root)
+-	 * In this case, a sibling path is a sum of p->mountpoint and
+-	 * rpath - strlen(cut_root).
+-	 */
+-
+-	cut_root = cut_root_for_bind(pa->root, p->root);
+-	if (cut_root == NULL)
++	rpath = get_relative_path(m->ns_mountpoint, pa->ns_mountpoint);
++	if (!rpath) {
++		pr_warn("child - parent mountpoint missmatch %s - %s\n", m->ns_mountpoint, pa->ns_mountpoint);
+ 		return NULL;
+-	if (p->mountpoint[1] != 0) /* not "/" */ {
+-		off = snprintf(path, len, "%s", p->mountpoint);
+-		if (path[off - 1] == '/') /* p->mountpoint = "./" */
+-			off--;
+ 	}
+-	len -= off;
+-	path += off;
+ 
+-	if (strlen(pa->root) > strlen(p->root)) {
+-		off = snprintf(path, len, "/%s", cut_root);
+-		len -= off;
+-		path += off;
+-	} else {
+-		int length = strlen(cut_root);
+-		if (strncmp(rpath, cut_root, length))
+-			return NULL;
+-		rpath += strlen(cut_root);
+-		if (length > 0 && (rpath[0] && rpath[0] != '/'))
+-			return NULL;
++	if (snprintf(fsrpath, sizeof(fsrpath), "%s/%s", pa->root, rpath) >= sizeof(fsrpath)) {
++		pr_warn("snrptintf truncation \"%s / %s\"\n", pa->root, rpath);
++		return NULL;
+ 	}
+-	if (rpath[0] == '/')
+-		rpath++;
+ 
+-	if (rpath[0] != '\0')
+-		snprintf(path, len, "/%s", rpath);
++	rpath = get_relative_path(fsrpath, p->root);
++	if (!rpath)
++		return NULL;
++
++	if (snprintf(buf, len, "%s/%s", p->ns_mountpoint, rpath) >= sizeof(fsrpath)) {
++		pr_warn("snrptintf truncation \"%s / %s\"\n", p->ns_mountpoint, rpath);
++		return NULL;
++	}
+ 
+ 	return buf;
+ }
+-- 
+2.35.1
+

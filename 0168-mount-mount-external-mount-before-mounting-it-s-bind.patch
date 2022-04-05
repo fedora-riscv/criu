@@ -1,0 +1,103 @@
+From 2f347af01f5ec1525b989fe4ed9d9c5ead2c5f27 Mon Sep 17 00:00:00 2001
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Date: Mon, 17 Feb 2020 11:58:41 +0300
+Subject: [PATCH 168/245] mount: mount external mount before mounting it's
+ binds
+
+The problem when we don't order these mounts we can get to mounting
+non-external bind first via do_new_mount and fail c/r. For instance for
+tmpfs we would fail on no image to get contents from. See the test
+mnt_ext_root for more info.
+
+Cherry-picked from Virtuozzo criu:
+https://src.openvz.org/projects/OVZ/repos/criu/commits/baf3f8db8
+
+Changes: switch to mnt_bind_pick helper, export to mount.h, make check
+in can_mount_now skip mounts with ->bind set.
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ criu/include/mount.h |  2 ++
+ criu/mount.c         | 27 ++++++++++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/criu/include/mount.h b/criu/include/mount.h
+index b21c23975..7dffe5b2c 100644
+--- a/criu/include/mount.h
++++ b/criu/include/mount.h
+@@ -173,7 +173,9 @@ extern int remount_readonly_mounts(void);
+ extern int try_remount_writable(struct mount_info *mi, bool ns);
+ extern bool mnt_is_overmounted(struct mount_info *mi);
+ 
++extern struct mount_info *mnt_get_external_bind(struct mount_info *mi);
+ extern bool mnt_is_external_bind(struct mount_info *mi);
++extern bool has_mounted_external_bind(struct mount_info *mi);
+ 
+ extern struct mount_info *mnt_bind_pick(struct mount_info *mi,
+ 					bool (*pick)(struct mount_info *mi, struct mount_info *bind));
+diff --git a/criu/mount.c b/criu/mount.c
+index f1c970da6..968b6dc03 100644
+--- a/criu/mount.c
++++ b/criu/mount.c
+@@ -564,11 +564,16 @@ static bool __mnt_is_external_bind(struct mount_info *mi, struct mount_info *bin
+  * Say mount is external if it was explicitly specified as an external or it
+  * can be bind-mounted from such an explicit external mount.
+  */
+-bool mnt_is_external_bind(struct mount_info *mi)
++struct mount_info *mnt_get_external_bind(struct mount_info *mi)
+ {
+ 	return mnt_bind_pick(mi, __mnt_is_external_bind);
+ }
+ 
++bool mnt_is_external_bind(struct mount_info *mi)
++{
++	return mnt_get_external_bind(mi);
++}
++
+ static bool __can_receive_master_from_external(struct mount_info *mi, struct mount_info *bind)
+ {
+ 	if (mnt_is_nodev_external(bind) && bind->master_id == mi->master_id && is_sub_path(mi->root, bind->root))
+@@ -582,6 +587,19 @@ static struct mount_info *can_receive_master_from_external(struct mount_info *mi
+ 	return mnt_bind_pick(mi, __can_receive_master_from_external);
+ }
+ 
++static bool __has_mounted_external_bind(struct mount_info *mi, struct mount_info *bind)
++{
++	if (bind->external && bind->mounted && is_sub_path(mi->root, bind->root))
++		return true;
++
++	return false;
++}
++
++bool has_mounted_external_bind(struct mount_info *mi)
++{
++	return mnt_bind_pick(mi, __has_mounted_external_bind);
++}
++
+ /*
+  * Having two children with same mountpoint is unsupported. That can happen in
+  * case of mount propagation inside of shared mounts, in that case it is hard
+@@ -2426,6 +2444,8 @@ static bool rst_mnt_is_root(struct mount_info *m)
+ 
+ static bool can_mount_now(struct mount_info *mi)
+ {
++	struct mount_info *ext;
++
+ 	if (rst_mnt_is_root(mi)) {
+ 		pr_debug("%s: true as %d is mntns root\n", __func__, mi->mnt_id);
+ 		return true;
+@@ -2437,6 +2457,11 @@ static bool can_mount_now(struct mount_info *mi)
+ 	if (mnt_is_nodev_external(mi))
+ 		goto shared;
+ 
++	if (!mi->bind && !mi->external && (ext = mnt_get_external_bind(mi)) && !has_mounted_external_bind(mi)) {
++		pr_debug("%s: false as %d's external %d is not mounted\n", __func__, mi->mnt_id, ext->mnt_id);
++		return false;
++	}
++
+ 	/*
+ 	 * We're the slave peer:
+ 	 *   - Make sure the master peer is already mounted
+-- 
+2.35.1
+

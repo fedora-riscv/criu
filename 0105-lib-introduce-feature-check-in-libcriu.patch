@@ -1,0 +1,144 @@
+From 0a26cde1b8b454b64951ce1b0b67c937e2188241 Mon Sep 17 00:00:00 2001
+From: Adrian Reber <areber@redhat.com>
+Date: Mon, 6 Dec 2021 16:51:21 +0000
+Subject: [PATCH 105/245] lib: introduce feature check in libcriu
+
+This commit adds feature check support to libcriu. It already exists in
+the CLI and RPC and this just extends it to libcriu.
+
+This commit provides one function to do all possible feature checks in
+one call. The parameter to the feature check function is a structure and
+the user can enable which features should be checked.
+
+Using a structure makes the function extensible without the need to
+break the API/ABI in the future.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ lib/c/criu.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ lib/c/criu.h | 29 +++++++++++++++++++++
+ 2 files changed, 101 insertions(+)
+
+diff --git a/lib/c/criu.c b/lib/c/criu.c
+index 500574e33..dea5896f7 100644
+--- a/lib/c/criu.c
++++ b/lib/c/criu.c
+@@ -1925,3 +1925,75 @@ int criu_join_ns_add(const char *ns, const char *ns_file, const char *extra_opt)
+ {
+ 	return criu_local_join_ns_add(global_opts, ns, ns_file, extra_opt);
+ }
++
++int criu_local_feature_check(criu_opts *opts, struct criu_feature_check *features, size_t size)
++{
++	CriuFeatures criu_features = CRIU_FEATURES__INIT;
++	struct criu_feature_check features_copy = { 0 };
++	CriuReq req = CRIU_REQ__INIT;
++	CriuResp *resp = NULL;
++	int ret = -1;
++
++	saved_errno = 0;
++
++	if (!features)
++		goto exit;
++
++	if (size > sizeof(struct criu_feature_check))
++		goto exit;
++
++	memcpy(&features_copy, features, size);
++
++	req.type = CRIU_REQ_TYPE__FEATURE_CHECK;
++	req.opts = opts->rpc;
++
++	if (features_copy.mem_track) {
++		criu_features.has_mem_track = true;
++		criu_features.mem_track = true;
++	}
++	if (features_copy.lazy_pages) {
++		criu_features.has_lazy_pages = true;
++		criu_features.lazy_pages = true;
++	}
++	if (features_copy.pidfd_store) {
++		criu_features.has_pidfd_store = true;
++		criu_features.pidfd_store = true;
++	}
++	req.features = &criu_features;
++
++	ret = send_req_and_recv_resp(opts, &req, &resp);
++	if (ret)
++		goto exit;
++
++	memset(&features_copy, 0, sizeof(struct criu_feature_check));
++
++	if (resp->success) {
++		if (resp->features->has_mem_track) {
++			features_copy.mem_track = resp->features->mem_track;
++		}
++		if (resp->features->has_lazy_pages) {
++			features_copy.lazy_pages = resp->features->lazy_pages;
++		}
++		if (resp->features->has_pidfd_store) {
++			features_copy.pidfd_store = resp->features->pidfd_store;
++		}
++		memcpy(features, &features_copy, size);
++	} else {
++		ret = -EBADE;
++	}
++
++exit:
++	if (resp)
++		criu_resp__free_unpacked(resp, NULL);
++
++	swrk_wait(opts);
++
++	errno = saved_errno;
++
++	return ret;
++}
++
++int criu_feature_check(struct criu_feature_check *features, size_t size)
++{
++	return criu_local_feature_check(global_opts, features, size);
++}
+diff --git a/lib/c/criu.h b/lib/c/criu.h
+index c6d4f50a8..aed2c3481 100644
+--- a/lib/c/criu.h
++++ b/lib/c/criu.h
+@@ -288,6 +288,35 @@ int criu_local_dump_iters(criu_opts *opts, int (*more)(criu_predump_info pi));
+ int criu_local_get_version(criu_opts *opts);
+ int criu_local_check_version(criu_opts *opts, int minimum);
+ 
++/*
++ * Feature checking allows the user to check if CRIU supports
++ * certain features. There are CRIU features which do not depend
++ * on the version of CRIU but on kernel features or architecture.
++ *
++ * One example is memory tracking. Memory tracking can be disabled
++ * in the kernel or there are architectures which do not support
++ * it (aarch64 for example). By using the feature check a libcriu
++ * user can easily query CRIU if a certain feature is available.
++ *
++ * The features which should be checked can be marked in the
++ * structure 'struct criu_feature_check'. Each structure member
++ * that is set to true will result in CRIU checking for the
++ * availability of that feature in the current combination of
++ * CRIU/kernel/architecture.
++ *
++ * Available features will be set to true when the function
++ * returns successfully. Missing features will be set to false.
++ */
++
++struct criu_feature_check {
++	bool mem_track;
++	bool lazy_pages;
++	bool pidfd_store;
++};
++
++int criu_feature_check(struct criu_feature_check *features, size_t size);
++int criu_local_feature_check(criu_opts *opts, struct criu_feature_check *features, size_t size);
++
+ #ifdef __GNUG__
+ }
+ #endif
+-- 
+2.35.1
+

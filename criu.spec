@@ -79,6 +79,7 @@ Linux in user-space.
 %package devel
 Summary: Header files and libraries for %{name}
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-libs = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries for %{name}.

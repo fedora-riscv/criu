@@ -17,7 +17,7 @@
 
 Name: criu
 Version: 3.17
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -215,6 +215,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Mon Jun 13 2022 Python Maint <python-maint@redhat.com> - 3.17-3
+- Rebuilt for Python 3.11
+
 * Thu May 19 2022 Radostin Stoyanov <rstoyanov@fedoraproject.org> - 3.17-2
 - Use mntns-compat-mode as a temporary fix for runc
 

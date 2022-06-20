@@ -17,15 +17,15 @@
 
 Name: criu
 Version: 3.17
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
 Source0: https://github.com/checkpoint-restore/criu/archive/v%{version}/criu-%{version}.tar.gz
 
-# FIXME: Always use mntns-compat-mode until we have a proper fix for
+# Fix for mount-v2 problems
 # https://github.com/opencontainers/runc/pull/3442
-Patch98: config-always-use-mntns-compat-mode.patch
+Patch98: https://patch-diff.githubusercontent.com/raw/checkpoint-restore/criu/pull/1898.patch
 
 # Add protobuf-c as a dependency.
 # We use this patch because the protobuf-c package name
@@ -215,6 +215,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Mon Jun 20 2022 Adrian Reber <adrian@lisas.de> - 3.17-4
+- Apply upstream patch to fix mount v2 errors
+
 * Mon Jun 13 2022 Python Maint <python-maint@redhat.com> - 3.17-3
 - Rebuilt for Python 3.11
 

@@ -16,16 +16,12 @@
 %undefine _auto_set_build_flags
 
 Name: criu
-Version: 3.17
-Release: 4%{?dist}
+Version: 3.17.1
+Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
 Source0: https://github.com/checkpoint-restore/criu/archive/v%{version}/criu-%{version}.tar.gz
-
-# Fix for mount-v2 problems
-# https://github.com/opencontainers/runc/pull/3442
-Patch98: https://patch-diff.githubusercontent.com/raw/checkpoint-restore/criu/pull/1898.patch
 
 # Add protobuf-c as a dependency.
 # We use this patch because the protobuf-c package name
@@ -126,7 +122,6 @@ This script can help to workaround the so called "PID mismatch" problem.
 %prep
 %setup -q
 
-%patch98 -p1
 %patch99 -p1
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -215,6 +210,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Mon Jun 27 2022 Radostin Stoyanov <rstoyanov@fedoraproject.org> - 3.17.1-1
+- Update to release version 3.17.1
+
 * Mon Jun 20 2022 Adrian Reber <adrian@lisas.de> - 3.17-4
 - Apply upstream patch to fix mount v2 errors
 

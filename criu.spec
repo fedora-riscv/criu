@@ -17,7 +17,7 @@
 
 Name: criu
 Version: 3.17.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -210,6 +210,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Wed Jul 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.17.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
 * Fri Jul 08 2022 Adrian Reber <adrian@lisas.de> - 3.17.1-2
 - Rebuilt to pick up glibc rseq() changes
 

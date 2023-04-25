@@ -51,6 +51,8 @@ BuildRequires: systemd
 BuildRequires: libnet-devel
 BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel libcap-devel
 %if 0%{?fedora} || 0%{?rhel} > 7
+BuildRequires: %{py_prefix}-pip
+BuildRequires: %{py_prefix}-setuptools
 BuildRequires: asciidoctor
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel
@@ -145,6 +147,8 @@ make docs V=1
 
 
 %install
+sed -e "s,--upgrade --force-reinstall,--disable-pip-version-check --progress-bar off --verbose,g" -i lib/Makefile
+rm -f crit/pyproject.toml
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_binary}
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -205,8 +209,8 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 
 %files -n crit
 %{_bindir}/crit
+%{python3_sitelib}/crit-%{version}*egg-info
 %doc %{_mandir}/man1/crit.1*
-%{python3_sitelib}/crit-%{version}.dist-info/
 
 %files -n criu-ns
 %{_sbindir}/criu-ns

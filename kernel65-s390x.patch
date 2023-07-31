@@ -1,0 +1,26 @@
+https://github.com/checkpoint-restore/criu/pull/2232
+
+diff --git a/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h b/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
+index 87283bc6b..6d55a015f 100644
+--- a/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
++++ b/compel/arch/s390/src/lib/include/uapi/asm/infect-types.h
+@@ -4,6 +4,7 @@
+ #include <stdint.h>
+ #include <signal.h>
+ #include <sys/mman.h>
++#include <linux/const.h>
+ #include <asm/ptrace.h>
+ #include "common/page.h"
+ 
+diff --git a/criu/arch/s390/include/asm/restorer.h b/criu/arch/s390/include/asm/restorer.h
+index b8472afc8..1a6469837 100644
+--- a/criu/arch/s390/include/asm/restorer.h
++++ b/criu/arch/s390/include/asm/restorer.h
+@@ -1,6 +1,7 @@
+ #ifndef __CR_ASM_RESTORER_H__
+ #define __CR_ASM_RESTORER_H__
+ 
++#include <linux/const.h>
+ #include <asm/ptrace.h>
+ #include <asm/types.h>
+ 

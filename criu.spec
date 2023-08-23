@@ -17,7 +17,7 @@
 
 Name: criu
 Version: 3.18
-Release: 1%{?dist}
+Release: 1.rv64%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPLv2
 URL: http://criu.org/
@@ -69,7 +69,7 @@ BuildRequires: make
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x riscv64
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
@@ -217,6 +217,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Wed Aug 23 2023 Zhengyu He <hezhy472013@gmail.com> -3.18-1.rv64
+- Add support for riscv64
+
 * Tue Apr 25 2034 Adrian Reber <adrian@lisas.de> - 3.18-1
 - Update to 3.18
 - Apply patch from upstream to support newer CPUs

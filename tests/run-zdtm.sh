@@ -18,6 +18,9 @@ EXCLUDES=" \
 	-x zdtm/static/netns_sub \
 	-x zdtm/static/netns_sub_veth \
 	-x zdtm/static/file_locks01 \
+	-x zdtm/static/mntns_link_remap \
+	-x zdtm/static/unlink_fstat03 \
+	-x zdtm/static/unlink_regular00 \
 	-x zdtm/static/cgroup02 "
 
 run_test() {

@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.19
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT
 URL: http://criu.org/
@@ -156,6 +156,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Tue Nov 28 2023 Adrian Reber <adrian@lisas.de> - 3.19-2
+- Fix test setup
+
 * Tue Nov 28 2023 Adrian Reber <adrian@lisas.de> - 3.19-1
 - Update to 3.19
 

@@ -32,6 +32,7 @@ BuildRequires: protobuf-devel protobuf-c-devel %{py_prefix}-devel libnl3-devel l
 BuildRequires: %{py_prefix}-pip
 BuildRequires: %{py_prefix}-setuptools
 BuildRequires: %{py_prefix}-wheel
+BuildRequires: %{py_prefix}-protobuf
 BuildRequires: asciidoctor
 BuildRequires: perl-interpreter
 BuildRequires: libselinux-devel

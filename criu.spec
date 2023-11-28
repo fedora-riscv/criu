@@ -11,17 +11,12 @@
 %undefine _auto_set_build_flags
 
 Name: criu
-Version: 3.18
-Release: 4%{?dist}
+Version: 3.19
+Release: 1%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT
 URL: http://criu.org/
 Source0: https://github.com/checkpoint-restore/criu/archive/v%{version}/criu-%{version}.tar.gz
-
-# Fix to work on CPUs with larger XSAVE area (Sapphire Rapids)
-Patch0: https://github.com/checkpoint-restore/criu/commit/d739260c57576c636759afb312340fa3827312f6.patch
-# https://github.com/checkpoint-restore/criu/pull/2232
-Patch1: kernel65-s390x.patch
 
 # Add protobuf-c as a dependency.
 # We use this patch because the protobuf-c package name
@@ -101,8 +96,6 @@ This script can help to workaround the so called "PID mismatch" problem.
 
 %prep
 %setup -q
-%patch -P 0 -p1
-%patch -P 1 -p1
 %patch -P 99 -p1
 
 %build
@@ -121,9 +114,10 @@ sed -e "s,--upgrade --force-reinstall,--disable-pip-version-check --progress-bar
 rm -f crit/pyproject.toml
 make install-criu DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 make install-lib DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_binary}
+make install-crit DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir} PYTHON=%{py_binary}
 make install-man DESTDIR=$RPM_BUILD_ROOT PREFIX=%{_prefix} LIBDIR=%{_libdir}
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/compel.1
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/amdgpu_plugin.1
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/criu-amdgpu-plugin.1
 
 mkdir -p %{buildroot}%{_tmpfilesdir}
 install -m 0644 %{SOURCE5} %{buildroot}%{_tmpfilesdir}/%{name}.conf
@@ -149,11 +143,12 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %{_libdir}/*.so.*
 
 %files -n %{py_prefix}-%{name}
-%{python3_sitelib}/pycriu/*
+%{python3_sitelib}/pycriu*
 
 %files -n crit
 %{_bindir}/crit
 %{python3_sitelib}/crit-%{version}.dist-info/
+%{python3_sitelib}/crit
 %doc %{_mandir}/man1/crit.1*
 
 %files -n criu-ns
@@ -161,6 +156,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 %doc %{_mandir}/man1/criu-ns.1*
 
 %changelog
+* Tue Nov 28 2023 Adrian Reber <adrian@lisas.de> - 3.19-1
+- Update to 3.19
+
 * Wed Jul 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.18-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 

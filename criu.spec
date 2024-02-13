@@ -12,7 +12,7 @@
 
 Name: criu
 Version: 3.19
-Release: 2%{?dist}
+Release: 2.rv64%{?dist}
 Summary: Tool for Checkpoint/Restore in User-space
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT
 URL: http://criu.org/
@@ -48,7 +48,7 @@ BuildRequires: make
 # user-space and kernel changes are only available for x86_64, arm,
 # ppc64le, aarch64 and s390x
 # https://bugzilla.redhat.com/show_bug.cgi?id=902875
-ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x
+ExclusiveArch: x86_64 %{arm} ppc64le aarch64 s390x riscv64
 
 %description
 criu is the user-space part of Checkpoint/Restore in User-space
@@ -175,6 +175,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libcriu.a
 * Tue Apr 25 2023 Adrian Reber <adrian@lisas.de> - 3.18-1
 - Update to 3.18
 - Apply patch from upstream to support newer CPUs
+
+* Wed Aug 23 2023 Zhengyu He <hezhy472013@gmail.com> -3.18-1.rv64
+- Add support for riscv64
 
 * Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.17.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
